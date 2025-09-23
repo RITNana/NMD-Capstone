@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bleeding Station Test</title>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+
+</head>
+
+<body>
+    <h1>Bleeding Station Test</h1>
+
+    <div id="value-verification"></div>
+
+    <script>
+        const socket = io();
+
+        socket.on('serial-data', (data) => {
+            console.log("Received from Arduino:", data);
+
+            // write to the div
+            document.getElementById('value-verification').innerText = data;
+        });
+    </script>
+
+</body>
+
+</html>
