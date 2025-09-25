@@ -17,7 +17,10 @@ const connect_to_serial = async () => {
     const ports = await SerialPort.list();
 
     const arduino_port = ports
-        .find(port => port.friendlyName.includes('USB Serial Device'));
+       .find(port => port.friendlyName.includes('USB Serial Device'));
+
+    // const arduino_port = ports
+    //     .find(port => port.friendlyName.includes('USB VID'));
 
     if (!arduino_port) {
         console.error('Arduino not found!');
