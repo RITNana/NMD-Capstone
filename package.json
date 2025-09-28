@@ -18,7 +18,9 @@
   },
   "homepage": "https://github.com/RITNana/NMD-Capstone#readme",
   "dependencies": {
+    "@serialport/parser-readline": "^13.0.0",
     "express": "^5.1.0",
+    "p5": "^2.0.5",
     "serialport": "^12.0.0",
     "socket.io": "^4.8.1"
   }

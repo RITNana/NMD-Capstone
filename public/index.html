@@ -5,7 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bleeding Station Test</title>
-    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
+
+    <style>
+        body { font-family: system-ui, sans-serif; margin: 16px; }
+        #value-verification { margin-top: 8px; color:#444; }
+    </style>
 
 </head>
 
@@ -14,16 +21,9 @@
 
     <div id="value-verification"></div>
 
-    <script>
-        const socket = io();
+    <script src="/sketch.js"></script>
 
-        socket.on('serial-data', (data) => {
-            console.log("Received from Arduino:", data);
-
-            // write to the div
-            document.getElementById('value-verification').innerText = data;
-        });
-    </script>
+    
 
 </body>
 
