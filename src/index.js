@@ -1,11 +1,11 @@
-const express = require('express');
-const http = require('http');
-const { Server } = require('socket.io');
-const path = require('path');
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
+const path = require("path");
 
-const { SerialPort } = require('serialport');
-const { ReadlineParser } = require('@serialport/parser-readline');
-
+const { SerialPort } = require("serialport");
+const { ReadlineParser } = require("@serialport/parser-readline");
+const fs = require("fs");
 
 let port;
 
@@ -14,43 +14,61 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 let serial_port = null;
-app.use(express.static(path.join(__dirname, '..', 'public'))); // serve index.html
+
+app.get("/Background.mp4", (req, res) => {
+  const filePath = path.join(
+    __dirname,
+    "..",
+    "public",
+    "media",
+    "Background.mp4"
+  );
+  const stat = fs.statSync(filePath);
+
+  res.writeHead(200, {
+    "Content-Type": "video/mp4",
+    "Content-Length": stat.size,
+  });
+
+  const readStream = fs.createReadStream(filePath);
+  readStream.pipe(res);
+});
+
+app.use(express.static(path.join(__dirname, "..", "public"))); // serve index.html
 
 const connect_to_serial = async () => {
+  try {
+    port = new SerialPort({
+      path: "COM3",
+      baudRate: 9600,
+    });
+    const parser = port.pipe(new ReadlineParser({ delimiter: "\n" }));
 
-    try{
-        port = new SerialPort({
-            path: 'COM3',
-            baudRate: 9600,
-        });
-        const parser = port.pipe(new ReadlineParser({ delimiter: '\n' }));
+    port.on("open", () => {
+      console.log("Serial Port Opened on COM3 @ 9600");
+    });
 
-        port.on('open', () => {
-            console.log('Serial Port Opened on COM3 @ 9600');
-        });
+    port.on("error", (err) => {
+      console.error("Serial error:", err.message);
+    });
 
-        port.on('error', (err) => {
-        console.error('Serial error:', err.message);
-        });
+    port.on("close", () => {
+      console.log("Serial port closed");
+    });
 
-        port.on('close', () => {
-        console.log('Serial port closed');
-        });
+    parser.on("data", (line) => {
+      const dataStr = line.toString().trim();
 
-        parser.on('data', (line) => {
-            const dataStr = line.toString().trim();
+      console.log("Data:", dataStr);
 
-            console.log('Data:', dataStr);
+      // Send to browser
+      io.emit("serial-data", dataStr);
+    });
+  } catch (err) {
+    console.error("Error connecting to serial port:", err);
+  }
 
-            // Send to browser
-            io.emit('serial-data', dataStr);
-        });
-    }
-    catch(err){
-        console.error('Error connecting to serial port:', err);
-    }
-
-    /*
+  /*
     const ports = await SerialPort.list();
 
     const arduino_port = ports
@@ -91,30 +109,29 @@ const connect_to_serial = async () => {
     */
 };
 
-
-
 const startServer = () => {
-    // IMPORTANT: start the HTTP server, not app.listen
-    server.listen(3000, () => {
-        console.log('Server + Socket.IO listening on http://localhost:3000');
-    });
+  // IMPORTANT: start the HTTP server, not app.listen
+  server.listen(3000, () => {
+    console.log("Server + Socket.IO listening on http://localhost:3000");
+  });
 
-    io.on('connection', (socket) => {
-        console.log('Web client connected:', socket.id);
-        socket.on('disconnect', () => console.log('Web client disconnected:', socket.id));
-    });
+  io.on("connection", (socket) => {
+    console.log("Web client connected:", socket.id);
+    socket.on("disconnect", () =>
+      console.log("Web client disconnected:", socket.id)
+    );
+  });
 };
 
 const main = async () => {
-    await connect_to_serial();
-    startServer();
+  await connect_to_serial();
+  startServer();
 };
 
-process.on('SIGINT', () => {
-  console.log('\nShutting down…');
+process.on("SIGINT", () => {
+  console.log("\nShutting down…");
   if (port && port.isOpen) port.close(() => process.exit(0));
   else process.exit(0);
 });
 
 main();
-

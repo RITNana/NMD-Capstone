@@ -13,66 +13,65 @@ let chargeNum = 0;
 let leds = [false, false, false];
 
 // variable to hold task video
-let taskVideo
-
 
 // colors for the three LEDs (R,G,B)
 const ledColors = [
-  [255, 70, 70],   // red
-  [255, 190, 60],  // amber
-  [60, 220, 100],  // green
+  [255, 70, 70], // red
+  [255, 190, 60], // amber
+  [60, 220, 100], // green
 ];
 
-function preload(){
-  taskVideo = createVideo("Background.mp4")
-}
+let taskVideo;
 
 function setup() {
   createCanvas(720, 300);
-  textFont('system-ui');
-  taskVideo.hide()
+  textFont("system-ui");
 
-  // same-origin socket.io
-  // socket = io();
-
-  // socket.on('serial-data', (payload) => {
-  //   // expect a line with a number, e.g., "17"
-  //   const s = String(payload).trim();
-  //   const match = s.match(/-?\d+/);
-  //   if (!match) return;
-
-  //   const val = parseInt(match[0], 10);
-  //   if (!Number.isFinite(val)) return;
-
-  //   chargeNum = val;
-
-  //   // update LED states EXACTLY like Arduino
-  //   leds[0] = chargeNum > thresholds[0];
-  //   leds[1] = chargeNum > thresholds[1];
-  //   leds[2] = chargeNum > thresholds[2];
-
-  //   // mirror to debug div
-  //   const el = document.getElementById('value-verification');
-  //   if (el) {
-  //     el.textContent =
-  //       `chargeNum=${chargeNum} | LED1=${leds[0]?'ON':'OFF'} ` +
-  //       `LED2=${leds[1]?'ON':'OFF'} LED3=${leds[2]?'ON':'OFF'}`;
-  //   }
-  // });
+  taskVideo = createVideo("media/Background.mp4");
+  taskVideo.loop();
+  taskVideo.hide();
 }
+
+// same-origin socket.io
+// socket = io();
+
+// socket.on('serial-data', (payload) => {
+//   // expect a line with a number, e.g., "17"
+//   const s = String(payload).trim();
+//   const match = s.match(/-?\d+/);
+//   if (!match) return;
+
+//   const val = parseInt(match[0], 10);
+//   if (!Number.isFinite(val)) return;
+
+//   chargeNum = val;
+
+//   // update LED states EXACTLY like Arduino
+//   leds[0] = chargeNum > thresholds[0];
+//   leds[1] = chargeNum > thresholds[1];
+//   leds[2] = chargeNum > thresholds[2];
+
+//   // mirror to debug div
+//   const el = document.getElementById('value-verification');
+//   if (el) {
+//     el.textContent =
+//       `chargeNum=${chargeNum} | LED1=${leds[0]?'ON':'OFF'} ` +
+//       `LED2=${leds[1]?'ON':'OFF'} LED3=${leds[2]?'ON':'OFF'}`;
+//   }
+// });
 
 function draw() {
   background(246);
-  image(taskVideo, 0, 0, width, height)
+  image(taskVideo, 0, 0, width, height);
 }
 
-  // title
-  // noStroke();
-  // fill(20);
-  // textSize(18);
-  // text('LED Emulation (from Arduino chargeNum)', 20, 28);
+// title
+// noStroke();
+// fill(20);
+// textSize(18);
+// text('LED Emulation (from Arduino chargeNum)', 20, 28);
 
-  // draw three LEDs centered horizontally
+// draw three LEDs centered horizontally
 //   const cx = width / 2;
 //   const cy = 160;
 //   const spacing = 140; // horizontal spacing
@@ -130,5 +129,3 @@ function draw() {
 
 //   pop();
 // }
-
-
