@@ -6,7 +6,7 @@ const int ledPins[] = {2, 3, 4};
 const int buttonPin = 7;
 
 // Light threshold value
-const int lightThreshold = 300;
+const int lightThreshold = 100;
 
 // LED state flag
 bool ledsOn = false;
@@ -37,23 +37,28 @@ void setup()
 
 void loop()
 {
-  //Serial.println("starting");
-
-  
+  // Serial.println("starting");
 
   // Read the photoresistor
   int lightLevel = analogRead(photoresistorPin);
 
   // allow button
   bool currentButtonState = digitalRead(buttonPin);
+  // Serial.println(currentButtonState);
+
+  if ((lightLevel < 100 && currentButtonState == 1))
+  {
+    chargeNum = 0;
+  };
+
+  Serial.println(lightLevel);
 
   if ((lightLevel > lightThreshold) &&
-      (currentButtonState == LOW))
+      (currentButtonState == 0))
   {
 
     chargeNum += 1;
     Serial.println(chargeNum);
-
 
     if (chargeNum > 10)
     {

@@ -39,13 +39,13 @@ app.use(express.static(path.join(__dirname, "..", "public"))); // serve index.ht
 const connect_to_serial = async () => {
   try {
     port = new SerialPort({
-      path: "COM3",
+      path: "COM4",
       baudRate: 9600,
     });
     const parser = port.pipe(new ReadlineParser({ delimiter: "\n" }));
 
     port.on("open", () => {
-      console.log("Serial Port Opened on COM3 @ 9600");
+      console.log("Serial Port Opened on COM4 @ 9600");
     });
 
     port.on("error", (err) => {
@@ -68,45 +68,41 @@ const connect_to_serial = async () => {
     console.error("Error connecting to serial port:", err);
   }
 
-  /*
-    const ports = await SerialPort.list();
+  const ports = await SerialPort.list();
 
-    const arduino_port = ports
-        .find(port => port.friendlyName.includes('USB Serial Device'));
+  const arduino_port = ports.find((port) =>
+    port.friendlyName.includes("USB Serial Device")
+  );
 
+  if (!arduino_port) {
+    console.error("Arduino not found!");
+    return;
+  }
 
+  console.log(arduino_port);
 
-    if (!arduino_port) {
-        console.error('Arduino not found!');
-        return;
-    }
+  // serial_port = new SerialPort({
+  //   path: "COM4",
+  //   baudRate: 9600,
+  // });
 
-    console.log(arduino_port);
+  // serial_port.open((err) => {
+  //   console.log(err);
+  // });
 
-    serial_port = new SerialPort({
-        path: 'COM3',
-        baudRate: 9600,
-    });
+  //problem area??
+  // serial_port.on("data", function (data) {
+  //   console.log("Data:", data);
+  // });
 
-    serial_port.open((err) => {
-        console.log(err);
-    })
-
-
-    //problem area??
-    serial_port.on('data', function (data) {
-        console.log('Data:', data)
-    })
-
-    //serial_port.on('readable', (data) => {
-    //    data = data.toString().trim();
-    //
-    //    console.log('DATA:', data);
-    //
-    //    // Send to browser
-    //    io.emit('serial-data', data);
-    //});
-    */
+  //serial_port.on('readable', (data) => {
+  //    data = data.toString().trim();
+  //
+  //    console.log('DATA:', data);
+  //
+  //    // Send to browser
+  //    io.emit('serial-data', data);
+  //});
 };
 
 const startServer = () => {
