@@ -39,13 +39,15 @@ app.use(express.static(path.join(__dirname, "..", "public"))); // serve index.ht
 const connect_to_serial = async () => {
   try {
     port = new SerialPort({
-      path: "COM4",
+      //change com port as needed
+      path: "COM3",
       baudRate: 9600,
     });
     const parser = port.pipe(new ReadlineParser({ delimiter: "\n" }));
 
     port.on("open", () => {
-      console.log("Serial Port Opened on COM4 @ 9600");
+      //change com port as needed
+      console.log("Serial Port Opened on COM3 @ 9600");
     });
 
     port.on("error", (err) => {

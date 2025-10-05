@@ -6,7 +6,7 @@ const int ledPins[] = {2, 3, 4};
 const int buttonPin = 7;
 
 // Light threshold value
-const int lightThreshold = 100;
+const int lightThreshold = 300;
 
 // LED state flag
 bool ledsOn = false;
@@ -19,6 +19,7 @@ const int delayBetweenLEDs = 1000;
 
 // value for buttonHold
 int chargeNum = 0;
+
 
 void setup()
 {
@@ -35,73 +36,33 @@ void setup()
   Serial.begin(9600);
 }
 
-void loop()
-{
-  // Serial.println("starting");
-
-  // Read the photoresistor
+void loop() {
   int lightLevel = analogRead(photoresistorPin);
+  bool pressed = (digitalRead(buttonPin) == LOW); // INPUT_PULLUP: LOW = pressed
 
-  // allow button
-  bool currentButtonState = digitalRead(buttonPin);
-  // Serial.println(currentButtonState);
+  // use only ONE of these definitions for bothTrueStreak (either global OR static)
+  static uint8_t bothTrueStreak = 0;
 
-  if ((lightLevel < 100 && currentButtonState == 1))
-  {
-    chargeNum = 0;
-  };
-
-  Serial.println(lightLevel);
-
-  if ((lightLevel > lightThreshold) &&
-      (currentButtonState == 0))
-  {
-
-    chargeNum += 1;
-    Serial.println(chargeNum);
-
-    if (chargeNum > 10)
-    {
-      digitalWrite(ledPins[0], HIGH);
-    }
-    if (chargeNum > 20)
-    {
-      digitalWrite(ledPins[1], HIGH);
-    }
-    if (chargeNum > 30)
-    {
-      digitalWrite(ledPins[2], HIGH);
-    }
-
-    // Turn off LEDs
-  }
-  else
-  {
-
-    if (chargeNum > 0)
-    {
-      chargeNum -= 1;
-      Serial.println(chargeNum);
-
-      if (chargeNum < 10)
-      {
-        digitalWrite(ledPins[0], LOW);
-      }
-      if (chargeNum < 20)
-      {
-        digitalWrite(ledPins[1], LOW);
-      }
-      if (chargeNum < 30)
-      {
-        digitalWrite(ledPins[2], LOW);
-      }
-    }
-
-    ledsOn = false;
+  if (lightLevel > lightThreshold && pressed) {
+    if (bothTrueStreak < 3) bothTrueStreak++;
+  } else {
+    bothTrueStreak = 0;
   }
 
-  // Update the last button state
-  lastButtonState = currentButtonState;
+  if (bothTrueStreak >= 3) {
+    chargeNum++;
+    bothTrueStreak = 0;
+  } else if (!pressed || lightLevel <= lightThreshold) {
+    if (chargeNum > 0) chargeNum--;
+  }
+
+  digitalWrite(ledPins[0], chargeNum > 10 ? HIGH : LOW);
+  digitalWrite(ledPins[1], chargeNum > 20 ? HIGH : LOW);
+  digitalWrite(ledPins[2], chargeNum > 30 ? HIGH : LOW);
+
+  // ✅ send ONLY the charge number
+  Serial.println(chargeNum);
 
   delay(100);
 }
+

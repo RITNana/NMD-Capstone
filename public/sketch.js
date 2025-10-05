@@ -22,12 +22,45 @@ const ledColors = [
 ];
 
 let taskVideo;
+let bleedingBar;
+
+const barX = 261;     // adjust these to fit your PNG
+const barY = 153;
+const barW = 170;
+const barH = 15;
+let displayedProgress = 0;
+
+// slide + fade state
+let taskVisible = true;
+let dismissing = false;
+let dismissStartMs = 0;
+let taskOffsetX = 0;   // how far we've translated the task to the right
+let taskFade = 1;      // 1 = fully opaque, 0 = invisible
+
+// completion detection (avoid one-frame spikes)
+let fullFrames = 0;
+const FULL_FRAMES_TO_CONFIRM = 12; // ~12 frames ≈ 200ms at 60fps
+
+// animation tuneables
+const DISMISS_DURATION = 600;
+
+function preload() {
+  bleedingBar = loadImage("media/BleedingBar.png");
+}
 
 function setup() {
-  createCanvas(720, 300);
+  createCanvas(720, 400);
   textFont("system-ui");
 
-  taskVideo = createVideo("media/Background.mp4");
+  taskVideo = createVideo("media/Background.mp4", () => {
+    // make it autoplay-safe
+    taskVideo.volume(0);                 // p5 wrapper volume
+    taskVideo.elt.muted = true;          // HTML video must be muted
+    taskVideo.elt.setAttribute('muted','');
+    taskVideo.elt.setAttribute('playsinline',''); // iOS Safari inline playback
+    taskVideo.loop();                    // or .play()
+    taskVideo.hide();                    // we’ll draw it to the canvas
+  });
   taskVideo.loop();
   taskVideo.hide();
 }
@@ -62,84 +95,107 @@ socket.on("serial-data", (payload) => {
 
 function draw() {
   background(246);
-  image(taskVideo, 0, 0, width, height);
 
-  // title
-  // noStroke();
-  // fill(20);
-  // textSize(18);
-  // text("LED Emulation (from Arduino chargeNum)", 20, 28);
+  // background video stays put
+  if (taskVideo) image(taskVideo, 0, 0, width, height);
 
-  // // draw three LEDs centered horizontally
-  // const cx = width / 2;
-  // const cy = 160;
-  // const spacing = 140; // horizontal spacing
-  // const radius = 54; // outer bulb size
-  // const inner = 40; // inner core size
+  // compute progress and smooth it
+  const target = ledProgress(chargeNum, thresholds);
+  displayedProgress = lerp(displayedProgress, target, 0.1);
 
-  // drawLED(
-  //   cx - spacing,
-  //   cy,
-  //   radius,
-  //   inner,
-  //   leds[0],
-  //   ledColors[0],
-  //   "LED 1 (>10)"
-  // );
-  // drawLED(cx, cy, radius, inner, leds[1], ledColors[1], "LED 2 (>20)");
-  // drawLED(
-  //   cx + spacing,
-  //   cy,
-  //   radius,
-  //   inner,
-  //   leds[2],
-  //   ledColors[2],
-  //   "LED 3 (>30)"
-  // );
+  // detect "finished" (progress basically 100%) with a small hold
+  if (!dismissing && taskVisible) {
+    if (displayedProgress >= 0.995) {
+      fullFrames++;
+      if (fullFrames >= FULL_FRAMES_TO_CONFIRM) {
+        dismissing = true;
+        dismissStartMs = millis();
+      }
+    } else {
+      fullFrames = 0;
+    }
+  }
 
-  // //   // chargeNum readout
-  // fill(30);
-  // textSize(14);
-  // text(`chargeNum: ${chargeNum}`, 20, height - 20);
+  // run the slide+fade animation
+  if (dismissing) {
+    const t = constrain((millis() - dismissStartMs) / DISMISS_DURATION, 0, 1);
+    // ease-out: fast at start, slow at end
+    const e = 1 - pow(1 - t, 3);
+    taskOffsetX = e * (width + 48); // push fully off-right
+    taskFade = 1 - e;               // fade to 0
 
-  // function drawLED(x, y, rOuter, rInner, isOn, rgb, label) {
-  //   push();
+    if (t >= 1) {
+      dismissing = false;
+      taskVisible = false;          // stop drawing the overlay
+      taskFade = 0;
+    }
+  }
 
-  //   //   // base socket shadow
-  //   noStroke();
-  //   fill(225);
-  //   circle(x, y + 2, rOuter + 10);
+  // draw the task overlay (progress fill + PNG frame) if visible/animating
+  if (taskVisible || dismissing) {
+    push();
+    translate(taskOffsetX, 0);
 
-  //   //   // outer housing
-  //   fill(40);
-  //   circle(x, y, rOuter);
+    // progress fill under the PNG, faded with taskFade
+    noStroke();
+    fill(201, 22, 22, 220 * taskFade);
+    rect(barX, barY, barW * displayedProgress, barH);
 
-  //   //   // glow when ON
-  //   if (isOn) {
-  //     const [r, g, b] = rgb;
-  //     // halo (several translucent rings)
-  //     for (let i = 1; i <= 6; i++) {
-  //       const a = 80 - i * 12; // decreasing alpha
-  //       fill(r, g, b, a);
-  //       const rr = rInner + 18 + i * 12;
-  //       ellipse(x, y, rr, rr);
-  //     }
-  //     //     // bright inner
-  //     fill(r, g, b);
-  //   } else {
-  //     // off = dark inner
-  //     fill(70);
-  //   }
+    // PNG container on top, tinted for fade
+    tint(255, 255 * taskFade);
+    image(bleedingBar, 0, 0, width, height);
+    noTint();
 
-  //   //   // inner core
-  //   circle(x, y, rInner);
+    pop();
+  }
+}
 
-  //   //   // label
-  //   fill(35);
-  //   textAlign(CENTER, TOP);
-  //   textSize(13);
-  //   text(`${label} — ${isOn ? "ON" : "OFF"}`, x, y + rOuter / 2 + 8);
 
-  //   pop();
-  // }
+//function draw() {
+//  background(246);
+//  if (taskVideo) image(taskVideo, 0, 0, width, height);
+//
+//  // target progress based on thresholds/LEDs
+//  const target = ledProgress(chargeNum, thresholds);
+//
+//  // optional smoothing to avoid jitter (0.1 = follow speed)
+//  displayedProgress = lerp(displayedProgress, target, 0.1);
+//
+//  // fill rectangle
+//  noStroke();
+//  fill(201, 22, 22, 220);
+//  rect(barX, barY, barW * displayedProgress, barH);
+//
+//  // overlay frame last
+//  image(bleedingBar, 0, 0, width, height);
+//
+//}
+
+// Map chargeNum to progress in 3 equal segments that line up with the LEDs
+function ledProgress(charge, th = thresholds) {
+  const t0 = th[0], t1 = th[1], t2 = th[2];
+
+  if (charge <= 0) return 0;
+
+  if (charge <= t0) {
+    // first third
+    const seg = charge / t0;              // 0..1 within [0..t0]
+    return (1/3) * seg;
+  } else if (charge <= t1) {
+    // second third
+    const seg = (charge - t0) / (t1 - t0); // 0..1 within (t0..t1]
+    return (1/3) + (1/3) * seg;
+  } else {
+    // last third (cap at full)
+    const seg = (charge - t1) / (t2 - t1); // 0..1 within (t1..t2]
+    return Math.min((2/3) + (1/3) * seg, 1);
+  }
+}
+
+// Fallback: if the browser still blocks it, a click will start playback
+function mousePressed() {
+  if (taskVideo && taskVideo.elt && taskVideo.elt.paused) {
+    taskVideo.elt.muted = true; // ensure still muted
+    taskVideo.play();
+  }
 }
