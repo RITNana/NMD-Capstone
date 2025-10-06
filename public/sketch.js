@@ -24,7 +24,7 @@ const ledColors = [
 let taskVideo;
 let bleedingBar;
 
-const barX = 261;     // adjust these to fit your PNG
+const barX = 261; // adjust these to fit your PNG
 const barY = 153;
 const barW = 170;
 const barH = 15;
@@ -34,8 +34,8 @@ let displayedProgress = 0;
 let taskVisible = true;
 let dismissing = false;
 let dismissStartMs = 0;
-let taskOffsetX = 0;   // how far we've translated the task to the right
-let taskFade = 1;      // 1 = fully opaque, 0 = invisible
+let taskOffsetX = 0; // how far we've translated the task to the right
+let taskFade = 1; // 1 = fully opaque, 0 = invisible
 
 // completion detection (avoid one-frame spikes)
 let fullFrames = 0;
@@ -54,12 +54,12 @@ function setup() {
 
   taskVideo = createVideo("media/Background.mp4", () => {
     // make it autoplay-safe
-    taskVideo.volume(0);                 // p5 wrapper volume
-    taskVideo.elt.muted = true;          // HTML video must be muted
-    taskVideo.elt.setAttribute('muted','');
-    taskVideo.elt.setAttribute('playsinline',''); // iOS Safari inline playback
-    taskVideo.loop();                    // or .play()
-    taskVideo.hide();                    // we’ll draw it to the canvas
+    taskVideo.volume(0); // p5 wrapper volume
+    taskVideo.elt.muted = true; // HTML video must be muted
+    taskVideo.elt.setAttribute("muted", "");
+    taskVideo.elt.setAttribute("playsinline", ""); // iOS Safari inline playback
+    taskVideo.loop(); // or .play()
+    taskVideo.hide(); // we’ll draw it to the canvas
   });
   taskVideo.loop();
   taskVideo.hide();
@@ -122,11 +122,11 @@ function draw() {
     // ease-out: fast at start, slow at end
     const e = 1 - pow(1 - t, 3);
     taskOffsetX = e * (width + 48); // push fully off-right
-    taskFade = 1 - e;               // fade to 0
+    taskFade = 1 - e; // fade to 0
 
     if (t >= 1) {
       dismissing = false;
-      taskVisible = false;          // stop drawing the overlay
+      taskVisible = false; // stop drawing the overlay
       taskFade = 0;
     }
   }
@@ -150,7 +150,6 @@ function draw() {
   }
 }
 
-
 //function draw() {
 //  background(246);
 //  if (taskVideo) image(taskVideo, 0, 0, width, height);
@@ -173,22 +172,24 @@ function draw() {
 
 // Map chargeNum to progress in 3 equal segments that line up with the LEDs
 function ledProgress(charge, th = thresholds) {
-  const t0 = th[0], t1 = th[1], t2 = th[2];
+  const t0 = th[0],
+    t1 = th[1],
+    t2 = th[2];
 
   if (charge <= 0) return 0;
 
   if (charge <= t0) {
     // first third
-    const seg = charge / t0;              // 0..1 within [0..t0]
-    return (1/3) * seg;
+    const seg = charge / t0; // 0..1 within [0..t0]
+    return (1 / 3) * seg;
   } else if (charge <= t1) {
     // second third
     const seg = (charge - t0) / (t1 - t0); // 0..1 within (t0..t1]
-    return (1/3) + (1/3) * seg;
+    return 1 / 3 + (1 / 3) * seg;
   } else {
     // last third (cap at full)
     const seg = (charge - t1) / (t2 - t1); // 0..1 within (t1..t2]
-    return Math.min((2/3) + (1/3) * seg, 1);
+    return Math.min(2 / 3 + (1 / 3) * seg, 1);
   }
 }
 
