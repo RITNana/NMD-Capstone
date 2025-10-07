@@ -40,14 +40,14 @@ const connect_to_serial = async () => {
   try {
     port = new SerialPort({
       //change com port as needed
-      path: "COM3",
+      path: "COM4",
       baudRate: 9600,
     });
     const parser = port.pipe(new ReadlineParser({ delimiter: "\n" }));
 
     port.on("open", () => {
       //change com port as needed
-      console.log("Serial Port Opened on COM3 @ 9600");
+      console.log("Serial Port Opened on COM4 @ 9600");
     });
 
     port.on("error", (err) => {
