@@ -10,10 +10,15 @@ to create new branch do - git branch (branch name)
 
 switch the branch - git checkout (branch name)
 
+make sure to pull if branch has updates
+
 you can check which branch u are on in the terminal by looking in the ()
 for example: it should say (main) next to the directory if on main
 
+PUSHING BRANCHES:
 to push a NEW branch do - git push --set-upstream origin (branch name)
+
+if the branch already exists, you can just git push as normal
 
 
 NOTE:
