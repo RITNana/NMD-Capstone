@@ -3,6 +3,8 @@
 // public/sketch.js
 let socket;
 
+let nana = "Nana";
+
 // mirrors Arduino thresholds
 const thresholds = [10, 20, 30];
 
