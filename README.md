@@ -38,3 +38,13 @@ Then press create pull request and it should tell you if there are conflicts.
 
 We all probably have access to aprrove the pull requests, so we can work together on that.
 
+
+
+HOW TO GET BRANCH UP TO DATE WITH MAIN
+first get local main up to date
+
+go to the main branch and git pull
+
+then switch back to your branch and do git merge main
+
+that should put you up to date with the main branch so you can work from there
