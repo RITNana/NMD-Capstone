@@ -100,6 +100,13 @@ void loop()
   bool recalibrate = (digitalRead(recalibratePin) == LOW);
   if(recalibrate){calibrate(); delay(200);}
 
+  if(lightLevel > averageLight + lightThreshold){
+    Serial.print("ON ");
+  }
+  else{
+    Serial.print("OFF ");
+  }
+
   // ✅ send ONLY the charge number
   Serial.println(chargeNum);
 

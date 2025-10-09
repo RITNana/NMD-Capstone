@@ -40,14 +40,14 @@ const connect_to_serial = async () => {
   try {
     port = new SerialPort({
       //change com port as needed
-      path: "COM4",
+      path: "COM3",
       baudRate: 9600,
     });
     const parser = port.pipe(new ReadlineParser({ delimiter: "\n" }));
 
     port.on("open", () => {
       //change com port as needed
-      console.log("Serial Port Opened on COM4 @ 9600");
+      console.log("Serial Port Opened on COM3 @ 9600");
     });
 
     port.on("error", (err) => {
@@ -58,14 +58,33 @@ const connect_to_serial = async () => {
       console.log("Serial port closed");
     });
 
+    // inside connect_to_serial()
     parser.on("data", (line) => {
-      const dataStr = line.toString().trim();
+      const text = String(line).trim();       // e.g. "ON 17"
+      const [light, numStr] = text.split(/\s+/);
 
-      console.log("Data:", dataStr);
+      // guard-rails
+      if (!light || typeof numStr === "undefined") return;
+      const charge = Number.parseInt(numStr, 10);
+      if (!Number.isFinite(charge)) return;
 
-      // Send to browser
-      io.emit("serial-data", dataStr);
+      console.log(`Serial => light=${light} charge=${charge}`);
+
+      // send BOTH pieces to the browser
+      io.emit("serial-data", { light, charge });
     });
+
+
+    //parser.on("data", (line) => {
+    //  let input = line.split(" ");
+    //  const lightStatus = input[0].toString().trim();
+    //  const dataStr = input[1].toString().trim();
+    //
+    //  console.log("Data:", dataStr);
+    //
+    //  // Send to browser
+    //  io.emit("serial-data", dataStr);
+    //});
   } catch (err) {
     console.error("Error connecting to serial port:", err);
   }
