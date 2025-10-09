@@ -44,6 +44,8 @@ const FULL_FRAMES_TO_CONFIRM = 12; // ~12 frames ≈ 200ms at 60fps
 // animation tuneables
 const DISMISS_DURATION = 600;
 
+let veinStatus = "";
+
 function preload() {
   bleedingBar = loadImage("media/BleedingBar.png");
 }
@@ -69,29 +71,75 @@ function setup() {
 socket = io();
 
 socket.on("serial-data", (payload) => {
-  // expect a line with a number, e.g., "17"
-  const s = String(payload).trim();
-  const match = s.match(/-?\d+/);
-  if (!match) return;
+  // Accept BOTH styles:
+  // 1) object: { light: "ON"|"OFF", charge: number }
+  // 2) legacy string: "ON 17" / "OFF 12" / or even just "17"
+  let light = "";
+  let charge = NaN;
 
-  const val = parseInt(match[0], 10);
-  if (!Number.isFinite(val)) return;
+  if (payload && typeof payload === "object" && "charge" in payload) {
+    // new structured payload
+    light = String(payload.light || "").trim();
+    charge = Number(payload.charge);
+  } else {
+    // legacy string fallback
+    const s = String(payload).trim();            // e.g. "ON 17" or "17"
+    const parts = s.split(/\s+/);
+    if (parts.length === 1) {
+      // just a number
+      charge = parseInt(parts[0], 10);
+    } else {
+      // "ON 17" style
+      light = parts[0];
+      charge = parseInt(parts[1], 10);
+    }
+  }
 
-  chargeNum = val;
+  if (!Number.isFinite(charge)) return;
 
-  // update LED states EXACTLY like Arduino
+  // update model
+  chargeNum = charge;
   leds[0] = chargeNum > thresholds[0];
   leds[1] = chargeNum > thresholds[1];
   leds[2] = chargeNum > thresholds[2];
 
-  // mirror to debug div
-  const el = document.getElementById("value-verification");
-  if (el) {
-    el.textContent =
-      `chargeNum=${chargeNum} | LED1=${leds[0] ? "ON" : "OFF"} ` +
-      `LED2=${leds[1] ? "ON" : "OFF"} LED3=${leds[2] ? "ON" : "OFF"}`;
-  }
+  // ✅ show user a clear “light connected” hint
+  // (you’re printing "ON " / "OFF " from Arduino)
+  veinStatus = (light === "ON") ? "Connected" : "";
+
 });
+
+// Remove the old misuse of 'connect' for light status:
+// socket.on("connect", (lightStatus) => { ... })  // ❌ delete this
+
+
+//socket = io();
+//
+//socket.on("serial-data", (payload) => {
+//  // expect a line with a number, e.g., "17"
+//  const s = String(payload).trim();
+//  const match = s.match(/-?\d+/);
+//  if (!match) return;
+//
+//  const val = parseInt(match[0], 10);
+//  if (!Number.isFinite(val)) return;
+//
+//  chargeNum = val;
+//
+//  // update LED states EXACTLY like Arduino
+//  leds[0] = chargeNum > thresholds[0];
+//  leds[1] = chargeNum > thresholds[1];
+//  leds[2] = chargeNum > thresholds[2];
+//
+//  // mirror to debug div
+//  const el = document.getElementById("value-verification");
+//  if (el) {
+//    el.textContent =
+//      `chargeNum=${chargeNum} | LED1=${leds[0] ? "ON" : "OFF"} ` +
+//      `LED2=${leds[1] ? "ON" : "OFF"} LED3=${leds[2] ? "ON" : "OFF"}`;
+//  }
+//});
+
 
 function draw() {
   background(246);
@@ -102,6 +150,12 @@ function draw() {
   // compute progress and smooth it
   const target = ledProgress(chargeNum, thresholds);
   displayedProgress = lerp(displayedProgress, target, 0.1);
+
+  //textSize(20);
+  //textStyle(BOLD);
+  //noStroke();
+  //fill(veinStatus.startsWith("Connected") ? "white" : "red");
+  //text(`${veinStatus}`, 440, 165);
 
   // detect "finished" (progress basically 100%) with a small hold
   if (!dismissing && taskVisible) {
@@ -128,8 +182,24 @@ function draw() {
       dismissing = false;
       taskVisible = false; // stop drawing the overlay
       taskFade = 0;
+      veinStatus = "";
     }
   }
+
+  if (taskVisible || dismissing) {
+    push();
+    translate(taskOffsetX, 0);
+    textSize(20);
+    textStyle(BOLD);
+    noStroke();
+    // fade with taskFade
+    const alpha = 255 * taskFade;
+    fill(veinStatus.startsWith("Connected") ? color(255, 255, 255, alpha)
+      : color(255, 0, 0, alpha));
+    text(`${veinStatus}`, 440, 165);
+    pop();
+  }
+
 
   // draw the task overlay (progress fill + PNG frame) if visible/animating
   if (taskVisible || dismissing) {
