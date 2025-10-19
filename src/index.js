@@ -40,14 +40,14 @@ const connect_to_serial = async () => {
   try {
     port = new SerialPort({
       //change com port as needed
-      path: "COM3",
+      path: "COM4",
       baudRate: 9600,
     });
     const parser = port.pipe(new ReadlineParser({ delimiter: "\n" }));
 
     port.on("open", () => {
       //change com port as needed
-      console.log("Serial Port Opened on COM3 @ 9600");
+      console.log("Serial Port Opened on COM4 @ 9600");
     });
 
     port.on("error", (err) => {
@@ -60,7 +60,7 @@ const connect_to_serial = async () => {
 
     // inside connect_to_serial()
     parser.on("data", (line) => {
-      const text = String(line).trim();       // e.g. "ON 17"
+      const text = String(line).trim(); // e.g. "ON 17"
       const [light, numStr] = text.split(/\s+/);
 
       // guard-rails
@@ -73,7 +73,6 @@ const connect_to_serial = async () => {
       // send BOTH pieces to the browser
       io.emit("serial-data", { light, charge });
     });
-
 
     //parser.on("data", (line) => {
     //  let input = line.split(" ");
