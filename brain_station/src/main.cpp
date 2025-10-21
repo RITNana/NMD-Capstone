@@ -75,7 +75,9 @@ void loop()
       // new last button
       lastBtn = i;
     }
-    anyPress = true;
+
+    lastReadState[i] = pressed;
+    if (pressed) anyPress = true;
   }
 
   // charge goes down
