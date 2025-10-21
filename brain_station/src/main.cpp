@@ -9,7 +9,7 @@ int averageLight;
 const int lightThreshold = 33;
 
 // Button state tracking
-int lastBtn = 5; //starts on button that doesnt exist
+int lastBtn = 5; // starts on button that doesnt exist
 bool btnState[4] = {false, false, false, false};
 bool lastReadState[4] = {false, false, false, false};
 
@@ -19,61 +19,69 @@ const int maxCharge = 100;
 const int chargeAdd = 10;
 const int chargeLose = 1;
 
-
 // function to calibrate the photoresistor to the room light level
-int calibrate() {
+int calibrate()
+{
   int sensorLow = 1000;
   int sensorHigh = 0;
   int timer = 0;
 
-  while (timer < 1000) {
+  while (timer < 1000)
+  {
     int calibratingLightValue = analogRead(photoresistorPin);
-    if (calibratingLightValue > sensorHigh) {
+    if (calibratingLightValue > sensorHigh)
+    {
       sensorHigh = calibratingLightValue;
     }
-    if (calibratingLightValue < sensorLow) {
+    if (calibratingLightValue < sensorLow)
+    {
       sensorLow = calibratingLightValue;
     }
     timer++;
   }
-  averageLight = (sensorHigh + sensorLow)/2;
-  
+  averageLight = (sensorHigh + sensorLow) / 2;
 }
 
-void setup() {
+void setup()
+{
   Serial.begin(9600);
 
   // Set button pins as input pullups
-  for (int i = 0, i < 4; i++){
+  for (int i = 0; i < 4; i++)
+  {
     pinMode(buttonPins[i], INPUT_PULLUP);
   }
 
   calibrate();
 }
 
-void loop() {
+void loop()
+{
   int lightLevel = analogRead(photoresistorPin);
   bool lightOn = lightLevel > (averageLight + lightThreshold);
 
-  //start false
+  // start false
   bool anyPress = false;
 
   // LOW = pressed
-  for (int i = 0, i < 4, i++){
+  for (int i = 0; i < 4; i++)
+  {
     bool pressed = digitalRead(buttonPins[i]) == LOW;
 
     // different button than last pressed and light
-    if (pressed && !lastReadState[i]) {
+    if (pressed && !lastReadState[i])
+    {
       chargeNum += chargeAdd;
-      //new last button
+      // new last button
       lastBtn = i;
     }
     anyPress = true;
   }
 
   // charge goes down
-  if(!anyPress && chargeNum > 0) {
-    chargeNum -= chargeLoss;
+  if (!anyPress && chargeNum > 0)
+  {
+    chargeNum -= chargeLose;
   }
 
   // brain station photoresistor
