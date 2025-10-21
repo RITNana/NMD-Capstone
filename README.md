@@ -52,4 +52,12 @@ then switch back to your branch and do git merge main
 
 that should put you up to date with the main branch so you can work from there
 
+OOORRRRRR
+
+if you do not want to switch out of your branch branch do
+
+git fetch origin (get your local branches up to date)
+
+git merge origin/main (then merge)
+
 ---
