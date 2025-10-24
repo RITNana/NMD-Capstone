@@ -33,8 +33,8 @@ app.get("/Background.mp4", (req, res) => {
   const readStream = fs.createReadStream(filePath);
   readStream.pipe(res);
 });
-// Log all requests to /
-app.get("/", (req, res, next) => {
+// INPUT SPOT CURRENTLY FOR THE ARDUINOS
+app.get("/brain", (req, res, next) => {
   console.log(`Received request for / from ${req.ip}`);
   console.log("Headers:", req.headers);
   console.log("Query params:", req.query);

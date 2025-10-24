@@ -168,7 +168,7 @@ void httpRequest(int data) {
   if (client.connect(server, 3000)) { //Server address from above & Port
     Serial.println("connecting..."); //Really here for logging 
     // send the HTTP GET request:
-    client.println("GET / HTTP/1.1"); //GET request at '/' using HTTP/1.1
+    client.println("GET /brain HTTP/1.1"); //GET request at '/' using HTTP/1.1
     client.println("Host: Brain"); //Required but the input doesnt matter
     client.print("Data:");
     client.println(data);
