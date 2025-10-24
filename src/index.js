@@ -21,7 +21,7 @@ app.get("/Background.mp4", (req, res) => {
     "..",
     "public",
     "media",
-    "Background.mp4"
+    "Background.mp4",
   );
   const stat = fs.statSync(filePath);
 
@@ -29,10 +29,26 @@ app.get("/Background.mp4", (req, res) => {
     "Content-Type": "video/mp4",
     "Content-Length": stat.size,
   });
-
+  console.log(req);
   const readStream = fs.createReadStream(filePath);
   readStream.pipe(res);
 });
+// Log all requests to /
+app.get("/", (req, res, next) => {
+  console.log(`Received request for / from ${req.ip}`);
+  console.log("Headers:", req.headers);
+  console.log("Query params:", req.query);
+
+  
+  io.emit("serial-data", req.headers.data);
+
+
+  next(); // pass control to the static file handler
+});
+
+// Serve static files (including index.html)
+app.use(express.static(path.join(__dirname, "..", "public")));
+
 
 app.use(express.static(path.join(__dirname, "..", "public"))); // serve index.html
 
