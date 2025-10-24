@@ -101,9 +101,6 @@ int eyeballLoop()
   if (Serial.available() > 0) {
     char key = Serial.read(); // read one character
 
-
-
-
     // if (key == 'k' || key == 'K') {
     if(countTurn == 0){ //NTS Change this condition
       //Serial.println("Command: Turn servo to 180°");
@@ -188,7 +185,7 @@ void httpRequest(int data) {
   if (client.connect(server, 3000)) { //Server address from above & Port
     // Serial.println("connecting..."); //Really here for logging 
     // send the HTTP GET request:
-    client.println("GET / HTTP/1.1"); //GET request at '/' using HTTP/1.1
+    client.println("GET /eyeball HTTP/1.1"); //GET request at '/' using HTTP/1.1
     client.println("Host: Eyeball"); //Required but the input doesnt matter
     client.print("Data:");
     client.println(data);

@@ -50,6 +50,19 @@ app.get("/brain", (req, res, next) => {
 
 
 // input for bleeding station
+app.get("/eyeball", (req, res, next) => {
+  console.log(`Received request for /eyeball from ${req.ip}`);
+  console.log("Headers:", req.headers);
+  console.log("Query params:", req.query);
+
+  
+  io.emit("bleeding-data", req.headers.data);
+
+
+  next(); // pass control to the static file handler
+});
+
+// input for bleeding station
 app.get("/bleeding", (req, res, next) => {
   console.log(`Received request for /bleeding from ${req.ip}`);
   console.log("Headers:", req.headers);
