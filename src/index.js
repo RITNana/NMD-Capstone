@@ -33,18 +33,35 @@ app.get("/Background.mp4", (req, res) => {
   const readStream = fs.createReadStream(filePath);
   readStream.pipe(res);
 });
-// INPUT SPOT CURRENTLY FOR THE ARDUINOS
+
+
+// Input for brain station
 app.get("/brain", (req, res, next) => {
-  console.log(`Received request for / from ${req.ip}`);
+  console.log(`Received request for /brain from ${req.ip}`);
   console.log("Headers:", req.headers);
   console.log("Query params:", req.query);
 
   
-  io.emit("serial-data", req.headers.data);
+  io.emit("brain-data", req.headers.data);
 
 
   next(); // pass control to the static file handler
 });
+
+
+// input for bleeding station
+app.get("/bleeding", (req, res, next) => {
+  console.log(`Received request for /bleeding from ${req.ip}`);
+  console.log("Headers:", req.headers);
+  console.log("Query params:", req.query);
+
+  
+  io.emit("bleeding-data", req.headers.data);
+
+
+  next(); // pass control to the static file handler
+});
+
 
 // Serve static files (including index.html)
 app.use(express.static(path.join(__dirname, "..", "public")));

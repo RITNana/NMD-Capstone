@@ -1,123 +1,143 @@
-
+#include <Arduino.h>
+#include <Servo.h>
 #include "WiFiS3.h"
 
 
-#include <Arduino.h>
+Servo eyeballServo;
 
-// Pin assignments
-const int photoresistorPin = A0;
-const int buttonPins[4] = {2, 3, 4, 5};
-const int recalibratePin = 8;
+int servoPin = 9;
+int leftEyePin = A0;
+int rightEyePin = A1;
+int socketPin = A2;
 
-// Light threshold calibration
-int averageLight;
+int count = 0;
+
 const int lightThreshold = 33;
-bool lightOn = false;
 
-// Button state tracking
-int lastBtn = 5; // starts on button that doesnt exist
-bool btnState[4] = {false, false, false, false};
-bool lastReadState[4] = {false, false, false, false};
+//temp var
+int countTurn = 0;
 
-// Charge number
-int chargeNum = 0;
-const int maxCharge = 100;
-const int chargeAdd = 7;
-const int chargeLose = 1;
-
-// function to calibrate the photoresistor to the room light level
-void calibrate()
+enum State
 {
+  IDLE,
+  DROP,
+  WAIT_FOR_RETURN,
+  RESTORE,
+  COOLDOWN
+};
+State state = IDLE;
+
+int averageLightLeft;
+int averageLightRight;
+int averageLightSocket;
+// function to calibrate the photoresistor to the room light level
+int calibrate(int resistorPin) {
   int sensorLow = 1000;
   int sensorHigh = 0;
   int timer = 0;
 
-  while (timer < 1000)
-  {
-    int calibratingLightValue = analogRead(photoresistorPin);
-    if (calibratingLightValue > sensorHigh)
-    {
+  while (timer < 1000) {
+    int calibratingLightValue = analogRead(resistorPin);
+    if (calibratingLightValue > sensorHigh) {
       sensorHigh = calibratingLightValue;
     }
-    if (calibratingLightValue < sensorLow)
-    {
+    if (calibratingLightValue < sensorLow) {
       sensorLow = calibratingLightValue;
     }
-    delay(1);
     timer++;
   }
-  averageLight = (sensorHigh + sensorLow) / 2;
+  if(resistorPin == A0){
+    averageLightLeft = (sensorHigh + sensorLow)/2;
+  }
+  else if(resistorPin == A1){
+    averageLightRight = (sensorHigh + sensorLow)/2;
+  }
+  else if(resistorPin = A2){
+    averageLightSocket = (sensorHigh + sensorLow)/2;
+  }
+  
 }
 
-void brainSetup()
+
+void eyeballSetup()
 {
   // Serial.begin(9600);
-
-  // Set button pins as input pullups
-  for (int i = 0; i < 4; i++)
-  {
-    pinMode(buttonPins[i], INPUT_PULLUP);
+  // delay(200);
+  while (!Serial)
+  { /* wait on native USB boards */
   }
 
-  calibrate();
+  //Serial.println("Booting...");
+
+  eyeballServo.attach(servoPin);
+  eyeballServo.write(0);
+
+  calibrate(leftEyePin);
+  calibrate(rightEyePin);
+  calibrate(socketPin);
 }
 
-int brainLoop()
+int eyeballLoop()
 {
-  int lightLevel = analogRead(photoresistorPin);
-  bool lightOn = lightLevel > (averageLight + lightThreshold);
 
-  // start false
-  bool anyPress = false;
+  int leftLight = analogRead(leftEyePin);
+  int rightLight = analogRead(rightEyePin);
 
-  // LOW = pressed
-  for (int i = 0; i < 4; i++)
-  {
-    bool pressed = digitalRead(buttonPins[i]) == LOW;
+  int connectionLight = analogRead(socketPin);
 
-    // different button than last pressed
-    if (pressed && !lastReadState[i])
-    {
-      // light on
-      if (lightOn)
-      {
-        chargeNum += chargeAdd;
-        if (chargeNum > maxCharge)
-          chargeNum = maxCharge;
-      }
-      // new last button
-      lastBtn = i;
+  //if(connectionLight > (averageLightSocket-20)){
+  //  Serial.print("Connected | ");
+  //}
+  //else{
+  //  Serial.print("Not Connected | ");
+  //}
+
+  // Print the readings to the console
+  //Serial.print("Left: ");
+  //Serial.print(leftLight);
+  //Serial.print(" | Right: ");
+  //Serial.println(rightLight);
+
+  if (Serial.available() > 0) {
+    char key = Serial.read(); // read one character
+
+
+
+
+    // if (key == 'k' || key == 'K') {
+    if(countTurn == 0){ //NTS Change this condition
+      //Serial.println("Command: Turn servo to 180°");
+      eyeballServo.write(180);
+      delay(500); 
+      count = 0;
+      calibrate(averageLightLeft);
+      calibrate(averageLightRight);
+      countTurn = 1;
     }
-
-    // track button pressed
-    lastReadState[i] = pressed;
-    if (pressed)
-      anyPress = true;
   }
 
-  // passive charge loss
-  if (!anyPress || chargeNum > 0)
-  {
-    chargeNum -= chargeLose;
-    // keep lowest 0
-    if (chargeNum < 0)
-      chargeNum = 0;
+  bool preconditions = (count == 0) && (connectionLight > (averageLightSocket));
+  if (leftLight < averageLightLeft && rightLight < averageLightRight && preconditions) {
+    //Serial.println("Low light detected! Returning to initial position...");
+
+    // Smoothly move back to 0°
+    for (int pos = 180; pos >= 0; pos--) {
+      eyeballServo.write(pos);
+      delay(10);  // slow movement
+    }
+    count = 1;
+    calibrate(averageLightLeft);
+    calibrate(averageLightRight);
   }
 
-  // brain station photoresistor
-  Serial.print("BRAIN_LIGHT:");
-  Serial.print(lightOn ? "ON " : "OFF ");
+  delay(200);
 
-  // charge num
-  Serial.print("CHARGE:");
-  Serial.println(chargeNum);
+  int eyeAngle = eyeballServo.read();
 
-  return chargeNum;
-  // delay(100);
+  Serial.println(eyeAngle);
+
+  return eyeAngle;
 }
-
-
-
 
 
 
@@ -166,10 +186,10 @@ void httpRequest(int data) {
 
   // if there's a successful connection:
   if (client.connect(server, 3000)) { //Server address from above & Port
-    Serial.println("connecting..."); //Really here for logging 
+    // Serial.println("connecting..."); //Really here for logging 
     // send the HTTP GET request:
-    client.println("GET /brain HTTP/1.1"); //GET request at '/' using HTTP/1.1
-    client.println("Host: Brain"); //Required but the input doesnt matter
+    client.println("GET / HTTP/1.1"); //GET request at '/' using HTTP/1.1
+    client.println("Host: Eyeball"); //Required but the input doesnt matter
     client.print("Data:");
     client.println(data);
     // client.println("User-Agent: ArduinoWiFi/1.1"); //Not required
@@ -204,14 +224,12 @@ void printWifiStatus() {
 
 
 
-
-
 /* -------------------------------------------------------------------------- */
 void setup() {
 /* -------------------------------------------------------------------------- */  
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
-  brainSetup();
+  eyeballSetup();
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
@@ -256,8 +274,6 @@ void loop() {
   // if (millis() - lastConnectionTime > postingInterval) {
   //   httpRequest();
   // }
-  int valuedata = brainLoop();
+  int valuedata = eyeballLoop();
   httpRequest(valuedata);
 }
-
-

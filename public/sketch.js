@@ -70,7 +70,7 @@ function setup() {
 // same-origin socket.io
 socket = io();
 
-socket.on("serial-data", (payload) => {
+socket.on("serial-data", (payload) => {   //NTS Need to copy this so that bleeding-data, brain-data, & whatever else does it
   // Accept BOTH styles:
   // 1) object: { light: "ON"|"OFF", charge: number }
   // 2) legacy string: "ON 17" / "OFF 12" / or even just "17"
