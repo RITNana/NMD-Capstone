@@ -70,43 +70,46 @@ function setup() {
 // same-origin socket.io
 socket = io();
 
-socket.on("bleeding-data", (payload) => {   //NTS Need to copy this so that bleeding-data, brain-data, & whatever else does it
-  // Accept BOTH styles:
-  // 1) object: { light: "ON"|"OFF", charge: number }
-  // 2) legacy string: "ON 17" / "OFF 12" / or even just "17"
+const lightTest = (payload, charge) => {
   let light = "";
-  let charge = NaN;
+    
 
-  if (payload && typeof payload === "object" && "charge" in payload) {
-    // new structured payload
-    light = String(payload.light || "").trim();
-    charge = Number(payload.charge);
-  } else {
-    // legacy string fallback
-    const s = String(payload).trim();            // e.g. "ON 17" or "17"
-    const parts = s.split(/\s+/);
-    if (parts.length === 1) {
-      // just a number
-      charge = parseInt(parts[0], 10);
+    if (payload && typeof payload === "object" && "charge" in payload) {
+      // new structured payload
+      light = String(payload.light || "").trim();
+      charge = Number(payload.charge);
     } else {
-      // "ON 17" style
-      light = parts[0];
-      charge = parseInt(parts[1], 10);
+      // legacy string fallback
+      const s = String(payload).trim();            // e.g. "ON 17" or "17"
+      const parts = s.split(/\s+/);
+      if (parts.length === 1) {
+        // just a number
+        charge = parseInt(parts[0], 10);
+      } else {
+        // "ON 17" style
+        light = parts[0];
+        charge = parseInt(parts[1], 10);
+      }
     }
-  }
 
-  if (!Number.isFinite(charge)) return;
+    if (!Number.isFinite(charge)) return;
 
-  // update model
-  chargeNum = charge;
   leds[0] = chargeNum > thresholds[0];
   leds[1] = chargeNum > thresholds[1];
   leds[2] = chargeNum > thresholds[2];
+}
 
+socket.on("bleeding-data", (payload) => {   //NTS Need to copy this so that bleeding-data, brain-data, & whatever else does it
+  // Accepts strings in numbers
+
+  let charge = String(payload).trim();  
+  // update model
+  chargeNum = charge;
+
+  lightTest(payload,charge);
   // ✅ show user a clear “light connected” hint
   // (you’re printing "ON " / "OFF " from Arduino)
-  veinStatus = (light === "ON") ? "Connected" : "";
-
+  // veinStatus = (light === "ON") ? "Connected" : "";
 });
 
 // Remove the old misuse of 'connect' for light status:
