@@ -13,26 +13,22 @@ let bleedingNum = 0;
 let heartNum = 0;
 let tummyNum = 0;
 
-// led states computed from chargeNum (boolean)
+//display progress
+let display = {
+  brain: 0,
+  eyeball: 0,
+  bleeding: 0,
+  heart: 0,
+  tummy: 0,
+}
+
+// led states
 let leds = [false, false, false];
 
-// variable to hold task video
-
-// colors for the three LEDs (R,G,B)
-const ledColors = [
-  [255, 70, 70], // red
-  [255, 190, 60], // amber
-  [60, 220, 100], // green
-];
-
+// video overlay
 let taskVideo;
 let bleedingBar;
-
-const barX = 261; // adjust these to fit your PNG
-const barY = 153;
-const barW = 170;
-const barH = 15;
-let displayedProgress = 0;
+let veinStatus = "";
 
 // slide + fade state
 let taskVisible = true;
@@ -48,7 +44,6 @@ const FULL_FRAMES_TO_CONFIRM = 12; // ~12 frames ≈ 200ms at 60fps
 // animation tuneables
 const DISMISS_DURATION = 600;
 
-let veinStatus = "";
 
 function preload() {
   bleedingBar = loadImage("media/BleedingBar.png");
@@ -69,128 +64,120 @@ function setup() {
   });
   taskVideo.loop();
   taskVideo.hide();
+
+  // same-origin socket.io
+  socket = io();
+  SocketListeners();
 }
 
-// same-origin socket.io
-socket = io();
+
+// ---- Socket Listeners ----
+function SocketListeners() {
+  socket.on("brain-data", (payload) => {
+    // Accepts strings in numbers
+    let charge = String(payload).trim();
+    // update model
+    brainNum = charge;
+    // lightTest(payload,charge);
+    // ✅ show user a clear “light connected” hint
+    // (you’re printing "ON " / "OFF " from Arduino)
+  });
+
+  socket.on("eyeball-data", (payload) => {
+    // Accepts strings in numbers
+
+    let charge = String(payload).trim();
+    // update model
+    eyeballNum = charge;
+
+    // lightTest(payload,charge);
+    // ✅ show user a clear “light connected” hint
+    // (you’re printing "ON " / "OFF " from Arduino)
+  });
+
+  socket.on("bleeding-data", (payload) => {
+    // Accepts strings in numbers
+
+    let charge = String(payload).trim();
+    // update model
+    bleedingNum = charge;
+
+    // lightTest(payload,charge);
+    // ✅ show user a clear “light connected” hint
+    // (you’re printing "ON " / "OFF " from Arduino)
+  });
+  socket.on("heart-data", (payload) => {
+    // Accepts strings in numbers
+
+    let charge = String(payload).trim();
+    // update model
+    heartNum = charge;
+
+    // lightTest(payload,charge);
+    // ✅ show user a clear “light connected” hint
+    // (you’re printing "ON " / "OFF " from Arduino)
+  });
+
+  socket.on("tummy-data", (payload) => {
+    // Accepts strings in numbers
+
+    let charge = String(payload).trim();
+    // update model
+    tummyNum = charge;
+
+    // lightTest(payload,charge);
+    // ✅ show user a clear “light connected” hint
+    // (you’re printing "ON " / "OFF " from Arduino)
+  });
+
+}
+
+// colors for the three LEDs (R,G,B)
+const ledColors = [
+  [255, 70, 70], // red
+  [255, 190, 60], // amber
+  [60, 220, 100], // green
+];
+
+const barX = 261; // adjust these to fit your PNG
+const barY = 153;
+const barW = 170;
+const barH = 15;
+let displayedProgress = 0;
 
 const lightTest = (payload, charge) => {
   let light = "";
-    
 
-    if (payload && typeof payload === "object" && "charge" in payload) {
-      // new structured payload
-      light = String(payload.light || "").trim();
-      charge = Number(payload.charge);
+
+  if (payload && typeof payload === "object" && "charge" in payload) {
+    // new structured payload
+    light = String(payload.light || "").trim();
+    charge = Number(payload.charge);
+  } else {
+    // legacy string fallback
+    const s = String(payload).trim();            // e.g. "ON 17" or "17"
+    const parts = s.split(/\s+/);
+    if (parts.length === 1) {
+      // just a number
+      charge = parseInt(parts[0], 10);
     } else {
-      // legacy string fallback
-      const s = String(payload).trim();            // e.g. "ON 17" or "17"
-      const parts = s.split(/\s+/);
-      if (parts.length === 1) {
-        // just a number
-        charge = parseInt(parts[0], 10);
-      } else {
-        // "ON 17" style
-        light = parts[0];
-        charge = parseInt(parts[1], 10);
-      }
+      // "ON 17" style
+      light = parts[0];
+      charge = parseInt(parts[1], 10);
     }
+  }
 
-    if (!Number.isFinite(charge)) return;
+  if (!Number.isFinite(charge)) return;
 
-  leds[0] = chargeNum > thresholds[0];
-  leds[1] = chargeNum > thresholds[1];
-  leds[2] = chargeNum > thresholds[2];
+  leds[0] = charge > thresholds[0];
+  leds[1] = charge > thresholds[1];
+  leds[2] = charge > thresholds[2];
 
   veinStatus = (light === "ON") ? "Connected" : "";
 }
 
-socket.on("brain-data", (payload) => {  
-  // Accepts strings in numbers
-  let charge = String(payload).trim();  
-  // update model
-  brainNum = charge;
-  // lightTest(payload,charge);
-  // ✅ show user a clear “light connected” hint
-  // (you’re printing "ON " / "OFF " from Arduino)
-});
-
-socket.on("eyeball-data", (payload) => {  
-  // Accepts strings in numbers
-
-  let charge = String(payload).trim();  
-  // update model
-  eyeballNum = charge;
-
-  // lightTest(payload,charge);
-  // ✅ show user a clear “light connected” hint
-  // (you’re printing "ON " / "OFF " from Arduino)
-});
-
-socket.on("bleeding-data", (payload) => {  
-  // Accepts strings in numbers
-
-  let charge = String(payload).trim();  
-  // update model
-  bleedingNum = charge;
-
-  // lightTest(payload,charge);
-  // ✅ show user a clear “light connected” hint
-  // (you’re printing "ON " / "OFF " from Arduino)
-});
-socket.on("heart-data", (payload) => {  
-  // Accepts strings in numbers
-
-  let charge = String(payload).trim();  
-  // update model
-  heartNum = charge;
-
-  // lightTest(payload,charge);
-  // ✅ show user a clear “light connected” hint
-  // (you’re printing "ON " / "OFF " from Arduino)
-});
-
-socket.on("tummy-data", (payload) => {  
-  // Accepts strings in numbers
-
-  let charge = String(payload).trim();  
-  // update model
-  tummyNum = charge;
-
-  // lightTest(payload,charge);
-  // ✅ show user a clear “light connected” hint
-  // (you’re printing "ON " / "OFF " from Arduino)
-});
-// Remove the old misuse of 'connect' for light status:
-// socket.on("connect", (lightStatus) => { ... })  // ❌ delete this
 
 
-//socket = io();
-//
-//socket.on("serial-data", (payload) => {
-//  // expect a line with a number, e.g., "17"
-//  const s = String(payload).trim();
-//  const match = s.match(/-?\d+/);
-//  if (!match) return;
-//
-//  const val = parseInt(match[0], 10);
-//  if (!Number.isFinite(val)) return;
-//
-//  chargeNum = val;
-//
-//  // update LED states EXACTLY like Arduino
-//  leds[0] = chargeNum > thresholds[0];
-//  leds[1] = chargeNum > thresholds[1];
-//  leds[2] = chargeNum > thresholds[2];
-//
-//  // mirror to debug div
-//  const el = document.getElementById("value-verification");
-//  if (el) {
-//    el.textContent =
-//      `chargeNum=${chargeNum} | LED1=${leds[0] ? "ON" : "OFF"} ` +
-//      `LED2=${leds[1] ? "ON" : "OFF"} LED3=${leds[2] ? "ON" : "OFF"}`;
-//  }
-//});
 
 
 function draw() {
@@ -199,9 +186,42 @@ function draw() {
   // background video stays put
   if (taskVideo) image(taskVideo, 0, 0, width, height);
 
-  // compute progress and smooth it
-  const target = ledProgress(chargeNum, thresholds);
-  displayedProgress = lerp(displayedProgress, target, 0.1);
+
+
+  // compute progress and smooth it for each station
+  //const target = ledProgress(bleedingNum, thresholds);
+  displayedProgress.brain = lerp(displayedProgress.brain, ledProgress(brainNum, thresholds), 0.1);
+  displayedProgress.eyeball = lerp(displayedProgress.eyeball, ledProgress(eyeballNum, thresholds), 0.1);
+  displayedProgress.bleeding = lerp(displayedProgress.bleeding, ledProgress(bleedingNum, thresholds), 0.1);
+  displayedProgress.heart = lerp(displayedProgress.heart, ledProgress(heartNum, thresholds), 0.1);
+  displayedProgress.tummy = lerp(displayedProgress.tummy, ledProgress(tummyNum, thresholds), 0.1);
+
+
+  // ---- BLEEDED TASK ----
+
+  // draw the task overlay (progress fill + PNG frame) if visible/animating
+  if (taskVisible || dismissing) {
+    push();
+    translate(taskOffsetX, 0);
+
+    // progress fill under the PNG, faded with taskFade
+    noStroke();
+    fill(201, 22, 22, 220 * taskFade);
+    rect(barX, barY, barW * displayedProgress, barH);
+
+    // PNG container on top, tinted for fade
+    tint(255, 255 * taskFade);
+    image(bleedingBar, 0, 0, width, height);
+    noTint();
+
+    pop();
+  }
+
+  // --- OTHERS FOR NOW ----
+  drawBar("Brain Scan", display.brain, 300, color(80, 180, 255));
+  drawBar("Eyeball Exam", display.eyeball, 340, color(255, 230, 100));
+  drawBar("Heart Pump", display.heart, 380, color(255, 120, 180));
+  drawBar("Tummy Repair", display.tummy, 420, color(120, 255, 150));
 
   //textSize(20);
   //textStyle(BOLD);
@@ -209,7 +229,7 @@ function draw() {
   //fill(veinStatus.startsWith("Connected") ? "white" : "red");
   //text(`${veinStatus}`, 440, 165);
 
-  // detect "finished" (progress basically 100%) with a small hold
+      // detect "finished" (progress basically 100%) with a small hold
   if (!dismissing && taskVisible) {
     if (displayedProgress >= 0.995) {
       fullFrames++;
@@ -238,38 +258,56 @@ function draw() {
     }
   }
 
-  if (taskVisible || dismissing) {
-    push();
-    translate(taskOffsetX, 0);
+  // show the 'connected' text
+if (taskVisible || dismissing) {
+  push();
+  translate(taskOffsetX, 0);
+
+  // Draw progress fill (bleeding bar)
+  noStroke();
+  fill(201, 22, 22, 220 * taskFade); // fade with taskFade
+  rect(barX, barY, barW * displayedProgress.bleeding, barH);
+
+  // Draw PNG overlay on top
+  tint(255, 255 * taskFade);
+  image(bleedingBar, 0, 0, width, height);
+  noTint();
+
+  // Draw “Connected” text only if veinStatus === "Connected"
+  if (veinStatus === "Connected") {
     textSize(20);
     textStyle(BOLD);
     noStroke();
-    // fade with taskFade
-    const alpha = 255 * taskFade;
-    fill(veinStatus.startsWith("Connected") ? color(255, 255, 255, alpha)
-      : color(255, 0, 0, alpha));
+    fill(255, 255 * taskFade);
     text(`${veinStatus}`, 440, 165);
-    pop();
   }
 
+  pop();
+}
 
-  // draw the task overlay (progress fill + PNG frame) if visible/animating
-  if (taskVisible || dismissing) {
-    push();
-    translate(taskOffsetX, 0);
+}
 
-    // progress fill under the PNG, faded with taskFade
-    noStroke();
-    fill(201, 22, 22, 220 * taskFade);
-    rect(barX, barY, barW * displayedProgress, barH);
+// ---- DRAW BAR ----
+function drawBar(label, progress, y, color) {
+  //size
+  const x = 180;
+  const w = 360;
+  const h = 20;
 
-    // PNG container on top, tinted for fade
-    tint(255, 255 * taskFade);
-    image(bleedingBar, 0, 0, width, height);
-    noTint();
+  //background
+  fill(50, 50, 50, 160);
+  rect(x, y, w, h, 4);
 
-    pop();
-  }
+  //fill
+  fill(color);
+
+  //text
+  noStroke();
+  fill(255);
+  textSize(16);
+  textAlign(LEFT, CENTER);
+  text(`${label}`, x - 150, y + h / 2);
+
 }
 
 //function draw() {
@@ -292,11 +330,10 @@ function draw() {
 //
 //}
 
+// ---- SHOW BAR PROGRESS ----
 // Map chargeNum to progress in 3 equal segments that line up with the LEDs
 function ledProgress(charge, th = thresholds) {
-  const t0 = th[0],
-    t1 = th[1],
-    t2 = th[2];
+  const [t0, t1, t2] = th
 
   if (charge <= 0) return 0;
 
@@ -314,6 +351,8 @@ function ledProgress(charge, th = thresholds) {
     return Math.min(2 / 3 + (1 / 3) * seg, 1);
   }
 }
+
+// ----- INTERACTION -----
 
 // Fallback: if the browser still blocks it, a click will start playback
 function mousePressed() {
@@ -356,3 +395,44 @@ document.addEventListener("fullscreenchange", updateFullscreenBG);
 
 //on load
 updateFullscreenBG();
+
+// // colors for the three LEDs (R,G,B)
+// const ledColors = [
+//   [255, 70, 70], // red
+//   [255, 190, 60], // amber
+//   [60, 220, 100], // green
+// ];
+
+// const barX = 261; // adjust these to fit your PNG
+// const barY = 153;
+// const barW = 170;
+// const barH = 15;
+// let displayedProgress = 0;
+
+
+//socket = io();
+//
+//socket.on("serial-data", (payload) => {
+//  // expect a line with a number, e.g., "17"
+//  const s = String(payload).trim();
+//  const match = s.match(/-?\d+/);
+//  if (!match) return;
+//
+//  const val = parseInt(match[0], 10);
+//  if (!Number.isFinite(val)) return;
+//
+//  chargeNum = val;
+//
+//  // update LED states EXACTLY like Arduino
+//  leds[0] = chargeNum > thresholds[0];
+//  leds[1] = chargeNum > thresholds[1];
+//  leds[2] = chargeNum > thresholds[2];
+//
+//  // mirror to debug div
+//  const el = document.getElementById("value-verification");
+//  if (el) {
+//    el.textContent =
+//      `chargeNum=${chargeNum} | LED1=${leds[0] ? "ON" : "OFF"} ` +
+//      `LED2=${leds[1] ? "ON" : "OFF"} LED3=${leds[2] ? "ON" : "OFF"}`;
+//  }
+//});
