@@ -1,3 +1,4 @@
+
 #include "WiFiS3.h"
 
 
@@ -5,121 +6,115 @@
 
 // Pin assignments
 const int photoresistorPin = A0;
-const int ledPins[] = {2, 3, 4};
-const int buttonPin = 7;
+const int buttonPins[4] = {2, 3, 4, 5};
 const int recalibratePin = 8;
 
-// Light threshold value
+// Light threshold calibration
+int averageLight;
 const int lightThreshold = 33;
-
-// LED state flag
-bool ledsOn = false;
+bool lightOn = false;
 
 // Button state tracking
-bool lastButtonState = HIGH;
+int lastBtn = 5; // starts on button that doesnt exist
+bool btnState[4] = {false, false, false, false};
+bool lastReadState[4] = {false, false, false, false};
 
-// Time between each LED lighting up
-const int delayBetweenLEDs = 1000;
-
-// value for buttonHold
+// Charge number
 int chargeNum = 0;
+const int maxCharge = 100;
+const int chargeAdd = 7;
+const int chargeLose = 1;
 
-// value on from the photoresistor calibration
-int averageLight;
 // function to calibrate the photoresistor to the room light level
-int calibrate() {
+void calibrate()
+{
   int sensorLow = 1000;
   int sensorHigh = 0;
   int timer = 0;
 
-  while (timer < 1000) {
+  while (timer < 1000)
+  {
     int calibratingLightValue = analogRead(photoresistorPin);
-    if (calibratingLightValue > sensorHigh) {
+    if (calibratingLightValue > sensorHigh)
+    {
       sensorHigh = calibratingLightValue;
     }
-    if (calibratingLightValue < sensorLow) {
+    if (calibratingLightValue < sensorLow)
+    {
       sensorLow = calibratingLightValue;
     }
+    delay(1);
     timer++;
   }
-  averageLight = (sensorHigh + sensorLow)/2;
-  
+  averageLight = (sensorHigh + sensorLow) / 2;
 }
 
-
-void bleedingSetup()
+void brainSetup()
 {
-  // Set LED pins as OUTPUT
-  for (int i = 0; i < 3; i++)
+  // Serial.begin(9600);
+
+  // Set button pins as input pullups
+  for (int i = 0; i < 4; i++)
   {
-    pinMode(ledPins[i], OUTPUT);
+    pinMode(buttonPins[i], INPUT_PULLUP);
   }
 
-  // Set button pin as INPUT_PULLUP (active LOW)
-  pinMode(buttonPin, INPUT_PULLUP);
-  // recalibrate pin is setup the same
-  pinMode(recalibratePin, INPUT_PULLUP);
-
-  // Debugging
-  // Serial.begin(9600);
-  // Calibrate the photoresistor to start
   calibrate();
 }
 
-int bleedingLoop()
+int brainLoop()
 {
   int lightLevel = analogRead(photoresistorPin);
-  bool pressed = (digitalRead(buttonPin) == LOW); // INPUT_PULLUP: LOW = pressed
+  bool lightOn = lightLevel > (averageLight + lightThreshold);
 
-  // use only ONE of these definitions for bothTrueStreak (either global OR static)
-  static uint8_t bothTrueStreak = 0;
+  // start false
+  bool anyPress = false;
 
-  if (lightLevel > averageLight + lightThreshold && pressed)
+  // LOW = pressed
+  for (int i = 0; i < 4; i++)
   {
-    if (bothTrueStreak < 3)
-      bothTrueStreak++;
+    bool pressed = digitalRead(buttonPins[i]) == LOW;
+
+    // different button than last pressed
+    if (pressed && !lastReadState[i])
+    {
+      // light on
+      if (lightOn)
+      {
+        chargeNum += chargeAdd;
+        if (chargeNum > maxCharge)
+          chargeNum = maxCharge;
+      }
+      // new last button
+      lastBtn = i;
+    }
+
+    // track button pressed
+    lastReadState[i] = pressed;
+    if (pressed)
+      anyPress = true;
   }
-  else
+
+  // passive charge loss
+  if (!anyPress || chargeNum > 0)
   {
-    bothTrueStreak = 0;
+    chargeNum -= chargeLose;
+    // keep lowest 0
+    if (chargeNum < 0)
+      chargeNum = 0;
   }
 
-  if (bothTrueStreak >= 3)
-  {
-    chargeNum++;
-    bothTrueStreak = 0;
-  }
-  else if (!pressed || lightLevel <= lightThreshold)
-  {
-    if (chargeNum > 0)
-      chargeNum--;
-  }
+  // brain station photoresistor
+  Serial.print("BRAIN_LIGHT:");
+  Serial.print(lightOn ? "ON " : "OFF ");
 
-  digitalWrite(ledPins[0], chargeNum > 10 ? HIGH : LOW);
-  digitalWrite(ledPins[1], chargeNum > 20 ? HIGH : LOW);
-  digitalWrite(ledPins[2], chargeNum > 30 ? HIGH : LOW);
-
-  //call calibrate if the button is hit during runtime
-  bool recalibrate = (digitalRead(recalibratePin) == LOW);
-  if(recalibrate){calibrate(); delay(200);}
-
-  if(lightLevel > averageLight + lightThreshold){
-    Serial.print("ON ");
-  }
-  else{
-    Serial.print("OFF ");
-  }
-
-  // ✅ send ONLY the charge number
+  // charge num
+  Serial.print("CHARGE:");
   Serial.println(chargeNum);
+
   return chargeNum;
-  delay(100);
+  // delay(100);
 }
-
-
-
-
-
 
 
 
@@ -161,7 +156,7 @@ void read_request() {
   }  
 }
 
-// This things sends a group of headers in a httpRequest
+// this method makes a HTTP connection to the server:
 /* -------------------------------------------------------------------------- */
 void httpRequest(int data) {
 /* -------------------------------------------------------------------------- */  
@@ -169,18 +164,17 @@ void httpRequest(int data) {
   // This will free the socket on the NINA module
   client.stop();
 
-  //Each print line is a header
-
   // if there's a successful connection:
   if (client.connect(server, 3000)) { //Server address from above & Port
-    // Serial.println("connecting..."); //Really here for logging 
-    client.println("GET /bleeding HTTP/1.1"); //GET request at '/' using HTTP/1.1
-    client.println("Host: Bleeding"); //Required but the input doesnt matter
+    Serial.println("connecting..."); //Really here for logging 
+    // send the HTTP GET request:
+    client.println("GET /brain HTTP/1.1"); //GET request at '/' using HTTP/1.1
+    client.println("Host: Brain"); //Required but the input doesnt matter
     client.print("Data:");
     client.println(data);
     // client.println("User-Agent: ArduinoWiFi/1.1"); //Not required
     // client.println("Connection: close");
-    client.println(); // Leave this here since this ends the headers
+    client.println();
     // note the time that the connection was made:
     lastConnectionTime = millis();
   } else {
@@ -217,7 +211,7 @@ void setup() {
 /* -------------------------------------------------------------------------- */  
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
-  bleedingSetup();
+  brainSetup();
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
@@ -262,6 +256,8 @@ void loop() {
   // if (millis() - lastConnectionTime > postingInterval) {
   //   httpRequest();
   // }
-  int valuedata = bleedingLoop();
+  int valuedata = brainLoop();
   httpRequest(valuedata);
 }
+
+

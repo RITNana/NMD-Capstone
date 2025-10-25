@@ -1,39 +1,43 @@
+#include <Arduino.h>
+#include <Servo.h>
 #include "WiFiS3.h"
 
 
-#include <Arduino.h>
+Servo eyeballServo;
 
-// Pin assignments
-const int photoresistorPin = A0;
-const int ledPins[] = {2, 3, 4};
-const int buttonPin = 7;
-const int recalibratePin = 8;
+int servoPin = 9;
+int leftEyePin = A0;
+int rightEyePin = A1;
+int socketPin = A2;
 
-// Light threshold value
+int count = 0;
+
 const int lightThreshold = 33;
 
-// LED state flag
-bool ledsOn = false;
+//temp var
+int countTurn = 0;
 
-// Button state tracking
-bool lastButtonState = HIGH;
+enum State
+{
+  IDLE,
+  DROP,
+  WAIT_FOR_RETURN,
+  RESTORE,
+  COOLDOWN
+};
+State state = IDLE;
 
-// Time between each LED lighting up
-const int delayBetweenLEDs = 1000;
-
-// value for buttonHold
-int chargeNum = 0;
-
-// value on from the photoresistor calibration
-int averageLight;
+int averageLightLeft;
+int averageLightRight;
+int averageLightSocket;
 // function to calibrate the photoresistor to the room light level
-int calibrate() {
+int calibrate(int resistorPin) {
   int sensorLow = 1000;
   int sensorHigh = 0;
   int timer = 0;
 
   while (timer < 1000) {
-    int calibratingLightValue = analogRead(photoresistorPin);
+    int calibratingLightValue = analogRead(resistorPin);
     if (calibratingLightValue > sensorHigh) {
       sensorHigh = calibratingLightValue;
     }
@@ -42,87 +46,95 @@ int calibrate() {
     }
     timer++;
   }
-  averageLight = (sensorHigh + sensorLow)/2;
+  if(resistorPin == A0){
+    averageLightLeft = (sensorHigh + sensorLow)/2;
+  }
+  else if(resistorPin == A1){
+    averageLightRight = (sensorHigh + sensorLow)/2;
+  }
+  else if(resistorPin = A2){
+    averageLightSocket = (sensorHigh + sensorLow)/2;
+  }
   
 }
 
 
-void bleedingSetup()
+void eyeballSetup()
 {
-  // Set LED pins as OUTPUT
-  for (int i = 0; i < 3; i++)
-  {
-    pinMode(ledPins[i], OUTPUT);
-  }
-
-  // Set button pin as INPUT_PULLUP (active LOW)
-  pinMode(buttonPin, INPUT_PULLUP);
-  // recalibrate pin is setup the same
-  pinMode(recalibratePin, INPUT_PULLUP);
-
-  // Debugging
   // Serial.begin(9600);
-  // Calibrate the photoresistor to start
-  calibrate();
+  // delay(200);
+  while (!Serial)
+  { /* wait on native USB boards */
+  }
+
+  //Serial.println("Booting...");
+
+  eyeballServo.attach(servoPin);
+  eyeballServo.write(0);
+
+  calibrate(leftEyePin);
+  calibrate(rightEyePin);
+  calibrate(socketPin);
 }
 
-int bleedingLoop()
+int eyeballLoop()
 {
-  int lightLevel = analogRead(photoresistorPin);
-  bool pressed = (digitalRead(buttonPin) == LOW); // INPUT_PULLUP: LOW = pressed
 
-  // use only ONE of these definitions for bothTrueStreak (either global OR static)
-  static uint8_t bothTrueStreak = 0;
+  int leftLight = analogRead(leftEyePin);
+  int rightLight = analogRead(rightEyePin);
 
-  if (lightLevel > averageLight + lightThreshold && pressed)
-  {
-    if (bothTrueStreak < 3)
-      bothTrueStreak++;
-  }
-  else
-  {
-    bothTrueStreak = 0;
-  }
+  int connectionLight = analogRead(socketPin);
 
-  if (bothTrueStreak >= 3)
-  {
-    chargeNum++;
-    bothTrueStreak = 0;
-  }
-  else if (!pressed || lightLevel <= lightThreshold)
-  {
-    if (chargeNum > 0)
-      chargeNum--;
-  }
+  //if(connectionLight > (averageLightSocket-20)){
+  //  Serial.print("Connected | ");
+  //}
+  //else{
+  //  Serial.print("Not Connected | ");
+  //}
 
-  digitalWrite(ledPins[0], chargeNum > 10 ? HIGH : LOW);
-  digitalWrite(ledPins[1], chargeNum > 20 ? HIGH : LOW);
-  digitalWrite(ledPins[2], chargeNum > 30 ? HIGH : LOW);
+  // Print the readings to the console
+  //Serial.print("Left: ");
+  //Serial.print(leftLight);
+  //Serial.print(" | Right: ");
+  //Serial.println(rightLight);
 
-  //call calibrate if the button is hit during runtime
-  bool recalibrate = (digitalRead(recalibratePin) == LOW);
-  if(recalibrate){calibrate(); delay(200);}
+  if (Serial.available() > 0) {
+    char key = Serial.read(); // read one character
 
-  if(lightLevel > averageLight + lightThreshold){
-    Serial.print("ON ");
-  }
-  else{
-    Serial.print("OFF ");
+    // if (key == 'k' || key == 'K') {
+    if(countTurn == 0){ //NTS Change this condition
+      //Serial.println("Command: Turn servo to 180°");
+      eyeballServo.write(180);
+      delay(500); 
+      count = 0;
+      calibrate(averageLightLeft);
+      calibrate(averageLightRight);
+      countTurn = 1;
+    }
   }
 
-  // ✅ send ONLY the charge number
-  Serial.println(chargeNum);
-  return chargeNum;
-  delay(100);
+  bool preconditions = (count == 0) && (connectionLight > (averageLightSocket));
+  if (leftLight < averageLightLeft && rightLight < averageLightRight && preconditions) {
+    //Serial.println("Low light detected! Returning to initial position...");
+
+    // Smoothly move back to 0°
+    for (int pos = 180; pos >= 0; pos--) {
+      eyeballServo.write(pos);
+      delay(10);  // slow movement
+    }
+    count = 1;
+    calibrate(averageLightLeft);
+    calibrate(averageLightRight);
+  }
+
+  delay(200);
+
+  int eyeAngle = eyeballServo.read();
+
+  Serial.println(eyeAngle);
+
+  return eyeAngle;
 }
-
-
-
-
-
-
-
-
 
 
 
@@ -161,7 +173,7 @@ void read_request() {
   }  
 }
 
-// This things sends a group of headers in a httpRequest
+// this method makes a HTTP connection to the server:
 /* -------------------------------------------------------------------------- */
 void httpRequest(int data) {
 /* -------------------------------------------------------------------------- */  
@@ -169,18 +181,17 @@ void httpRequest(int data) {
   // This will free the socket on the NINA module
   client.stop();
 
-  //Each print line is a header
-
   // if there's a successful connection:
   if (client.connect(server, 3000)) { //Server address from above & Port
     // Serial.println("connecting..."); //Really here for logging 
-    client.println("GET /bleeding HTTP/1.1"); //GET request at '/' using HTTP/1.1
-    client.println("Host: Bleeding"); //Required but the input doesnt matter
+    // send the HTTP GET request:
+    client.println("GET /eyeball HTTP/1.1"); //GET request at '/' using HTTP/1.1
+    client.println("Host: Eyeball"); //Required but the input doesnt matter
     client.print("Data:");
     client.println(data);
     // client.println("User-Agent: ArduinoWiFi/1.1"); //Not required
     // client.println("Connection: close");
-    client.println(); // Leave this here since this ends the headers
+    client.println();
     // note the time that the connection was made:
     lastConnectionTime = millis();
   } else {
@@ -210,14 +221,12 @@ void printWifiStatus() {
 
 
 
-
-
 /* -------------------------------------------------------------------------- */
 void setup() {
 /* -------------------------------------------------------------------------- */  
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
-  bleedingSetup();
+  eyeballSetup();
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
@@ -262,6 +271,6 @@ void loop() {
   // if (millis() - lastConnectionTime > postingInterval) {
   //   httpRequest();
   // }
-  int valuedata = bleedingLoop();
+  int valuedata = eyeballLoop();
   httpRequest(valuedata);
 }

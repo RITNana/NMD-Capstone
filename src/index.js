@@ -21,7 +21,7 @@ app.get("/Background.mp4", (req, res) => {
     "..",
     "public",
     "media",
-    "Background.mp4"
+    "Background.mp4",
   );
   const stat = fs.statSync(filePath);
 
@@ -29,10 +29,57 @@ app.get("/Background.mp4", (req, res) => {
     "Content-Type": "video/mp4",
     "Content-Length": stat.size,
   });
-
+  console.log(req);
   const readStream = fs.createReadStream(filePath);
   readStream.pipe(res);
 });
+
+const theGet = ( station, req, res, next) => {
+  console.log(`Received request for /${station} from ${req.ip}`);
+  console.log("Headers:", req.headers);
+  console.log("Query params:", req.query);
+
+  
+  io.emit(`${station}-data`, req.headers.data);
+  next();
+}
+
+
+//For adding a new station format is as follows
+//app.get("/stationname", (req,res,next) => {theGet('stationname',req,res,next)});
+
+// Input for brain station
+app.get("/brain", (req, res, next) => {theGet('brain',req,res,next)});
+
+
+
+// input for bleeding station
+app.get("/eyeball", (req, res, next) => {theGet('eyeball',req,res,next)});
+ // pass control to the static file handler
+
+ 
+// input for bleeding station
+app.get("/bleeding", (req,res,next) => {theGet('bleeding',req,res,next)});  // pass control to the static file handler
+
+
+
+//Leave this here for the sake of backup
+// app.get("/bleeding", (req, res, next) => {
+//   console.log(`Received request for /bleeding from ${req.ip}`);
+//   console.log("Headers:", req.headers);
+//   console.log("Query params:", req.query);
+
+  
+//   io.emit("bleeding-data", req.headers.data);
+
+
+//   next();
+
+
+
+// Serve static files (including index.html)
+app.use(express.static(path.join(__dirname, "..", "public")));
+
 
 app.use(express.static(path.join(__dirname, "..", "public"))); // serve index.html
 
