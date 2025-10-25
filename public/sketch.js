@@ -6,8 +6,12 @@ let socket;
 // mirrors Arduino thresholds
 const thresholds = [10, 20, 30];
 
-// latest charge number from serial
-let chargeNum = 0;
+// the charge nums to be used in front end
+let brainNum = 0;
+let eyeballNum = 0;
+let bleedingNum = 0;
+let heartNum = 0;
+let tummyNum = 0;
 
 // led states computed from chargeNum (boolean)
 let leds = [false, false, false];
@@ -70,45 +74,93 @@ function setup() {
 // same-origin socket.io
 socket = io();
 
-socket.on("bleeding-data", (payload) => {   //NTS Need to copy this so that bleeding-data, brain-data, & whatever else does it
-  // Accept BOTH styles:
-  // 1) object: { light: "ON"|"OFF", charge: number }
-  // 2) legacy string: "ON 17" / "OFF 12" / or even just "17"
+const lightTest = (payload, charge) => {
   let light = "";
-  let charge = NaN;
+    
 
-  if (payload && typeof payload === "object" && "charge" in payload) {
-    // new structured payload
-    light = String(payload.light || "").trim();
-    charge = Number(payload.charge);
-  } else {
-    // legacy string fallback
-    const s = String(payload).trim();            // e.g. "ON 17" or "17"
-    const parts = s.split(/\s+/);
-    if (parts.length === 1) {
-      // just a number
-      charge = parseInt(parts[0], 10);
+    if (payload && typeof payload === "object" && "charge" in payload) {
+      // new structured payload
+      light = String(payload.light || "").trim();
+      charge = Number(payload.charge);
     } else {
-      // "ON 17" style
-      light = parts[0];
-      charge = parseInt(parts[1], 10);
+      // legacy string fallback
+      const s = String(payload).trim();            // e.g. "ON 17" or "17"
+      const parts = s.split(/\s+/);
+      if (parts.length === 1) {
+        // just a number
+        charge = parseInt(parts[0], 10);
+      } else {
+        // "ON 17" style
+        light = parts[0];
+        charge = parseInt(parts[1], 10);
+      }
     }
-  }
 
-  if (!Number.isFinite(charge)) return;
+    if (!Number.isFinite(charge)) return;
 
-  // update model
-  chargeNum = charge;
   leds[0] = chargeNum > thresholds[0];
   leds[1] = chargeNum > thresholds[1];
   leds[2] = chargeNum > thresholds[2];
 
+  veinStatus = (light === "ON") ? "Connected" : "";
+}
+
+socket.on("brain-data", (payload) => {  
+  // Accepts strings in numbers
+  let charge = String(payload).trim();  
+  // update model
+  brainNum = charge;
+  // lightTest(payload,charge);
   // ✅ show user a clear “light connected” hint
   // (you’re printing "ON " / "OFF " from Arduino)
-  veinStatus = (light === "ON") ? "Connected" : "";
-
 });
 
+socket.on("eyeball-data", (payload) => {  
+  // Accepts strings in numbers
+
+  let charge = String(payload).trim();  
+  // update model
+  eyeballNum = charge;
+
+  // lightTest(payload,charge);
+  // ✅ show user a clear “light connected” hint
+  // (you’re printing "ON " / "OFF " from Arduino)
+});
+
+socket.on("bleeding-data", (payload) => {  
+  // Accepts strings in numbers
+
+  let charge = String(payload).trim();  
+  // update model
+  bleedingNum = charge;
+
+  // lightTest(payload,charge);
+  // ✅ show user a clear “light connected” hint
+  // (you’re printing "ON " / "OFF " from Arduino)
+});
+socket.on("heart-data", (payload) => {  
+  // Accepts strings in numbers
+
+  let charge = String(payload).trim();  
+  // update model
+  heartNum = charge;
+
+  // lightTest(payload,charge);
+  // ✅ show user a clear “light connected” hint
+  // (you’re printing "ON " / "OFF " from Arduino)
+});
+
+socket.on("tummy-data", (payload) => {  
+  // Accepts strings in numbers
+
+  let charge = String(payload).trim();  
+  // update model
+  tummyNum = charge;
+
+  // lightTest(payload,charge);
+  // ✅ show user a clear “light connected” hint
+  // (you’re printing "ON " / "OFF " from Arduino)
+});
 // Remove the old misuse of 'connect' for light status:
 // socket.on("connect", (lightStatus) => { ... })  // ❌ delete this
 
