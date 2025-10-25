@@ -55,13 +55,14 @@ app.get("/brain", (req, res, next) => {theGet('brain',req,res,next)});
 
 // input for bleeding station
 app.get("/eyeball", (req, res, next) => {theGet('eyeball',req,res,next)});
- // pass control to the static file handler
+
 
  
 // input for bleeding station
 app.get("/bleeding", (req,res,next) => {theGet('bleeding',req,res,next)});  // pass control to the static file handler
 
-
+//input for heart station
+app.get("/heart",(req,res,next) => {theGet('heart',req,res,next)});
 
 //Leave this here for the sake of backup
 // app.get("/bleeding", (req, res, next) => {
