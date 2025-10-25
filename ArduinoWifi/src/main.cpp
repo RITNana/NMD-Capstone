@@ -1,3 +1,4 @@
+
 #include "WiFiS3.h"
 
 
@@ -103,13 +104,6 @@ int bleedingLoop()
   bool recalibrate = (digitalRead(recalibratePin) == LOW);
   if(recalibrate){calibrate(); delay(200);}
 
-  if(lightLevel > averageLight + lightThreshold){
-    Serial.print("ON ");
-  }
-  else{
-    Serial.print("OFF ");
-  }
-
   // ✅ send ONLY the charge number
   Serial.println(chargeNum);
   return chargeNum;
@@ -126,6 +120,7 @@ int bleedingLoop()
 
 
 
+///////please enter your sensitive data in the Secret tab/arduino_secrets.h
 char ssid[] = "F00KKA9";        // your network SSID (name)
 char pass[] = "PleaseWork";    // your network password (use for WPA, or use as key for WEP)
 int keyIndex = 0;            // your network key index number (needed only for WEP)
@@ -156,12 +151,14 @@ void read_request() {
     Serial.print(c);
     /* wrap data to 80 columns*/
     received_data_num++;
-    if(received_data_num % 80 == 0) {}
+    if(received_data_num % 80 == 0) { 
+      
+    }
     
   }  
 }
 
-// This things sends a group of headers in a httpRequest
+// this method makes a HTTP connection to the server:
 /* -------------------------------------------------------------------------- */
 void httpRequest(int data) {
 /* -------------------------------------------------------------------------- */  
@@ -169,18 +166,17 @@ void httpRequest(int data) {
   // This will free the socket on the NINA module
   client.stop();
 
-  //Each print line is a header
-
   // if there's a successful connection:
   if (client.connect(server, 3000)) { //Server address from above & Port
-    // Serial.println("connecting..."); //Really here for logging 
-    client.println("GET /bleeding HTTP/1.1"); //GET request at '/' using HTTP/1.1
-    client.println("Host: Bleeding"); //Required but the input doesnt matter
+    Serial.println("connecting..."); //Really here for logging 
+    // send the HTTP GET request:
+    client.println("GET / HTTP/1.1"); //GET request at '/' using HTTP/1.1
+    client.println("Host: ME-ME"); //Required but the input doesnt matter
     client.print("Data:");
     client.println(data);
     // client.println("User-Agent: ArduinoWiFi/1.1"); //Not required
     // client.println("Connection: close");
-    client.println(); // Leave this here since this ends the headers
+    client.println();
     // note the time that the connection was made:
     lastConnectionTime = millis();
   } else {
