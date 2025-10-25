@@ -177,16 +177,11 @@ const lightTest = (payload, charge) => {
 }
 
 
-
-
-
 function draw() {
   background(246);
 
   // background video stays put
   if (taskVideo) image(taskVideo, 0, 0, width, height);
-
-
 
   // compute progress and smooth it for each station
   //const target = ledProgress(bleedingNum, thresholds);
@@ -217,11 +212,13 @@ function draw() {
     pop();
   }
 
+
+
   // --- OTHERS FOR NOW ----
-  drawBar("Brain Scan", display.brain, 300, color(80, 180, 255));
-  drawBar("Eyeball Exam", display.eyeball, 340, color(255, 230, 100));
-  drawBar("Heart Pump", display.heart, 380, color(255, 120, 180));
-  drawBar("Tummy Repair", display.tummy, 420, color(120, 255, 150));
+  drawTaskBar("Brain Scan", displayedProgress.brain, 200, color(80, 180, 255));
+  drawTaskBar("Eyeball Exam", displayedProgress.eyeball, 230, color(255, 230, 100));
+  drawTaskBar("Heart Pump", displayedProgress.heart, 260, color(255, 120, 180));
+  drawTaskBar("Tummy Repair", displayedProgress.tummy, 290, color(120, 255, 150));
 
   //textSize(20);
   //textStyle(BOLD);
@@ -229,7 +226,7 @@ function draw() {
   //fill(veinStatus.startsWith("Connected") ? "white" : "red");
   //text(`${veinStatus}`, 440, 165);
 
-      // detect "finished" (progress basically 100%) with a small hold
+  // detect "finished" (progress basically 100%) with a small hold
   if (!dismissing && taskVisible) {
     if (displayedProgress >= 0.995) {
       fullFrames++;
@@ -259,22 +256,70 @@ function draw() {
   }
 
   // show the 'connected' text
-if (taskVisible || dismissing) {
+  if (taskVisible || dismissing) {
+    push();
+    translate(taskOffsetX, 0);
+
+    // Draw progress fill (bleeding bar)
+    noStroke();
+    fill(201, 22, 22, 220 * taskFade); // fade with taskFade
+    rect(barX, barY, barW * displayedProgress.bleeding, barH);
+
+    // Draw PNG overlay on top
+    tint(255, 255 * taskFade);
+    image(bleedingBar, 0, 0, width, height);
+    noTint();
+
+    // Draw “Connected” text only if veinStatus === "Connected"
+    if (veinStatus === "Connected") {
+      textSize(20);
+      textStyle(BOLD);
+      noStroke();
+      fill(255, 255 * taskFade);
+      text(`${veinStatus}`, 440, 165);
+    }
+
+    pop();
+  }
+
+}
+
+
+
+// ---- DRAW BAR (TEMPORARY) ----
+function drawTaskBar(label, progress, y, barColor, overlayImage = null, showVeinStatus = false) {
+  if (!taskVisible && !dismissing) return;
+
   push();
-  translate(taskOffsetX, 0);
+  translate(taskOffsetX, 0); // slide effect
 
-  // Draw progress fill (bleeding bar)
+  // background bar
+  const x = 180;
+  const w = 360;
+  const h = 20;
+  fill(50, 50, 50, 160);
+  rect(x, y, w, h, 4);
+
+  // progress fill
+  fill(barColor);
+  rect(x, y, w * constrain(progress, 0, 1), h, 4);
+
+  // overlay image if provided
+  if (overlayImage) {
+    tint(255, 255 * taskFade); // fade with slide
+    image(overlayImage, 0, 0, width, height);
+    noTint();
+  }
+
+  // text label
   noStroke();
-  fill(201, 22, 22, 220 * taskFade); // fade with taskFade
-  rect(barX, barY, barW * displayedProgress.bleeding, barH);
+  fill(255);
+  textSize(16);
+  textAlign(LEFT, CENTER);
+  text(label, x - 100, y + h / 2);
 
-  // Draw PNG overlay on top
-  tint(255, 255 * taskFade);
-  image(bleedingBar, 0, 0, width, height);
-  noTint();
-
-  // Draw “Connected” text only if veinStatus === "Connected"
-  if (veinStatus === "Connected") {
+  // “Connected” text
+  if (showVeinStatus && veinStatus === "Connected") {
     textSize(20);
     textStyle(BOLD);
     noStroke();
@@ -285,30 +330,6 @@ if (taskVisible || dismissing) {
   pop();
 }
 
-}
-
-// ---- DRAW BAR ----
-function drawBar(label, progress, y, color) {
-  //size
-  const x = 180;
-  const w = 360;
-  const h = 20;
-
-  //background
-  fill(50, 50, 50, 160);
-  rect(x, y, w, h, 4);
-
-  //fill
-  fill(color);
-
-  //text
-  noStroke();
-  fill(255);
-  textSize(16);
-  textAlign(LEFT, CENTER);
-  text(`${label}`, x - 150, y + h / 2);
-
-}
 
 //function draw() {
 //  background(246);
