@@ -64,6 +64,9 @@ app.get("/bleeding", (req,res,next) => {theGet('bleeding',req,res,next)});  // p
 //input for heart station
 app.get("/heart",(req,res,next) => {theGet('heart',req,res,next)});
 
+// input for tummy station
+app.get("/tummy",(req,res,next) => {theGet('tummy',req,res,next)});
+
 //Leave this here for the sake of backup
 // app.get("/bleeding", (req, res, next) => {
 //   console.log(`Received request for /bleeding from ${req.ip}`);

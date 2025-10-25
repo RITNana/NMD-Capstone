@@ -6,8 +6,12 @@ let socket;
 // mirrors Arduino thresholds
 const thresholds = [10, 20, 30];
 
-// latest charge number from serial
-let chargeNum = 0;
+// the charge nums to be used in front end
+let brainNum = 0;
+let eyeballNum = 0;
+let bleedingNum = 0;
+let heartNum = 0;
+let tummyNum = 0;
 
 // led states computed from chargeNum (boolean)
 let leds = [false, false, false];
@@ -97,21 +101,66 @@ const lightTest = (payload, charge) => {
   leds[0] = chargeNum > thresholds[0];
   leds[1] = chargeNum > thresholds[1];
   leds[2] = chargeNum > thresholds[2];
+
+  veinStatus = (light === "ON") ? "Connected" : "";
 }
 
-socket.on("bleeding-data", (payload) => {   //NTS Need to copy this so that bleeding-data, brain-data, & whatever else does it
+socket.on("brain-data", (payload) => {  
+  // Accepts strings in numbers
+  let charge = String(payload).trim();  
+  // update model
+  brainNum = charge;
+  // lightTest(payload,charge);
+  // ✅ show user a clear “light connected” hint
+  // (you’re printing "ON " / "OFF " from Arduino)
+});
+
+socket.on("eyeball-data", (payload) => {  
   // Accepts strings in numbers
 
   let charge = String(payload).trim();  
   // update model
-  chargeNum = charge;
+  eyeballNum = charge;
 
-  lightTest(payload,charge);
+  // lightTest(payload,charge);
   // ✅ show user a clear “light connected” hint
   // (you’re printing "ON " / "OFF " from Arduino)
-  // veinStatus = (light === "ON") ? "Connected" : "";
 });
 
+socket.on("bleeding-data", (payload) => {  
+  // Accepts strings in numbers
+
+  let charge = String(payload).trim();  
+  // update model
+  bleedingNum = charge;
+
+  // lightTest(payload,charge);
+  // ✅ show user a clear “light connected” hint
+  // (you’re printing "ON " / "OFF " from Arduino)
+});
+socket.on("heart-data", (payload) => {  
+  // Accepts strings in numbers
+
+  let charge = String(payload).trim();  
+  // update model
+  heartNum = charge;
+
+  // lightTest(payload,charge);
+  // ✅ show user a clear “light connected” hint
+  // (you’re printing "ON " / "OFF " from Arduino)
+});
+
+socket.on("tummy-data", (payload) => {  
+  // Accepts strings in numbers
+
+  let charge = String(payload).trim();  
+  // update model
+  tummyNum = charge;
+
+  // lightTest(payload,charge);
+  // ✅ show user a clear “light connected” hint
+  // (you’re printing "ON " / "OFF " from Arduino)
+});
 // Remove the old misuse of 'connect' for light status:
 // socket.on("connect", (lightStatus) => { ... })  // ❌ delete this
 
