@@ -1,5 +1,7 @@
 // const { createVideo } = require("p5");
 
+//NOTE: Add connecttion light back on
+
 // public/sketch.js
 let socket;
 
@@ -131,6 +133,17 @@ function draw() {
       textAlign(LEFT, CENTER);
       const labelX = barX + 200;
       text(key.toUpperCase(), labelX, barY + barH / 2);
+
+      //connection status
+      textSize(14);
+      textStyle(NORMAL);
+      textAlign(LEFT, CENTER);
+
+      //NEEDS TO CHNAGE so it relates to if connected or not, NOT THE CHARGE
+      if (st.num > 0) {
+        fill(255, 255 * st.fade); 
+        text("CONNECTED", barX + barW + 10, barY + barH / 2);
+      }
 
       pop();
     }
