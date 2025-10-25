@@ -34,46 +34,47 @@ app.get("/Background.mp4", (req, res) => {
   readStream.pipe(res);
 });
 
+const theGet = ( station, req, res, next) => {
+  console.log(`Received request for /${station} from ${req.ip}`);
+  console.log("Headers:", req.headers);
+  console.log("Query params:", req.query);
+
+  
+  io.emit(`${station}-data`, req.headers.data);
+  next();
+}
+
+
+//For adding a new station format is as follows
+//app.get("/stationname", (req,res,next) => {theGet('stationname',req,res,next)});
 
 // Input for brain station
-app.get("/brain", (req, res, next) => {
-  console.log(`Received request for /brain from ${req.ip}`);
-  console.log("Headers:", req.headers);
-  console.log("Query params:", req.query);
+app.get("/brain", (req, res, next) => {theGet('brain',req,res,next)});
 
-  
-  io.emit("brain-data", req.headers.data);
-
-
-  next(); // pass control to the static file handler
-});
 
 
 // input for bleeding station
-app.get("/eyeball", (req, res, next) => {
-  console.log(`Received request for /eyeball from ${req.ip}`);
-  console.log("Headers:", req.headers);
-  console.log("Query params:", req.query);
+app.get("/eyeball", (req, res, next) => {theGet('eyeball',req,res,next)});
+ // pass control to the static file handler
 
-  
-  io.emit("bleeding-data", req.headers.data);
-
-
-  next(); // pass control to the static file handler
-});
-
+ 
 // input for bleeding station
-app.get("/bleeding", (req, res, next) => {
-  console.log(`Received request for /bleeding from ${req.ip}`);
-  console.log("Headers:", req.headers);
-  console.log("Query params:", req.query);
+app.get("/bleeding", (req,res,next) => {theGet('bleeding',req,res,next)});  // pass control to the static file handler
+
+
+
+//Leave this here for the sake of backup
+// app.get("/bleeding", (req, res, next) => {
+//   console.log(`Received request for /bleeding from ${req.ip}`);
+//   console.log("Headers:", req.headers);
+//   console.log("Query params:", req.query);
 
   
-  io.emit("bleeding-data", req.headers.data);
+//   io.emit("bleeding-data", req.headers.data);
 
 
-  next(); // pass control to the static file handler
-});
+//   next();
+
 
 
 // Serve static files (including index.html)
