@@ -26,11 +26,11 @@ const barH = 15;
 
 // stations and their states
 let stations = {
-  brain: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [80, 180, 255] },
-  eyeball: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [255, 230, 100] },
-  bleeding: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [201, 22, 22] },
-  heart: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [255, 120, 180] },
-  tummy: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [120, 255, 150] }
+  brain: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [80, 180, 255], name: "brain" },
+  eyeball: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [255, 230, 100], name: "eyeball" },
+  bleeding: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [201, 22, 22],name: "bleeding" },
+  heart: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [255, 120, 180], name: "heart" },
+  tummy: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [120, 255, 150], name: "tummy" }
 };
 
 
@@ -38,6 +38,8 @@ function preload() {
   bleedingBar = loadImage("media/BleedingBar.png");
 }
 
+let banish = "";
+let newTask = "";
 function setup() {
   createCanvas(720, 400);
   textFont("system-ui");
@@ -57,6 +59,36 @@ function setup() {
   // same-origin socket.io
   socket = io();
   SocketListeners();
+
+
+  addEventListener("keydown", (e) => {
+    if(e.key == "w"){
+      newTask = "brain";
+    }
+    if(e.key == "e"){
+      newTask = "eyeball";
+    }
+    if(e.key == "q"){
+      newTask = "bleeding";
+    }
+    if(e.key == "r"){
+      newTask = "tummy";
+    }
+
+    if(e.key == "s"){
+      banish = "brain";
+    }
+    if(e.key == "d"){
+      banish = "eyeball";
+    }
+    if(e.key == "a"){
+      banish = "bleeding";
+    }
+    if(e.key == "f"){
+      banish = "tummy";
+    }
+    
+  })
 }
 
 
@@ -97,9 +129,8 @@ function draw() {
       st.dismissing = true;
       st.dismissStart = millis();
     }
-
     // handle dismissal animation
-    if (st.dismissing) {
+    if (st.dismissing || st.name === banish) {
       const t = constrain((millis() - st.dismissStart) / DISMISS_DURATION, 0, 1);
       const e = 1 - pow(1 - t, 3);
       st.offsetX = e * (width + 48);
@@ -109,8 +140,21 @@ function draw() {
         st.visible = false;
         st.fade = 0;
       }
+      banish = ""
     }
-
+    if(st.name === newTask){
+      st.offsetX = 0;  
+      translate(st.offsetX,posY);
+      st.visible = true;
+      st.dismissing = false;
+      st.fade = 1;
+      banish = false;
+      newTask = "";
+      st.progress = 0;
+      st.num = 0;
+      st.dismissStart = 0;
+    }
+    
     // draw station overlay
     if (st.visible || st.dismissing) {
       push();
