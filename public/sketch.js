@@ -27,7 +27,7 @@ let stations = {
   brain: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [80, 180, 255] },
   eyeball: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [255, 230, 100] },
   bleeding: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [201, 22, 22] },
-  //heart: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [255, 120, 180] },
+  heart: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [255, 120, 180] },
   tummy: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [120, 255, 150] }
 };
 
@@ -60,11 +60,11 @@ function setup() {
 
 // ---- Socket Listeners ----
 function SocketListeners() {
-  socket.on("brain-data", (p) => stations.brain.num = Number(String(p).trim()));
-  socket.on("eyeball-data", (p) => stations.eyeball.num = Number(String(p).trim()));
-  socket.on("bleeding-data", (p) => stations.bleeding.num = Number(String(p).trim()));
-  socket.on("heart-data", (p) => stations.heart.num = Number(String(p).trim()));
-  socket.on("tummy-data", (p) => stations.tummy.num = Number(String(p).trim()));
+  socket.on("brain-data", (p) => stations.brain.num = (String(p).trim()));
+  socket.on("eyeball-data", (p) => stations.eyeball.num = (String(p).trim()));
+  socket.on("bleeding-data", (p) => stations.bleeding.num = (String(p).trim()));
+  socket.on("heart-data", (p) => stations.heart.num = (String(p).trim()));
+  socket.on("tummy-data", (p) => stations.tummy.num = (String(p).trim()));
 }
 
 
@@ -78,7 +78,8 @@ function draw() {
     bleeding: { y: 0 },
     brain: { y: 60 },
     eyeball: { y: 120 },
-    tummy: { y: 180 }
+    tummy: { y: 180 },
+    heart: {y: 240000}
   };
 
   // iterate through each station
