@@ -37,7 +37,7 @@ let stations = {
 function preload() {
   bleedingBar = loadImage("media/BleedingBar.png");
 }
-
+//Feed in the name of the task for newTask or banish to get that task back on screen or banish it as if its complete
 let banish = "";
 let newTask = "";
 function setup() {
@@ -60,8 +60,9 @@ function setup() {
   socket = io();
   SocketListeners();
 
-
+  //Some event listeners for manual control of the game
   addEventListener("keydown", (e) => {
+    //These bring in new tasks
     if(e.key == "w"){
       newTask = "brain";
     }
@@ -74,7 +75,7 @@ function setup() {
     if(e.key == "r"){
       newTask = "tummy";
     }
-
+    //these atomize task from the list
     if(e.key == "s"){
       banish = "brain";
     }
@@ -93,6 +94,7 @@ function setup() {
 
 
 // ---- Socket Listeners ----
+//They should be strings
 function SocketListeners() {
   socket.on("brain-data", (p) => stations.brain.num = (String(p).trim()));
   socket.on("eyeball-data", (p) => stations.eyeball.num = (String(p).trim()));
@@ -142,6 +144,8 @@ function draw() {
       }
       banish = ""
     }
+
+    //return a task from completion / reset all values 
     if(st.name === newTask){
       st.offsetX = 0;  
       translate(st.offsetX,posY);
