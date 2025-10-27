@@ -45,6 +45,8 @@ let gameState = 0;
 let gameloop = 0;
 let updateGameState = false;
 let useGameLoop = false;
+let heartConnected = false;
+let heartLast = 0;
 //Gameloop 1 for Prototype 2
 function gameLoop1(state) {
   if (state == 1){
@@ -189,10 +191,11 @@ function draw() {
   for (const key in stations) {
     const st = stations[key];
     const posY = positions[key].y;
-
+    if(st.name == "bleeding")console.log(heartConnected);
     // smooth progress update
-    st.progress = lerp(st.progress, ledProgress(st.num, thresholds), 0.1);
-
+    // if(heartConnected){ //require the heart to be connected to work
+      st.progress = lerp(st.progress, ledProgress(st.num, thresholds), 0.1);
+    // }
     // detect completion
     if (!st.dismissing && st.visible && st.progress >= 0.995) {
       st.dismissing = true;
@@ -274,6 +277,12 @@ function draw() {
       }
       updateGameState = false;
     }
+    if(st.name == "heart"){
+      if (st.num == "1" || st.num == "2" || st.num == "3" || heartLast == "1" || heartLast == "2" || heartLast == "3" ){heartConnected = true;}
+      else{heartConnected = false;}
+      heartLast = st.num;
+    }
+    
   }
 }
 
@@ -283,7 +292,7 @@ function draw() {
 function ledProgress(charge, th = thresholds) {
   const [t0, t1, t2] = th
 
-  if (charge <= 0) return 0;
+  if (charge <= 0 || !heartConnected) return 0;
 
   if (charge <= t0) {
     // first third
