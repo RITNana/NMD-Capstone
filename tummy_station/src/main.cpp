@@ -8,8 +8,12 @@ Servo servoR;
 
 const int photoresistorPin = A0;
 const int buttonPin = 2;
-const int servoPinL = 9;  // left
-const int servoPinR = 8; // right
+const int servoPinR = 9; // left
+const int servoPinL = 8; // right
+
+// angles for recalibration
+int angleL = 60;
+int angleR = 150;
 
 const int lightThreshold = 33;
 
@@ -50,10 +54,10 @@ void tummySetup()
 
   pinMode(buttonPin, INPUT_PULLUP);
 
-  servoL.attach(servoPinL);
   servoR.attach(servoPinR);
-  servoL.write(110);
-  servoR.write(60);
+  servoL.attach(servoPinL);
+  servoR.write(angleR);
+  servoL.write(angleL);
 
   calibrate();
 }
@@ -80,15 +84,15 @@ int tummyLoop()
     if (key == 'k' || key == 'K')
     {
       Serial.println("opening");
-      servoL.write(0);
-      servoR.write(180);
+      servoR.write(0);
+      servoL.write(180);
       delay(500);
     }
     else if (key == 'l' || key == 'L')
     {
       Serial.println("close");
-      servoL.write(60);
-      servoR.write(110);
+      servoR.write(angleR);
+      servoL.write(angleL);
       delay(500);
     }
   }
@@ -100,7 +104,7 @@ int tummyLoop()
   //   // Serial.println("closing");
   // }
 
-  int output = servoL.read();
+  int output = servoR.read();
   // Serial.println(connectionLight);
   Serial.println(output);
 
