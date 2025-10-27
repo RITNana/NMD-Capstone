@@ -40,6 +40,56 @@ function preload() {
 //Feed in the name of the task for newTask or banish to get that task back on screen or banish it as if its complete
 let banish = "";
 let newTask = "";
+
+let gameState = 0;
+let gameloop = 0;
+let updateGameState = false;
+let useGameLoop = false;
+//Gameloop 1 for Prototype 2
+function gameLoop1(state) {
+  if (state == 1){
+    newTask = "bleeding"
+  }
+  if(state == 2){
+    newTask = "brain"
+  }
+  if(state == 3){
+    newTask = "bleeding"
+  }
+  if(state == 4){
+    newTask = "brain"
+  }
+  if(state == 5){
+    newTask = "eyeball"
+  }
+  if(state == 6){
+    newTask = "tummy"
+    useGameLoop = false;
+  }
+}
+// Gameloop 2 for Prototype 2
+function gameLoop2(state) {
+  if (state == 1){
+    newTask = "brain"
+  }
+  if(state == 2){
+    newTask = "bleeding"
+  }
+  if(state == 3){
+    newTask = "brain"
+  }
+  if(state == 4){
+    newTask = "bleeding"
+  }
+  if(state == 5){
+    newTask = "tummy"
+  }
+  if(state == 6){
+    newTask = "eyeball"
+    useGameLoop = false;
+  }
+}
+
 function setup() {
   createCanvas(720, 400);
   textFont("system-ui");
@@ -88,7 +138,25 @@ function setup() {
     if(e.key == "f"){
       banish = "tummy";
     }
-    
+
+    if(e.key == "1"){ //For gameloop 1
+      gameloop = 1;
+      gameState = 1;
+      updateGameState = true;
+      useGameLoop = true;
+    }
+    if(e.key == "2"){ //For gameloop 2
+      gameloop = 2;
+      gameState = 1;
+      updateGameState = true;
+      useGameLoop = true;
+    }
+    if(e.key == "3"){ //For manual control
+      gameloop = 0;
+      gameState = 1;
+      updateGameState = false;
+      useGameLoop = false;
+    }
   })
 }
 
@@ -103,7 +171,6 @@ function SocketListeners() {
   socket.on("tummy-data", (p) => stations.tummy.num = (String(p).trim()));
 }
 
-
 // ---- DRAW STATIONS ----
 function draw() {
   background(0);
@@ -115,7 +182,7 @@ function draw() {
     brain: { y: 60 },
     eyeball: { y: 120 },
     tummy: { y: 180 },
-    heart: {y: 240000}
+    heart: {y: 240000} //BEGONE HEALTH BAR
   };
 
   // iterate through each station
@@ -143,6 +210,8 @@ function draw() {
         st.fade = 0;
       }
       banish = ""
+      gameState++;
+      updateGameState = true;
     }
 
     //return a task from completion / reset all values 
@@ -195,6 +264,15 @@ function draw() {
       }
 
       pop();
+    }
+    if(updateGameState && useGameLoop){
+      if(gameloop == 1){
+        gameLoop1(gameState);
+      }
+      if(gameloop == 2){
+        gameLoop2(gameState);
+      }
+      updateGameState = false;
     }
   }
 }
