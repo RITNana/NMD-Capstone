@@ -97,12 +97,13 @@ int tummyLoop()
     }
   }
 
-  // if (connectionLight > averageLight && pressed)
-  // {
-  //   delay(500);
-  //   servo.write(0);
-  //   // Serial.println("closing");
-  // }
+  if (connectionLight > averageLight && pressed)
+  {
+    delay(500);
+    servoR.write(angleR);
+    servoL.write(angleL);
+    // Serial.println("closing");
+  }
 
   int output = servoR.read();
   // Serial.println(connectionLight);
