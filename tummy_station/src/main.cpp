@@ -21,7 +21,7 @@ int averageLight;
 
 // output for wifi
 int output = 1;
-String go = "false";
+String remoteOpen = "false";
 
 int calibrate()
 {
@@ -73,7 +73,7 @@ void popout()
   {
     char key = Serial.read();
   }
-  if (go == "true")
+  if (remoteOpen == "true")
   {
     Serial.println("opening");
     servoR.write(0);
@@ -81,7 +81,7 @@ void popout()
     delay(500);
 
     output = 0; // open
-    go = "false";
+    remoteOpen = "false"; // this really doesnt need to be here but cause it gets overridden very soon but whatever
   }
 }
 
@@ -126,6 +126,7 @@ int tummyLoop()
     }
   }
 
+  //Where it closes
   if (connectionLight > averageLight && pressed)
   {
     delay(500);
@@ -140,7 +141,7 @@ int tummyLoop()
   // Serial.println(output);
   // output = servoR.read();
 
-  return output;
+  return output * 10000;
 }
 
 // // -----------------------------------------------------
@@ -163,25 +164,70 @@ char server[] = "192.168.137.1";
 unsigned long lastConnectionTime = 0;              // last time you connected to the server, in milliseconds
 const unsigned long postingInterval = 10L * 1000L; // delay between updates, in milliseconds
 
-/* just wrap the received data up to 80 columns in the serial print*/
-/* -------------------------------------------------------------------------- */
-void read_request()
-{
-  /* -------------------------------------------------------------------------- */
-  uint32_t received_data_num = 0;
+void parsing(char* response){
+  Serial.print("Raw body: ");
+  Serial.println(response);
 
-  while (client.available())
-  {
-    /* actual data reception */
-    char c = client.read();
-    /* print data to serial port */
-    Serial.print(c);
-    /* wrap data to 80 columns*/
-    received_data_num++;
-    if (received_data_num % 80 == 0)
-    {
+  // Now parse with strtok
+  char* token = strtok(response, "=");  // split by '='
+
+  if (token != NULL) { //
+    char* key = token;
+    token = strtok(NULL, "=");
+    if (token != NULL) {
+      char* value = token;
+      Serial.print("Key: ");
+      Serial.println(key);
+      Serial.print("Value: ");
+      Serial.println(value);
+      remoteOpen = (String)value;
+      // Serial.print(String(go));
+      popout();
     }
   }
+}
+
+/* just wrap the received data up to 80 columns in the serial print*/
+/* -------------------------------------------------------------------------- */
+void read_request() { //Purpose is to read the response from the server and send the body to where it can be parsed
+/* -------------------------------------------------------------------------- */  
+  uint32_t received_data_num = 0;
+  char response[256]; //have it so it buffers as much as possible
+  int index = 0;
+  bool bodyStarted = false;
+  String line = "";
+
+  // Wait for server data
+  unsigned long timeout = millis();
+  while (!client.available() && millis() - timeout < 2000) {
+    delay(10);
+  }
+
+  // Read and print all available characters
+  if (client.connected()) {
+    while (client.available()) {
+      char c = client.read();
+
+      if (bodyStarted) {
+        // Store response characters until buffer is full or connection ends
+        if (index < sizeof(response) - 1) {
+          response[index++] = c;
+        }
+      } 
+      else {
+        // Detect end of HTTP headers (\r\n\r\n)
+        line += c;
+        if (line.endsWith("\r\n\r\n")) {
+          bodyStarted = true;
+        }
+      }
+    }
+  }
+  response[index] = '\0';  // Null-terminate C string
+
+  parsing((char*)response);
+
+  // Serial.println("\n--- End of Response ---"); 
 }
 
 // this method makes a HTTP connection to the server:
