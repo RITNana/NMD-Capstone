@@ -292,8 +292,8 @@ function draw() {
 
       //NEEDS TO CHNAGE so it relates to if connected or not, NOT THE CHARGE
       if (st.num > 0) {
-      fill(255, 255 * st.fade);
-      text("CONNECTED", 620, 40);
+        fill(255, 255 * st.fade);
+        text("CONNECTED", 620, 40);
       }
 
       pop();
@@ -350,39 +350,14 @@ function mousePressed() {
   }
 }
 
+//import from helper
+const toggleFullscreen = fullscreen();
+
 //make full screen
 function doubleClicked() {
-  //get the canvas
-  const vid = document.querySelector('canvas');
-
-  if (!document.fullscreenElement) {
-    if (vid.requestFullscreen) {
-      vid.requestFullscreen();
-    }
-
-  } else {
-    //exit fullscreen
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    }
-
-  }
+  toggleFullscreen(document.querySelector('canvas'));
 }
 
-//background color change for full screen
-function updateFullscreenBG() {
-  if (document.fullscreenElement) {
-    document.body.style.backgroundColor = "#000000FF";
-  } else {
-    document.body.style.backgroundColor = "#FFFFFFFF";
-  }
-}
-
-//event listener
-document.addEventListener("fullscreenchange", updateFullscreenBG);
-
-//on load
-updateFullscreenBG();
 
 // // colors for the three LEDs (R,G,B)
 // const ledColors = [
