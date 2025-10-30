@@ -10,6 +10,7 @@
             "includePath": [
                 "C:/Capstone/NMD-Capstone/tummy_station/include",
                 "C:/Capstone/NMD-Capstone/tummy_station/src",
+                "C:/Users/jacks/.platformio/packages/framework-arduinorenesas-uno/libraries/WiFiS3/src",
                 "C:/Capstone/NMD-Capstone/tummy_station/.pio/libdeps/uno_r4_wifi/Servo/src",
                 "C:/Users/jacks/.platformio/packages/framework-arduinorenesas-uno/cores/arduino/tinyusb",
                 "C:/Users/jacks/.platformio/packages/framework-arduinorenesas-uno/cores/arduino",
@@ -36,7 +37,6 @@
                 "C:/Users/jacks/.platformio/packages/framework-arduinorenesas-uno/libraries/SoftwareSerial/src",
                 "C:/Users/jacks/.platformio/packages/framework-arduinorenesas-uno/libraries/Storage",
                 "C:/Users/jacks/.platformio/packages/framework-arduinorenesas-uno/libraries/WDT/src",
-                "C:/Users/jacks/.platformio/packages/framework-arduinorenesas-uno/libraries/WiFiS3/src",
                 "C:/Users/jacks/.platformio/packages/framework-arduinorenesas-uno/libraries/Wire",
                 ""
             ],
@@ -45,6 +45,7 @@
                 "path": [
                     "C:/Capstone/NMD-Capstone/tummy_station/include",
                     "C:/Capstone/NMD-Capstone/tummy_station/src",
+                    "C:/Users/jacks/.platformio/packages/framework-arduinorenesas-uno/libraries/WiFiS3/src",
                     "C:/Capstone/NMD-Capstone/tummy_station/.pio/libdeps/uno_r4_wifi/Servo/src",
                     "C:/Users/jacks/.platformio/packages/framework-arduinorenesas-uno/cores/arduino/tinyusb",
                     "C:/Users/jacks/.platformio/packages/framework-arduinorenesas-uno/cores/arduino",
@@ -71,7 +72,6 @@
                     "C:/Users/jacks/.platformio/packages/framework-arduinorenesas-uno/libraries/SoftwareSerial/src",
                     "C:/Users/jacks/.platformio/packages/framework-arduinorenesas-uno/libraries/Storage",
                     "C:/Users/jacks/.platformio/packages/framework-arduinorenesas-uno/libraries/WDT/src",
-                    "C:/Users/jacks/.platformio/packages/framework-arduinorenesas-uno/libraries/WiFiS3/src",
                     "C:/Users/jacks/.platformio/packages/framework-arduinorenesas-uno/libraries/Wire",
                     ""
                 ]

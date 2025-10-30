@@ -19,6 +19,10 @@ const int lightThreshold = 33;
 
 int averageLight;
 
+//output for wifi
+bool input;
+int output = 0;
+
 int calibrate()
 {
   int sensorLow = 1000;
@@ -89,6 +93,8 @@ int tummyLoop()
       servoR.write(0);
       servoL.write(190);
       delay(500);
+
+      output = 90; //open
     }
     else if (key == 'l' || key == 'L')
     {
@@ -96,6 +102,8 @@ int tummyLoop()
       servoR.write(angleR);
       servoL.write(angleL);
       delay(500);
+
+      output = 0; //closed
     }
   }
 
@@ -105,11 +113,13 @@ int tummyLoop()
     servoR.write(angleR);
     servoL.write(angleL);
     Serial.println("closing");
+
+    output = 0; //closed
   }
 
-  int output = servoR.read();
-  // Serial.println(connectionLight);
+  //Serial.println(connectionLight);
   //Serial.println(output);
+  //output = servoR.read();
 
   return output;
 }
