@@ -2,6 +2,7 @@ const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const path = require("path");
+const net = require("net");
 
 const { SerialPort } = require("serialport");
 const { ReadlineParser } = require("@serialport/parser-readline");
@@ -14,6 +15,14 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 let serial_port = null;
+
+const latestStationData = {
+  brain: false,
+  eyeball: false,
+  bleeding: false,
+  heart: false,
+  tummy: false
+};
 
 app.get("/Background.mp4", (req, res) => {
   const filePath = path.join(
@@ -37,11 +46,18 @@ app.get("/Background.mp4", (req, res) => {
 const theGet = ( station, req, res, next) => {
   console.log(`Received request for /${station} from ${req.ip}`);
   console.log("Headers:", req.headers);
-  console.log("Query params:", req.query);
-
-  
+  // console.log("Query params:", req.query);
+  // Emit to clients if needed
   io.emit(`${station}-data`, req.headers.data);
-  next();
+  // if(latestStationData[station] === "eyeball" || latestStationData[station] === "tummy"){
+  res.type("text/plain").send(`${station}=${latestStationData[station]}`);
+  latestStationData[station] = false;
+  // console.log("sendin");
+  // }
+
+  // if(latestStationData[station]);
+    // sendKey(host, port, "k");
+  // next();
 }
 
 
@@ -49,7 +65,7 @@ const theGet = ( station, req, res, next) => {
 //app.get("/stationname", (req,res,next) => {theGet('stationname',req,res,next)});
 
 // Input for brain station
-app.get("/brain", (req, res, next) => {theGet('brain',req,res,next)});
+app.get("/brain", (req, res, next) => {theGet('brain',req,res,next);});
 
 
 
@@ -59,7 +75,7 @@ app.get("/eyeball", (req, res, next) => {theGet('eyeball',req,res,next)});
 
  
 // input for bleeding station
-app.get("/bleeding", (req,res,next) => {theGet('bleeding',req,res,next)});  // pass control to the static file handler
+app.get("/bleeding", (req,res,next) => {theGet('bleeding',req,res,next);});  // pass control to the static file handler
 
 //input for heart station
 app.get("/heart",(req,res,next) => {theGet('heart',req,res,next)});
@@ -182,8 +198,15 @@ const startServer = () => {
     console.log("Server + Socket.IO listening on http://localhost:3000");
   });
 
+
   io.on("connection", (socket) => {
     console.log("Web client connected:", socket.id);
+    // Listen for each station's socket emit
+    socket.on("brain", (data) => latestStationData.brain = data);
+    socket.on("eyeball", (data) => latestStationData.eyeball = data);
+    socket.on("bleeding", (data) => latestStationData.bleeding = data);
+    socket.on("heart", (data) => latestStationData.heart = data);
+    socket.on("tummy", (data) => latestStationData.tummy = data);
     socket.on("disconnect", () =>
       console.log("Web client disconnected:", socket.id)
     );

@@ -40,6 +40,7 @@ function preload() {
 //Feed in the name of the task for newTask or banish to get that task back on screen or banish it as if its complete
 let banish = "";
 let newTask = "";
+let otherNewTask = "";
 
 let gameState = 0;
 let gameloop = 0;
@@ -57,14 +58,12 @@ function gameLoop1(state) {
   }
   if(state == 3){
     newTask = "bleeding"
+    otherNewTask = "brain"
   }
   if(state == 4){
-    newTask = "brain"
-  }
-  if(state == 5){
     newTask = "eyeball"
   }
-  if(state == 6){
+  if(state == 5){
     newTask = "tummy"
     useGameLoop = false;
   }
@@ -79,14 +78,12 @@ function gameLoop2(state) {
   }
   if(state == 3){
     newTask = "brain"
+    otherNewTask = "bleeding"
   }
   if(state == 4){
-    newTask = "bleeding"
-  }
-  if(state == 5){
     newTask = "tummy"
   }
-  if(state == 6){
+  if(state == 5){
     newTask = "eyeball"
     useGameLoop = false;
   }
@@ -191,11 +188,9 @@ function draw() {
   for (const key in stations) {
     const st = stations[key];
     const posY = positions[key].y;
-    if(st.name == "bleeding")console.log(heartConnected);
     // smooth progress update
-    // if(heartConnected){ //require the heart to be connected to work
-      st.progress = lerp(st.progress, ledProgress(st.num, thresholds), 0.1);
-    // }
+    st.progress = lerp(st.progress, ledProgress(st.num, thresholds), 0.1);
+
     // detect completion
     if (!st.dismissing && st.visible && st.progress >= 0.995) {
       st.dismissing = true;
@@ -217,19 +212,23 @@ function draw() {
       updateGameState = true;
     }
 
-    //return a task from completion / reset all values 
-    if(st.name === newTask){
+    function callOrReset(othertask){
       st.offsetX = 0;  
       translate(st.offsetX,posY);
       st.visible = true;
       st.dismissing = false;
       st.fade = 1;
       banish = false;
-      newTask = "";
+      if(!othertask)newTask = "";
+      if(othertask)otherNewTask = "";
       st.progress = 0;
       st.num = 0;
       st.dismissStart = 0;
+      socket.emit(`${st.name}`, true);
     }
+    //return a task from completion / reset all values 
+    if(st.name === newTask){callOrReset(false);}
+    if(st.name === otherNewTask){callOrReset(true);}
     
     // draw station overlay
     if (st.visible || st.dismissing) {
@@ -277,6 +276,7 @@ function draw() {
       }
       updateGameState = false;
     }
+    
     if(st.name == "heart"){
       if (st.num == "1" || st.num == "2" || st.num == "3" || heartLast == "1" || heartLast == "2" || heartLast == "3" ){heartConnected = true;}
       else{heartConnected = false;}

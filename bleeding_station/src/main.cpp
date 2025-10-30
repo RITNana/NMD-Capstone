@@ -103,15 +103,15 @@ int bleedingLoop()
   bool recalibrate = (digitalRead(recalibratePin) == LOW);
   if(recalibrate){calibrate(); delay(200);}
 
-  if(lightLevel > averageLight + lightThreshold){
-    Serial.print("ON ");
-  }
-  else{
-    Serial.print("OFF ");
-  }
+  // if(lightLevel > averageLight + lightThreshold){
+  //   Serial.print("ON ");
+  // }
+  // else{
+  //   Serial.print("OFF ");
+  // }
 
   // ✅ send ONLY the charge number
-  Serial.println(chargeNum);
+  // Serial.println(chargeNum);
   return chargeNum;
   delay(100);
 }
@@ -141,24 +141,76 @@ char server[] = "192.168.137.1";
 //IPAddress server(64,131,82,241);
 
 unsigned long lastConnectionTime = 0;            // last time you connected to the server, in milliseconds
-const unsigned long postingInterval = 10L * 1000L; // delay between updates, in milliseconds
+const unsigned long postingInterval = 1L * 10L; // delay between updates, in milliseconds
+// char* useful;
+void parsing(char* response){
+  Serial.print("Raw body: ");
+  Serial.println(response);
+
+  // Now parse with strtok
+  char* token = strtok(response, "=");  // split by '='
+
+  if (token != NULL) { //
+    char* key = token;
+    token = strtok(NULL, "=");
+    if (token != NULL) {
+      char* value = token;
+      Serial.print("Key: ");
+      Serial.println(key);
+      Serial.print("Value: ");
+      Serial.println(value);
+      // useful = value;
+    }
+  }
+  // if(useful){digitalWrite(ledPins[2], HIGH);}
+}
 
 /* just wrap the received data up to 80 columns in the serial print*/
 /* -------------------------------------------------------------------------- */
 void read_request() {
-/* -------------------------------------------------------------------------- */  
-  uint32_t received_data_num = 0;
+  static char buffer[128];
+  int index = 0;
+  bool inBody = false;
 
   while (client.available()) {
-    /* actual data reception */
     char c = client.read();
-    /* print data to serial port */
     Serial.print(c);
-    /* wrap data to 80 columns*/
-    received_data_num++;
-    if(received_data_num % 80 == 0) {}
-    
-  }  
+
+    // Skip headers (find first blank line)
+    if (!inBody) {
+      static String header = "";
+      header += c;
+      if (header.endsWith("\r\n\r\n")) {
+        inBody = true;
+      }
+      continue;
+    }
+
+    if (index < sizeof(buffer) - 1) {
+      buffer[index++] = c;
+    }
+  }
+
+  if (index == 0) {
+    // no new data
+    return;
+  }
+
+  buffer[index] = '\0';
+
+  // Example format: bleeding=HIGH
+  char* key = strtok(buffer, "=");
+  char* val = strtok(NULL, "=");
+
+  if (key && val) {
+    Serial.print(key);
+    Serial.print(": ");
+    Serial.println(val);
+  } else {
+    Serial.println(buffer);
+  }
+
+  client.stop(); // close to trigger next request immediately
 }
 
 // This things sends a group of headers in a httpRequest
@@ -216,7 +268,7 @@ void printWifiStatus() {
 void setup() {
 /* -------------------------------------------------------------------------- */  
   //Initialize serial and wait for port to open:
-  Serial.begin(9600);
+  Serial.begin(115200);
   bleedingSetup();
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
