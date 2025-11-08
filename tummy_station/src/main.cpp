@@ -138,15 +138,14 @@ int tummyLoop()
   //Where it closes
   if (connectionLight > averageLight && pressed)
   {
-    close();
-    output = 1; // closed
+    output += 1; // closed
   }
 
   // Serial.println(connectionLight);
   // Serial.println(output);
   // output = servoR.read();
 
-  return output * 5;
+  return output * 2;
 }
 
 // // -----------------------------------------------------

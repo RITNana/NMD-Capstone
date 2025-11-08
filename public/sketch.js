@@ -224,7 +224,9 @@ function draw() {
     const posY = positions[key].y;
     // smooth progress update
     if(inputDelay){
-      st.progress = lerp(st.progress, ledProgress(st.num, thresholds), 0.1);
+      st.progress = lerp(st.progress, ledProgress((st.progress + st.num), thresholds), 0.1);
+      // st.progress = lerp(st.progress,st.progress + st.num,.1);
+      // st.progress += st.num;
     }
     // detect completion
     if (!st.dismissing && st.visible && st.progress >= 0.995) {
@@ -258,7 +260,7 @@ function draw() {
       if (!othertask) newTask = "";
       if (othertask) otherNewTask = "";
       st.progress = 0;
-      st.num = 0;
+      // st.num = 0;
       st.dismissStart = 0;
       if(st.name == "eyeball" || st.name =="tummy"){
         st.inputDelay = false;
@@ -296,7 +298,7 @@ function draw() {
       textAlign(LEFT, CENTER);
 
       //NEEDS TO CHNAGE so it relates to if connected or not, NOT THE CHARGE
-      if (st.num > 0) {
+      if (st.progress > 0) {
         fill(255, 255 * st.fade);
         text("CONNECTED", 620, 40);
       }

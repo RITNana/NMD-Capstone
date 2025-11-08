@@ -9,6 +9,8 @@ int leftEyePin = A0;
 int rightEyePin = A1;
 int socketPin = A2;
 
+int output;
+
 int count = 0;
 
 const int lightThreshold = 33;
@@ -107,6 +109,7 @@ void popout(){
       // eyeballServo.write(90);
       // delay(500);
       count = 0;
+      output = 0;
       //calibrate(leftEyePin);
       //calibrate(rightEyePin);
       go = "false";
@@ -181,16 +184,17 @@ int eyeballLoop()
     else if (eyesCovered(leftLight, rightLight))
     {
       eyeCondition = 1;
+      output += 2;
     }
     else{
       return 0; //This is to prevent the 2 from triggering completion
     }
   }
 
-  delay(200);
+  // delay(200);
   //Serial.print(" | eyeCondition=");
   Serial.println(eyeCondition);
-  return eyeCondition * 100000;
+  return output;
 }
 
 

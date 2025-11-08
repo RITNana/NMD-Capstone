@@ -2203,447 +2203,448 @@ END GROUP
                 0x0000430c       0x84 .pio\build\uno_r4_wifi\src\main.cpp.o
                 0x0000430c                parsing(char*)
  .text._Z9tummyLoopv
-                0x00004390       0xcc .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x00004390       0xc8 .pio\build\uno_r4_wifi\src\main.cpp.o
                 0x00004390                tummyLoop()
  .text._Z12read_requestv
-                0x0000445c       0xac .pio\build\uno_r4_wifi\src\main.cpp.o
-                0x0000445c                read_request()
+                0x00004458       0xac .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x00004458                read_request()
  .text._Z11httpRequesti
-                0x00004508       0x78 .pio\build\uno_r4_wifi\src\main.cpp.o
-                0x00004508                httpRequest(int)
- .text.loop     0x00004580       0x12 .pio\build\uno_r4_wifi\src\main.cpp.o
-                0x00004580                loop
- *fill*         0x00004592        0x2 ff
- .text.setup    0x00004594       0xac .pio\build\uno_r4_wifi\src\main.cpp.o
-                0x00004594                setup
+                0x00004504       0x78 .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x00004504                httpRequest(int)
+ .text.loop     0x0000457c       0x12 .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x0000457c                loop
+ *fill*         0x0000458e        0x2 ff
+ .text.setup    0x00004590       0xac .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x00004590                setup
  .text._ZL17servo_timer_startv
-                0x00004640       0x28 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+                0x0000463c       0x28 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
  .text._Z20servo_timer_callbackP22st_timer_callback_args
-                0x00004668       0xe8 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
-                0x00004668                servo_timer_callback(st_timer_callback_args*)
+                0x00004664       0xe8 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+                0x00004664                servo_timer_callback(st_timer_callback_args*)
  .text._ZN5ServoC2Ev
-                0x00004750        0x6 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
-                0x00004750                Servo::Servo()
-                0x00004750                Servo::Servo()
- *fill*         0x00004756        0x2 ff
+                0x0000474c        0x6 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+                0x0000474c                Servo::Servo()
+                0x0000474c                Servo::Servo()
+ *fill*         0x00004752        0x2 ff
  .text._ZN5Servo17writeMicrosecondsEi
-                0x00004758       0x58 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
-                0x00004758                Servo::writeMicroseconds(int)
+                0x00004754       0x58 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+                0x00004754                Servo::writeMicroseconds(int)
  .text._ZN5Servo6attachEiii
-                0x000047b0      0x160 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
-                0x000047b0                Servo::attach(int, int, int)
+                0x000047ac      0x160 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+                0x000047ac                Servo::attach(int, int, int)
  .text._ZN5Servo6attachEi
-                0x00004910        0xc .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
-                0x00004910                Servo::attach(int)
+                0x0000490c        0xc .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+                0x0000490c                Servo::attach(int)
  .text._ZN5Servo5writeEi
-                0x0000491c       0x44 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
-                0x0000491c                Servo::write(int)
+                0x00004918       0x44 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+                0x00004918                Servo::write(int)
  .text.startup._GLOBAL__sub_I__Z20servo_timer_callbackP22st_timer_callback_args
-                0x00004960        0xc .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+                0x0000495c        0xc .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
  .text.exit._GLOBAL__sub_D__Z20servo_timer_callbackP22st_timer_callback_args
-                0x0000496c        0xc .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+                0x00004968        0xc .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
  .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_createERjj.isra.24
-                0x00004978       0x34 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
+                0x00004974       0x34 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
  .text._ZN5CWifiC2Ev
-                0x000049ac       0x68 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
-                0x000049ac                CWifi::CWifi()
-                0x000049ac                CWifi::CWifi()
+                0x000049a8       0x68 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
+                0x000049a8                CWifi::CWifi()
+                0x000049a8                CWifi::CWifi()
  .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_disposeEv
-                0x00004a14       0x10 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
-                0x00004a14                std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_dispose()
+                0x00004a10       0x10 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
+                0x00004a10                std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_dispose()
  .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE7_S_copyEPcPKcj
-                0x00004a24       0x1a .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
-                0x00004a24                std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_S_copy(char*, char const*, unsigned int)
+                0x00004a20       0x1a .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
+                0x00004a20                std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_S_copy(char*, char const*, unsigned int)
  .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_assignERKS4_
-                0x00004a3e       0x4e .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
-                0x00004a3e                std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_assign(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+                0x00004a3a       0x4e .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
+                0x00004a3a                std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_assign(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
  .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.isra.25
-                0x00004a8c       0x44 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
+                0x00004a88       0x44 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
  .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC2EPKcRKS3_.constprop.34
-                0x00004ad0       0x28 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
+                0x00004acc       0x28 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
  .text._ZN5CWifi4SSIDEv
-                0x00004af8       0xd8 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
-                0x00004af8                CWifi::SSID()
+                0x00004af4       0xd8 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
+                0x00004af4                CWifi::SSID()
  .text._ZN5CWifi6statusEv
-                0x00004bd0       0x60 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
-                0x00004bd0                CWifi::status()
+                0x00004bcc       0x60 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
+                0x00004bcc                CWifi::status()
  .text._ZN5CWifi5beginEPKcS1_
-                0x00004c30       0xd0 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
-                0x00004c30                CWifi::begin(char const*, char const*)
+                0x00004c2c       0xd0 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
+                0x00004c2c                CWifi::begin(char const*, char const*)
  .text._ZN5CWifi4RSSIEv
-                0x00004d00       0x50 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
-                0x00004d00                CWifi::RSSI()
+                0x00004cfc       0x50 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
+                0x00004cfc                CWifi::RSSI()
  .text._ZN5CWifi7localIPEv
-                0x00004d50       0xd8 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
-                0x00004d50                CWifi::localIP()
+                0x00004d4c       0xd8 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
+                0x00004d4c                CWifi::localIP()
  .text._ZN5CWifi15firmwareVersionEv
-                0x00004e28       0x7c .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
-                0x00004e28                CWifi::firmwareVersion()
+                0x00004e24       0x7c .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
+                0x00004e24                CWifi::firmwareVersion()
  .text.startup._GLOBAL__sub_I__ZN5CWifiC2Ev
-                0x00004ea4        0xc .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
+                0x00004ea0        0xc .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
  .text.exit._GLOBAL__sub_D__ZN5CWifiC2Ev
-                0x00004eb0       0x1c .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
+                0x00004eac       0x1c .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
  .text._ZN7arduino5Print17availableForWriteEv
-                0x00004ecc        0x4 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x00004ecc                arduino::Print::availableForWrite()
+                0x00004ec8        0x4 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00004ec8                arduino::Print::availableForWrite()
  .text._ZN10WiFiClientcvbEv
-                0x00004ed0        0xa .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x00004ed0                WiFiClient::operator bool()
+                0x00004ecc        0xa .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00004ecc                WiFiClient::operator bool()
  .text._ZN10WiFiClientneERKS_
-                0x00004eda       0x10 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x00004eda                WiFiClient::operator!=(WiFiClient const&)
+                0x00004ed6       0x10 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00004ed6                WiFiClient::operator!=(WiFiClient const&)
  .text._ZN10WiFiClient5writeEh
-                0x00004eea       0x16 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x00004eea                WiFiClient::write(unsigned char)
+                0x00004ee6       0x16 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00004ee6                WiFiClient::write(unsigned char)
  .text._ZN10WiFiClient4readEv
-                0x00004f00       0x20 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x00004f00                WiFiClient::read()
+                0x00004efc       0x20 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00004efc                WiFiClient::read()
  .text._ZN10WiFiClienteqERKS_
-                0x00004f20        0xc .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x00004f20                WiFiClient::operator==(WiFiClient const&)
+                0x00004f1c        0xc .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00004f1c                WiFiClient::operator==(WiFiClient const&)
  .text._ZNSt15_Sp_counted_ptrIPN7arduino10FifoBufferIhLm1024EEELN9__gnu_cxx12_Lock_policyE0EED2Ev
-                0x00004f2c        0x2 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x00004f2c                std::_Sp_counted_ptr<arduino::FifoBuffer<unsigned char, 1024ul>*, (__gnu_cxx::_Lock_policy)0>::~_Sp_counted_ptr()
-                0x00004f2c                std::_Sp_counted_ptr<arduino::FifoBuffer<unsigned char, 1024ul>*, (__gnu_cxx::_Lock_policy)0>::~_Sp_counted_ptr()
+                0x00004f28        0x2 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00004f28                std::_Sp_counted_ptr<arduino::FifoBuffer<unsigned char, 1024ul>*, (__gnu_cxx::_Lock_policy)0>::~_Sp_counted_ptr()
+                0x00004f28                std::_Sp_counted_ptr<arduino::FifoBuffer<unsigned char, 1024ul>*, (__gnu_cxx::_Lock_policy)0>::~_Sp_counted_ptr()
  .text._ZNSt15_Sp_counted_ptrIPN7arduino10FifoBufferIhLm1024EEELN9__gnu_cxx12_Lock_policyE0EE14_M_get_deleterERKSt9type_info
-                0x00004f2e        0x4 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x00004f2e                std::_Sp_counted_ptr<arduino::FifoBuffer<unsigned char, 1024ul>*, (__gnu_cxx::_Lock_policy)0>::_M_get_deleter(std::type_info const&)
+                0x00004f2a        0x4 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00004f2a                std::_Sp_counted_ptr<arduino::FifoBuffer<unsigned char, 1024ul>*, (__gnu_cxx::_Lock_policy)0>::_M_get_deleter(std::type_info const&)
  .text._ZNSt15_Sp_counted_ptrIPN7arduino10FifoBufferIhLm1024EEELN9__gnu_cxx12_Lock_policyE0EE10_M_disposeEv
-                0x00004f32        0xa .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x00004f32                std::_Sp_counted_ptr<arduino::FifoBuffer<unsigned char, 1024ul>*, (__gnu_cxx::_Lock_policy)0>::_M_dispose()
+                0x00004f2e        0xa .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00004f2e                std::_Sp_counted_ptr<arduino::FifoBuffer<unsigned char, 1024ul>*, (__gnu_cxx::_Lock_policy)0>::_M_dispose()
  .text._ZNSt15_Sp_counted_ptrIPN7arduino10FifoBufferIhLm1024EEELN9__gnu_cxx12_Lock_policyE0EED0Ev
-                0x00004f3c        0xe .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x00004f3c                std::_Sp_counted_ptr<arduino::FifoBuffer<unsigned char, 1024ul>*, (__gnu_cxx::_Lock_policy)0>::~_Sp_counted_ptr()
+                0x00004f38        0xe .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00004f38                std::_Sp_counted_ptr<arduino::FifoBuffer<unsigned char, 1024ul>*, (__gnu_cxx::_Lock_policy)0>::~_Sp_counted_ptr()
  .text._ZNSt15_Sp_counted_ptrIPN7arduino10FifoBufferIhLm1024EEELN9__gnu_cxx12_Lock_policyE0EE10_M_destroyEv
-                0x00004f4a        0x8 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x00004f4a                std::_Sp_counted_ptr<arduino::FifoBuffer<unsigned char, 1024ul>*, (__gnu_cxx::_Lock_policy)0>::_M_destroy()
+                0x00004f46        0x8 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00004f46                std::_Sp_counted_ptr<arduino::FifoBuffer<unsigned char, 1024ul>*, (__gnu_cxx::_Lock_policy)0>::_M_destroy()
  .text._ZN10WiFiClient7connectEN7arduino9IPAddressEt
-                0x00004f52       0x26 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x00004f52                WiFiClient::connect(arduino::IPAddress, unsigned short)
+                0x00004f4e       0x26 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00004f4e                WiFiClient::connect(arduino::IPAddress, unsigned short)
  .text._ZNSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE0EE10_M_releaseEv.part.6
-                0x00004f78       0x20 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00004f74       0x20 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
  .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC2EPKcRKS3_.constprop.43
-                0x00004f98       0x54 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00004f94       0x54 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
  .text._ZN7__GuardD2Ev
-                0x00004fec        0xc .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x00004fec                __Guard::~__Guard()
-                0x00004fec                __Guard::~__Guard()
+                0x00004fe8        0xc .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00004fe8                __Guard::~__Guard()
+                0x00004fe8                __Guard::~__Guard()
  .text._ZN7arduino10FifoBufferIhLm1024EE9availableEv.isra.7
-                0x00004ff8       0x2c .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00004ff4       0x2c .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
  .text._ZN7arduino10FifoBufferIhLm1024EE9nextIndexEm.isra.14
-                0x00005024       0x2e .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00005020       0x2e .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
  .text._ZNSt14__shared_countILN9__gnu_cxx12_Lock_policyE0EED2Ev
-                0x00005052       0x18 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x00005052                std::__shared_count<(__gnu_cxx::_Lock_policy)0>::~__shared_count()
-                0x00005052                std::__shared_count<(__gnu_cxx::_Lock_policy)0>::~__shared_count()
- *fill*         0x0000506a        0x2 ff
+                0x0000504e       0x18 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x0000504e                std::__shared_count<(__gnu_cxx::_Lock_policy)0>::~__shared_count()
+                0x0000504e                std::__shared_count<(__gnu_cxx::_Lock_policy)0>::~__shared_count()
+ *fill*         0x00005066        0x2 ff
  .text._ZN10WiFiClientD2Ev
-                0x0000506c       0x18 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x0000506c                WiFiClient::~WiFiClient()
-                0x0000506c                WiFiClient::~WiFiClient()
+                0x00005068       0x18 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00005068                WiFiClient::~WiFiClient()
+                0x00005068                WiFiClient::~WiFiClient()
  .text._ZN10WiFiClient9getSocketEv
-                0x00005084       0x80 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x00005084                WiFiClient::getSocket()
+                0x00005080       0x80 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00005080                WiFiClient::getSocket()
  .text._ZN10WiFiClient7connectEPKct
-                0x00005104       0xb0 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x00005104                WiFiClient::connect(char const*, unsigned short)
+                0x00005100       0xb0 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00005100                WiFiClient::connect(char const*, unsigned short)
  .text._ZN10WiFiClient5writeEPKhj
-                0x000051b4       0x80 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x000051b4                WiFiClient::write(unsigned char const*, unsigned int)
+                0x000051b0       0x80 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x000051b0                WiFiClient::write(unsigned char const*, unsigned int)
  .text._ZN10WiFiClient9availableEv
-                0x00005234       0x98 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x00005234                WiFiClient::available()
+                0x00005230       0x98 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00005230                WiFiClient::available()
  .text._ZN10WiFiClient5_readEv
-                0x000052cc      0x138 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x000052cc                WiFiClient::_read()
+                0x000052c8      0x138 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x000052c8                WiFiClient::_read()
  .text._ZN10WiFiClient14read_if_neededEj
-                0x00005404       0x22 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x00005404                WiFiClient::read_if_needed(unsigned int)
+                0x00005400       0x22 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00005400                WiFiClient::read_if_needed(unsigned int)
  .text._ZN10WiFiClient4readEPhj
-                0x00005426       0x88 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x00005426                WiFiClient::read(unsigned char*, unsigned int)
+                0x00005422       0x88 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00005422                WiFiClient::read(unsigned char*, unsigned int)
  .text._ZN10WiFiClient4peekEv
-                0x000054ae       0x2c .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x000054ae                WiFiClient::peek()
- *fill*         0x000054da        0x2 ff
+                0x000054aa       0x2c .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x000054aa                WiFiClient::peek()
+ *fill*         0x000054d6        0x2 ff
  .text._ZN10WiFiClient5flushEv
-                0x000054dc       0x60 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x000054dc                WiFiClient::flush()
+                0x000054d8       0x60 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x000054d8                WiFiClient::flush()
  .text._ZN10WiFiClient4stopEv
-                0x0000553c       0x78 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x0000553c                WiFiClient::stop()
+                0x00005538       0x78 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00005538                WiFiClient::stop()
  .text._ZN10WiFiClient9connectedEv
-                0x000055b4       0x80 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x000055b4                WiFiClient::connected()
+                0x000055b0       0x80 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x000055b0                WiFiClient::connected()
  .text._ZN10WiFiClient8remoteIPEv
-                0x00005634       0xa8 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x00005634                WiFiClient::remoteIP()
+                0x00005630       0xa8 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00005630                WiFiClient::remoteIP()
  .text._ZN10WiFiClient10remotePortEv
-                0x000056dc       0x74 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x000056dc                WiFiClient::remotePort()
+                0x000056d8       0x74 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x000056d8                WiFiClient::remotePort()
  .text._ZNSt12__shared_ptrIN7arduino10FifoBufferIhLm1024EEELN9__gnu_cxx12_Lock_policyE0EEaSEOS5_
-                0x00005750       0x28 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x00005750                std::__shared_ptr<arduino::FifoBuffer<unsigned char, 1024ul>, (__gnu_cxx::_Lock_policy)0>::operator=(std::__shared_ptr<arduino::FifoBuffer<unsigned char, 1024ul>, (__gnu_cxx::_Lock_policy)0>&&)
+                0x0000574c       0x28 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x0000574c                std::__shared_ptr<arduino::FifoBuffer<unsigned char, 1024ul>, (__gnu_cxx::_Lock_policy)0>::operator=(std::__shared_ptr<arduino::FifoBuffer<unsigned char, 1024ul>, (__gnu_cxx::_Lock_policy)0>&&)
  .text._ZN10WiFiClientC2Ev
-                0x00005778       0x74 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
-                0x00005778                WiFiClient::WiFiClient()
-                0x00005778                WiFiClient::WiFiClient()
+                0x00005774       0x74 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFiClient.cpp.o)
+                0x00005774                WiFiClient::WiFiClient()
+                0x00005774                WiFiClient::WiFiClient()
  .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_createERjj.isra.21
-                0x000057ec       0x34 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
+                0x000057e8       0x34 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
  .text._ZN10ModemClassD2Ev
-                0x00005820       0x18 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
-                0x00005820                ModemClass::~ModemClass()
-                0x00005820                ModemClass::~ModemClass()
+                0x0000581c       0x18 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
+                0x0000581c                ModemClass::~ModemClass()
+                0x0000581c                ModemClass::~ModemClass()
  .text._ZN10ModemClass12write_nowaitERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERS5_PKcz
-                0x00005838       0x6c .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
-                0x00005838                ModemClass::write_nowait(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, char const*, ...)
+                0x00005834       0x6c .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
+                0x00005834                ModemClass::write_nowait(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, char const*, ...)
  .text._ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE7compareEPKc
-                0x000058a4       0x28 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
-                0x000058a4                std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::compare(char const*) const
+                0x000058a0       0x28 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
+                0x000058a0                std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::compare(char const*) const
  .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC2EPKcRKS3_
-                0x000058cc       0x50 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
-                0x000058cc                std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)
-                0x000058cc                std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)
+                0x000058c8       0x50 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
+                0x000058c8                std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)
+                0x000058c8                std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&)
  .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_mutateEjjPKcj
-                0x0000591c       0x7e .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
-                0x0000591c                std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_mutate(unsigned int, unsigned int, char const*, unsigned int)
+                0x00005918       0x7e .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
+                0x00005918                std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_mutate(unsigned int, unsigned int, char const*, unsigned int)
  .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9push_backEc
-                0x0000599a       0x3e .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
-                0x0000599a                std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::push_back(char)
+                0x00005996       0x3e .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
+                0x00005996                std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::push_back(char)
  .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE7_S_moveEPcPKcj
-                0x000059d8       0x1a .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
-                0x000059d8                std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_S_move(char*, char const*, unsigned int)
- *fill*         0x000059f2        0x2 ff
+                0x000059d4       0x1a .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
+                0x000059d4                std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_S_move(char*, char const*, unsigned int)
+ *fill*         0x000059ee        0x2 ff
  .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_replaceEjjPKcj
-                0x000059f4       0xfc .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
-                0x000059f4                std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_replace(unsigned int, unsigned int, char const*, unsigned int)
+                0x000059f0       0xfc .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
+                0x000059f0                std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_replace(unsigned int, unsigned int, char const*, unsigned int)
  .text._ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEaSEPKc
-                0x00005af0       0x1e .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
-                0x00005af0                std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::operator=(char const*)
- *fill*         0x00005b0e        0x2 ff
+                0x00005aec       0x1e .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
+                0x00005aec                std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::operator=(char const*)
+ *fill*         0x00005b0a        0x2 ff
  .text._ZN10ModemClass8buf_readERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERS5_
-                0x00005b10      0x338 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
-                0x00005b10                ModemClass::buf_read(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&)
+                0x00005b0c      0x338 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
+                0x00005b0c                ModemClass::buf_read(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&)
  .text._ZN10ModemClass11passthroughEPKhj
-                0x00005e48       0xa0 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
-                0x00005e48                ModemClass::passthrough(unsigned char const*, unsigned int)
+                0x00005e44       0xa0 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
+                0x00005e44                ModemClass::passthrough(unsigned char const*, unsigned int)
  .text._ZN10ModemClass5writeERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERS5_PKcz
-                0x00005ee8       0xdc .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
-                0x00005ee8                ModemClass::write(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, char const*, ...)
+                0x00005ee4       0xdc .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
+                0x00005ee4                ModemClass::write(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, char const*, ...)
  .text._ZN10ModemClass5beginEii
-                0x00005fc4       0x94 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
-                0x00005fc4                ModemClass::begin(int, int)
+                0x00005fc0       0x94 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
+                0x00005fc0                ModemClass::begin(int, int)
  .text.startup._GLOBAL__sub_I__ZN10ModemClassC2Eii
-                0x00006058       0x28 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
+                0x00006054       0x28 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
  .text.exit._GLOBAL__sub_D__ZN10ModemClassC2Eii
-                0x00006080        0xc .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
+                0x0000607c        0xc .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
  .text.startup.main
-                0x0000608c        0xa .pio\build\uno_r4_wifi\libFrameworkArduinoVariant.a(main.c.o)
-                0x0000608c                main
+                0x00006088        0xa .pio\build\uno_r4_wifi\libFrameworkArduinoVariant.a(main.c.o)
+                0x00006088                main
  .text.PINCOUNT_fn
-                0x00006096        0x4 .pio\build\uno_r4_wifi\libFrameworkArduinoVariant.a(variant.cpp.o)
-                0x00006096                PINCOUNT_fn
+                0x00006092        0x4 .pio\build\uno_r4_wifi\libFrameworkArduinoVariant.a(variant.cpp.o)
+                0x00006092                PINCOUNT_fn
  .text._Z17__maybe_start_usbv
-                0x0000609a        0x2 .pio\build\uno_r4_wifi\libFrameworkArduinoVariant.a(variant.cpp.o)
-                0x0000609a                __maybe_start_usb()
+                0x00006096        0x2 .pio\build\uno_r4_wifi\libFrameworkArduinoVariant.a(variant.cpp.o)
+                0x00006096                __maybe_start_usb()
  .text.initVariant
-                0x0000609c       0x9c .pio\build\uno_r4_wifi\libFrameworkArduinoVariant.a(variant.cpp.o)
-                0x0000609c                initVariant
+                0x00006098       0x9c .pio\build\uno_r4_wifi\libFrameworkArduinoVariant.a(variant.cpp.o)
+                0x00006098                initVariant
  .text.R_FSP_SystemClockHzGet
-                0x00006138       0x24 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
+                0x00006134       0x24 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
  .text._ZN8FspTimer17set_period_countsEhfm.part.2
-                0x0000615c      0x158 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
+                0x00006158      0x158 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
  .text._ZN8FspTimerC2Ev
-                0x000062b4       0x18 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
-                0x000062b4                FspTimer::FspTimer()
-                0x000062b4                FspTimer::FspTimer()
+                0x000062b0       0x18 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
+                0x000062b0                FspTimer::FspTimer()
+                0x000062b0                FspTimer::FspTimer()
  .text._ZN8FspTimer5beginE12e_timer_modehhmm18e_timer_source_divPFvP22st_timer_callback_argsEPv
-                0x000062cc      0x16c .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
-                0x000062cc                FspTimer::begin(e_timer_mode, unsigned char, unsigned char, unsigned long, unsigned long, e_timer_source_div, void (*)(st_timer_callback_args*), void*)
+                0x000062c8      0x16c .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
+                0x000062c8                FspTimer::begin(e_timer_mode, unsigned char, unsigned char, unsigned long, unsigned long, e_timer_source_div, void (*)(st_timer_callback_args*), void*)
  .text._ZN8FspTimer19get_available_timerERhb
-                0x00006438       0x74 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
-                0x00006438                FspTimer::get_available_timer(unsigned char&, bool)
+                0x00006434       0x74 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
+                0x00006434                FspTimer::get_available_timer(unsigned char&, bool)
  .text._ZN8FspTimer17set_period_countsEhfm
-                0x000064ac       0xd8 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
-                0x000064ac                FspTimer::set_period_counts(unsigned char, float, unsigned long)
+                0x000064a8       0xd8 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
+                0x000064a8                FspTimer::set_period_counts(unsigned char, float, unsigned long)
  .text._ZN8FspTimer5beginE12e_timer_modehhffPFvP22st_timer_callback_argsEPv
-                0x00006584       0xb8 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
-                0x00006584                FspTimer::begin(e_timer_mode, unsigned char, unsigned char, float, float, void (*)(st_timer_callback_args*), void*)
+                0x00006580       0xb8 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
+                0x00006580                FspTimer::begin(e_timer_mode, unsigned char, unsigned char, float, float, void (*)(st_timer_callback_args*), void*)
  .text._ZN8FspTimer14get_period_rawEv
-                0x0000663c       0x2c .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
-                0x0000663c                FspTimer::get_period_raw()
+                0x00006638       0x2c .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
+                0x00006638                FspTimer::get_period_raw()
  .text._ZN8FspTimer10set_periodEm
-                0x00006668       0x3e .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
-                0x00006668                FspTimer::set_period(unsigned long)
+                0x00006664       0x3e .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
+                0x00006664                FspTimer::set_period(unsigned long)
  .text._ZN8FspTimer17set_period_bufferEb
-                0x000066a6       0x58 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
-                0x000066a6                FspTimer::set_period_buffer(bool)
+                0x000066a2       0x58 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
+                0x000066a2                FspTimer::set_period_buffer(bool)
  .text._ZN8FspTimer4openEv
-                0x000066fe       0x4e .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
-                0x000066fe                FspTimer::open()
+                0x000066fa       0x4e .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
+                0x000066fa                FspTimer::open()
  .text._ZN8FspTimer4stopEv
-                0x0000674c       0x2e .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
-                0x0000674c                FspTimer::stop()
+                0x00006748       0x2e .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
+                0x00006748                FspTimer::stop()
  .text._ZN8FspTimer5startEv
-                0x0000677a       0x2e .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
-                0x0000677a                FspTimer::start()
+                0x00006776       0x2e .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
+                0x00006776                FspTimer::start()
  .text._ZN8FspTimer5closeEv
-                0x000067a8       0x2e .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
-                0x000067a8                FspTimer::close()
- *fill*         0x000067d6        0x2 ff
+                0x000067a4       0x2e .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
+                0x000067a4                FspTimer::close()
+ *fill*         0x000067d2        0x2 ff
  .text._ZN8FspTimer3endEv
-                0x000067d8       0x48 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
-                0x000067d8                FspTimer::end()
+                0x000067d4       0x48 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
+                0x000067d4                FspTimer::end()
  .text._ZN8FspTimerD2Ev
-                0x00006820        0xc .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
-                0x00006820                FspTimer::~FspTimer()
-                0x00006820                FspTimer::~FspTimer()
+                0x0000681c        0xc .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
+                0x0000681c                FspTimer::~FspTimer()
+                0x0000681c                FspTimer::~FspTimer()
  .text._ZN8FspTimer15get_cfg_for_irqEv
-                0x0000682c       0x14 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
-                0x0000682c                FspTimer::get_cfg_for_irq()
+                0x00006828       0x14 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
+                0x00006828                FspTimer::get_cfg_for_irq()
  .text._ZN8FspTimer9is_openedEv
-                0x00006840       0x18 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
-                0x00006840                FspTimer::is_opened()
+                0x0000683c       0x18 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
+                0x0000683c                FspTimer::is_opened()
  .text._ZN8FspTimer18setup_overflow_irqEhPFvvE
-                0x00006858       0x4e .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
-                0x00006858                FspTimer::setup_overflow_irq(unsigned char, void (*)())
- *fill*         0x000068a6        0x2 ff
+                0x00006854       0x4e .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
+                0x00006854                FspTimer::setup_overflow_irq(unsigned char, void (*)())
+ *fill*         0x000068a2        0x2 ff
  .text.__NVIC_SetPriority
-                0x000068a8       0x28 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+                0x000068a4       0x28 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
  .text.R_BSP_IrqEnable
-                0x000068d0       0x34 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+                0x000068cc       0x34 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
  .text.R_BSP_IrqDisable
-                0x00006904       0x24 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
- .text.__tcf_0  0x00006928        0x2 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
- *fill*         0x0000692a        0x2 ff
+                0x00006900       0x24 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+ .text.__tcf_0  0x00006924        0x2 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+ *fill*         0x00006926        0x2 ff
  .text._ZN10IRQManager11getInstanceEv
-                0x0000692c       0x38 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
-                0x0000692c                IRQManager::getInstance()
+                0x00006928       0x38 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+                0x00006928                IRQManager::getInstance()
  .text._ZN10IRQManager18set_ext_link_eventEii
-                0x00006964       0xc8 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
-                0x00006964                IRQManager::set_ext_link_event(int, int)
+                0x00006960       0xc8 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+                0x00006960                IRQManager::set_ext_link_event(int, int)
  .text._ZN10IRQManager23set_gpt_over_link_eventEii
-                0x00006a2c       0x70 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
-                0x00006a2c                IRQManager::set_gpt_over_link_event(int, int)
+                0x00006a28       0x70 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+                0x00006a28                IRQManager::set_gpt_over_link_event(int, int)
  .text._ZN10IRQManager18set_agt_link_eventEii
-                0x00006a9c       0x28 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
-                0x00006a9c                IRQManager::set_agt_link_event(int, int)
+                0x00006a98       0x28 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+                0x00006a98                IRQManager::set_agt_link_event(int, int)
  .text._ZN10IRQManager16addTimerOverflowER5timerPFvvE
-                0x00006ac4       0x80 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
-                0x00006ac4                IRQManager::addTimerOverflow(timer&, void (*)())
+                0x00006ac0       0x80 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+                0x00006ac0                IRQManager::addTimerOverflow(timer&, void (*)())
  .text._ZN10IRQManager21set_iic_tx_link_eventEii
-                0x00006b44       0x20 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
-                0x00006b44                IRQManager::set_iic_tx_link_event(int, int)
+                0x00006b40       0x20 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+                0x00006b40                IRQManager::set_iic_tx_link_event(int, int)
  .text._ZN10IRQManager21set_iic_rx_link_eventEii
-                0x00006b64       0x20 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
-                0x00006b64                IRQManager::set_iic_rx_link_event(int, int)
+                0x00006b60       0x20 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+                0x00006b60                IRQManager::set_iic_rx_link_event(int, int)
  .text._ZN10IRQManager22set_iic_tei_link_eventEii
-                0x00006b84       0x20 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
-                0x00006b84                IRQManager::set_iic_tei_link_event(int, int)
+                0x00006b80       0x20 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+                0x00006b80                IRQManager::set_iic_tei_link_event(int, int)
  .text._ZN10IRQManager22set_iic_eri_link_eventEii
-                0x00006ba4       0x20 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
-                0x00006ba4                IRQManager::set_iic_eri_link_event(int, int)
+                0x00006ba0       0x20 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+                0x00006ba0                IRQManager::set_iic_eri_link_event(int, int)
  .text._ZN10IRQManager21set_sci_tx_link_eventEii
-                0x00006bc4       0x38 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
-                0x00006bc4                IRQManager::set_sci_tx_link_event(int, int)
+                0x00006bc0       0x38 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+                0x00006bc0                IRQManager::set_sci_tx_link_event(int, int)
  .text._ZN10IRQManager21set_sci_rx_link_eventEii
-                0x00006bfc       0x38 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
-                0x00006bfc                IRQManager::set_sci_rx_link_event(int, int)
+                0x00006bf8       0x38 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+                0x00006bf8                IRQManager::set_sci_rx_link_event(int, int)
  .text._ZN10IRQManager22set_sci_tei_link_eventEii
-                0x00006c34       0x38 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
-                0x00006c34                IRQManager::set_sci_tei_link_event(int, int)
+                0x00006c30       0x38 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+                0x00006c30                IRQManager::set_sci_tei_link_event(int, int)
  .text._ZN10IRQManager22set_sci_eri_link_eventEii
-                0x00006c6c       0x38 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
-                0x00006c6c                IRQManager::set_sci_eri_link_event(int, int)
+                0x00006c68       0x38 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+                0x00006c68                IRQManager::set_sci_eri_link_event(int, int)
  .text._ZN10IRQManager21set_spi_tx_link_eventEii
-                0x00006ca4       0x20 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
-                0x00006ca4                IRQManager::set_spi_tx_link_event(int, int)
+                0x00006ca0       0x20 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+                0x00006ca0                IRQManager::set_spi_tx_link_event(int, int)
  .text._ZN10IRQManager21set_spi_rx_link_eventEii
-                0x00006cc4       0x20 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
-                0x00006cc4                IRQManager::set_spi_rx_link_event(int, int)
+                0x00006cc0       0x20 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+                0x00006cc0                IRQManager::set_spi_rx_link_event(int, int)
  .text._ZN10IRQManager22set_spi_tei_link_eventEii
-                0x00006ce4       0x20 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
-                0x00006ce4                IRQManager::set_spi_tei_link_event(int, int)
+                0x00006ce0       0x20 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+                0x00006ce0                IRQManager::set_spi_tei_link_event(int, int)
  .text._ZN10IRQManager22set_spi_eri_link_eventEii
-                0x00006d04       0x20 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
-                0x00006d04                IRQManager::set_spi_eri_link_event(int, int)
+                0x00006d00       0x20 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+                0x00006d00                IRQManager::set_spi_eri_link_event(int, int)
  .text._ZN10IRQManager13addPeripheralE12Peripheral_tPv
-                0x00006d24      0x904 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
-                0x00006d24                IRQManager::addPeripheral(Peripheral_t, void*)
+                0x00006d20      0x904 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+                0x00006d20                IRQManager::addPeripheral(Peripheral_t, void*)
  .text._ZN4UARTcvbEv
-                0x00007628        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
-                0x00007628                UART::operator bool()
+                0x00007624        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
+                0x00007624                UART::operator bool()
  .text._ZN4UART5beginEm
-                0x0000762c        0xa .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
-                0x0000762c                UART::begin(unsigned long)
+                0x00007628        0xa .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
+                0x00007628                UART::begin(unsigned long)
  .text._ZN4UART5flushEv
-                0x00007636        0xa .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
-                0x00007636                UART::flush()
+                0x00007632        0xa .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
+                0x00007632                UART::flush()
  .text._ZN4UART4peekEv
-                0x00007640       0x18 .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
-                0x00007640                UART::peek()
+                0x0000763c       0x18 .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
+                0x0000763c                UART::peek()
  .text._ZN4UART5writeEh
-                0x00007658       0x34 .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
-                0x00007658                UART::write(unsigned char)
+                0x00007654       0x34 .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
+                0x00007654                UART::write(unsigned char)
  .text._ZN4UART3endEv
-                0x0000768c       0x22 .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
-                0x0000768c                UART::end()
+                0x00007688       0x22 .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
+                0x00007688                UART::end()
  .text._ZN4UART9availableEv
-                0x000076ae       0x32 .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
-                0x000076ae                UART::available()
+                0x000076aa       0x32 .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
+                0x000076aa                UART::available()
  .text._ZN4UART15WrapperCallbackEP20st_uart_callback_arg
-                0x000076e0       0x90 .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
-                0x000076e0                UART::WrapperCallback(st_uart_callback_arg*)
+                0x000076dc       0x90 .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
+                0x000076dc                UART::WrapperCallback(st_uart_callback_arg*)
  .text._ZN4UART4readEv
-                0x00007770       0x5c .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
-                0x00007770                UART::read()
+                0x0000776c       0x5c .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
+                0x0000776c                UART::read()
  .text._ZN4UARTC2Eiiii
-                0x000077cc       0x78 .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
-                0x000077cc                UART::UART(int, int, int, int)
-                0x000077cc                UART::UART(int, int, int, int)
+                0x000077c8       0x78 .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
+                0x000077c8                UART::UART(int, int, int, int)
+                0x000077c8                UART::UART(int, int, int, int)
  .text._ZN4UART13setUpUartIrqsER11st_uart_cfg
-                0x00007844       0x14 .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
-                0x00007844                UART::setUpUartIrqs(st_uart_cfg&)
+                0x00007840       0x14 .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
+                0x00007840                UART::setUpUartIrqs(st_uart_cfg&)
  .text._ZN4UART5writeEPhj
-                0x00007858       0x2e .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
-                0x00007858                UART::write(unsigned char*, unsigned int)
- *fill*         0x00007886        0x2 ff
+                0x00007854       0x2e .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
+                0x00007854                UART::write(unsigned char*, unsigned int)
+ *fill*         0x00007882        0x2 ff
  .text._ZN4UART8cfg_pinsEi
-                0x00007888       0xe8 .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
-                0x00007888                UART::cfg_pins(int)
+                0x00007884       0xe8 .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
+                0x00007884                UART::cfg_pins(int)
  .text._ZN4UART5beginEmt
-                0x00007970      0x1a8 .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
-                0x00007970                UART::begin(unsigned long, unsigned short)
+                0x0000796c      0x1a8 .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
+                0x0000796c                UART::begin(unsigned long, unsigned short)
  .text._ZN4UART9write_rawEPhj
-                0x00007b18       0x1e .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
-                0x00007b18                UART::write_raw(unsigned char*, unsigned int)
- *fill*         0x00007b36        0x2 ff
+                0x00007b14       0x1e .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
+                0x00007b14                UART::write_raw(unsigned char*, unsigned int)
+ *fill*         0x00007b32        0x2 ff
  .text.startup._GLOBAL__sub_I__UART1_
-                0x00007b38       0x1c .pio\build\uno_r4_wifi\libFrameworkArduino.a(SerialObj1.cpp.o)
+                0x00007b34       0x1c .pio\build\uno_r4_wifi\libFrameworkArduino.a(SerialObj1.cpp.o)
  .text.startup._GLOBAL__sub_I__UART3_
-                0x00007b54       0x1c .pio\build\uno_r4_wifi\libFrameworkArduino.a(SerialObj3.cpp.o)
+                0x00007b50       0x1c .pio\build\uno_r4_wifi\libFrameworkArduino.a(SerialObj3.cpp.o)
  .text._ZL13readAllGroupAP13ADC_Container
-                0x00007b70       0x2c .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
+                0x00007b6c       0x2c .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
  .text._ZL11ADC_irq_cbkP20st_adc_callback_args
-                0x00007b9c       0x58 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
+                0x00007b98       0x58 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
  .text._ZL10adcConvertP13ADC_Containert
-                0x00007bf4       0xa4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
+                0x00007bf0       0xa4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
  .text._ZL21get_ADC_container_ptrlRt.constprop.4
-                0x00007c98       0x38 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
+                0x00007c94       0x38 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
  .text._ZN13ADC_ContainerC2EhPFvP20st_adc_callback_argsEPv
-                0x00007cd0       0x6e .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
-                0x00007cd0                ADC_Container::ADC_Container(unsigned char, void (*)(st_adc_callback_args*), void*)
-                0x00007cd0                ADC_Container::ADC_Container(unsigned char, void (*)(st_adc_callback_args*), void*)
+                0x00007ccc       0x6e .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
+                0x00007ccc                ADC_Container::ADC_Container(unsigned char, void (*)(st_adc_callback_args*), void*)
+                0x00007ccc                ADC_Container::ADC_Container(unsigned char, void (*)(st_adc_callback_args*), void*)
  .text._ZN13ADC_ContainerD2Ev
-                0x00007d3e       0x12 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
-                0x00007d3e                ADC_Container::~ADC_Container()
-                0x00007d3e                ADC_Container::~ADC_Container()
+                0x00007d3a       0x12 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
+                0x00007d3a                ADC_Container::~ADC_Container()
+                0x00007d3a                ADC_Container::~ADC_Container()
  .text.analogRead
-                0x00007d50       0x3c .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
-                0x00007d50                analogRead
+                0x00007d4c       0x3c .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
+                0x00007d4c                analogRead
  .text.analogReference
-                0x00007d8c       0x5c .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
-                0x00007d8c                analogReference
+                0x00007d88       0x5c .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
+                0x00007d88                analogReference
+ *fill*         0x00007de4        0x4 ff
  .text._Z15analogReferencev
                 0x00007de8      0x10c .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
                 0x00007de8                analogReference()

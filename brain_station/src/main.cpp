@@ -22,7 +22,7 @@ bool lastReadState[4] = {false, false, false, false};
 // Charge number
 int chargeNum = 0;
 const int maxCharge = 100;
-const int chargeAdd = 7;
+const int chargeAdd = 4;
 const int chargeLose = 1;
 
 // function to calibrate the photoresistor to the room light level
