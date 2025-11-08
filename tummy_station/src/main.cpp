@@ -12,8 +12,8 @@ const int servoPinR = 9; // left
 const int servoPinL = 8; // right
 
 // angles for recalibration
-int angleL = 60;
-int angleR = 150;
+int angleL = 90;
+int angleR = 180;
 
 const int lightThreshold = 33;
 
@@ -65,7 +65,14 @@ void tummySetup()
 
   calibrate();
 }
+void close(){
+    delay(3000);
+    servoR.write(angleR);
+    servoL.write(angleL);
+    Serial.println("closing");
 
+    
+}
 void popout()
 {
 
@@ -76,14 +83,16 @@ void popout()
   if (remoteOpen == "true")
   {
     Serial.println("opening");
-    servoR.write(0);
-    servoL.write(190);
+    servoR.write(90);
+    servoL.write(180);
     delay(500);
 
     output = 0; // open
     remoteOpen = "false"; // this really doesnt need to be here but cause it gets overridden very soon but whatever
+    close();
   }
 }
+
 
 // change to tummyLoop()
 int tummyLoop()
@@ -129,11 +138,7 @@ int tummyLoop()
   //Where it closes
   if (connectionLight > averageLight && pressed)
   {
-    delay(500);
-    servoR.write(angleR);
-    servoL.write(angleL);
-    Serial.println("closing");
-
+    close();
     output = 1; // closed
   }
 
@@ -141,7 +146,7 @@ int tummyLoop()
   // Serial.println(output);
   // output = servoR.read();
 
-  return output * 10000;
+  return output * 5;
 }
 
 // // -----------------------------------------------------
@@ -192,7 +197,7 @@ void parsing(char* response){
 void read_request() { //Purpose is to read the response from the server and send the body to where it can be parsed
 /* -------------------------------------------------------------------------- */  
   uint32_t received_data_num = 0;
-  char response[256]; //have it so it buffers as much as possible
+  char response[12]; //have it so it buffers as much as possible
   int index = 0;
   bool bodyStarted = false;
   String line = "";

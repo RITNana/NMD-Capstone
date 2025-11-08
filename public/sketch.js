@@ -26,11 +26,11 @@ const barH = 30;
 
 // stations and their states
 let stations = {
-  brain: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [80, 180, 255], name: "brain" },
-  eyeball: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [255, 230, 100], name: "eyeball" },
-  bleeding: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [201, 22, 22], name: "bleeding" },
-  heart: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [255, 120, 180], name: "heart" },
-  tummy: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [120, 255, 150], name: "tummy" }
+  brain: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [80, 180, 255], name: "brain", inputDelay: true },
+  eyeball: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [255, 230, 100], name: "eyeball", inputDelay: false },
+  bleeding: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [201, 22, 22], name: "bleeding", inputDelay: true },
+  heart: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [255, 120, 180], name: "heart",inputDelay: true },
+  tummy: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [120, 255, 150], name: "tummy",inputDelay: false }
 };
 
 
@@ -223,8 +223,9 @@ function draw() {
     const st = stations[key];
     const posY = positions[key].y;
     // smooth progress update
-    st.progress = lerp(st.progress, ledProgress(st.num, thresholds), 0.1);
-
+    if(inputDelay){
+      st.progress = lerp(st.progress, ledProgress(st.num, thresholds), 0.1);
+    }
     // detect completion
     if (!st.dismissing && st.visible && st.progress >= 0.995) {
       st.dismissing = true;
@@ -244,6 +245,7 @@ function draw() {
       banish = ""
       gameState++;
       updateGameState = true;
+      st.inputDelay = true; //Possible solution for the first input completion
     }
 
     function callOrReset(othertask) {
@@ -258,6 +260,9 @@ function draw() {
       st.progress = 0;
       st.num = 0;
       st.dismissStart = 0;
+      if(st.name == "eyeball" || st.name =="tummy"){
+        st.inputDelay = false;
+      }
       socket.emit(`${st.name}`, true);
     }
     //return a task from completion / reset all values 

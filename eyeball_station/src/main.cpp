@@ -182,6 +182,9 @@ int eyeballLoop()
     {
       eyeCondition = 1;
     }
+    else{
+      return 0; //This is to prevent the 2 from triggering completion
+    }
   }
 
   delay(200);
@@ -237,7 +240,7 @@ void parsing(char* response){
 void read_request() { //Purpose is to read the response from the server and send the body to where it can be parsed
 /* -------------------------------------------------------------------------- */  
   uint32_t received_data_num = 0;
-  char response[256]; //have it so it buffers as much as possible
+  char response[12]; //have it so it buffers as much as possible
   int index = 0;
   bool bodyStarted = false;
   String line = "";
