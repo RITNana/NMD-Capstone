@@ -10,7 +10,7 @@ const int buttonPin = 7;
 const int recalibratePin = 8;
 
 // Light threshold value
-const int lightThreshold = 33;
+const int lightThreshold = 5;
 
 // LED state flag
 bool ledsOn = false;

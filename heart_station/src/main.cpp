@@ -8,7 +8,7 @@ const int leftPin  = A1;
 const int rightPin = A0;
 
 // light level threshold
-const int lightThreshold = 33;
+const int lightThreshold = 5;
 
 // Baseline averages established via calibration
 int averageLightLeft  = 0;

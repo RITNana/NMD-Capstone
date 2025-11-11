@@ -13,7 +13,7 @@ int output;
 
 int count = 0;
 
-const int lightThreshold = 33;
+const int lightThreshold = 15;
 
 int averageLightLeft;
 int averageLightRight;
@@ -21,7 +21,7 @@ int averageLightSocket;
 int eyeCondition;
 
 const int sockHyst = 10; // hysteresis for socket "connected" threshold
-const int eyeHyst = 0;
+const int eyeHyst = 1;
 
 // function to calibrate the photoresistor to the room light level
 void calibrate(int resistorPin)
@@ -60,7 +60,7 @@ String go = "false";
 void eyeballSetup()
 {
   Serial.begin(9600);
-  delay(200);
+  // delay(200);
   // while (!Serial)
   //{ /* wait on native USB boards */
   // }
@@ -95,13 +95,14 @@ void popout(){
   {
     char key = Serial.read();
   }
+  
   if (go == "true")
     {
-
+    // Serial.println(go);
       eyeballServo.write(90);
       delay(500);
       eyeballServo.write(0);
-      delay(500);
+      // delay(500);
 
       eyeCondition = 0;
 
@@ -125,7 +126,7 @@ int eyeballLoop()
   int connectionLight = analogRead(socketPin);
 
   bool connected = connectionLight > (averageLightSocket + sockHyst);
-
+  bool covered = eyesCovered(leftLight,rightLight);
   //Serial.print("L=");
   //Serial.print(leftLight);
   //Serial.print(" R=");
@@ -147,53 +148,54 @@ int eyeballLoop()
 
   // --- State machine ---
   // 0 = eyes bright (normal), 1 = eyes covered, 2 = eyes popped out (latched)
-  if (eyeCondition == 0)
-  {
-    // go to 1 when both eyes are covered
-    if (eyesCovered(leftLight, rightLight))
-    {
-      eyeCondition = 1;
-    }
-  }
-  else if (eyeCondition == 1)
-  {
-    // if eyes become bright:
-    if (eyesBright(leftLight, rightLight))
-    {
-      if (connected)
-      {
-        // socket light present -> OK to go back to 0
-        eyeCondition = 0;
-      }
-      else
-      {
-        // socket dark -> latch "popped out"
-        eyeCondition = 2;
-      }
-    }
-    // (stay 1 if still covered)
-  }
-  else if (eyeCondition == 2)
-  {
-    // popped out: must see socket light before allowing return to 0
-    if (connected && eyesBright(leftLight, rightLight))
-    {
-      eyeCondition = 0;
-    }
-    // user can cover again anytime -> show 1
-    else if (eyesCovered(leftLight, rightLight))
-    {
-      eyeCondition = 1;
-      output += 2;
-    }
-    else{
-      return 0; //This is to prevent the 2 from triggering completion
-    }
-  }
-
+  // if (eyeCondition == 0)
+  // {
+  //   // go to 1 when both eyes are covered
+  //   if (eyesCovered(leftLight, rightLight))
+  //   {
+  //     eyeCondition = 1;
+  //   }
+  // }
+  // else if (eyeCondition == 1)
+  // {
+  //   // if eyes become bright:
+  //   if (eyesBright(leftLight, rightLight))
+  //   {
+  //     if (connected)
+  //     {
+  //       // socket light present -> OK to go back to 0
+  //       eyeCondition = 0;
+  //     }
+  //     else
+  //     {
+  //       // socket dark -> latch "popped out"
+  //       eyeCondition = 2;
+  //     }
+  //   }
+  //   // (stay 1 if still covered)
+  // }
+  // else if (eyeCondition == 2)
+  // {
+  //   // popped out: must see socket light before allowing return to 0
+  //   if (connected && eyesBright(leftLight, rightLight))
+  //   {
+  //     eyeCondition = 0;
+  //   }
+  //   // user can cover again anytime -> show 1
+  //   else if (eyesCovered(leftLight, rightLight))
+  //   {
+  //     eyeCondition = 1;
+  //     output += 2;
+  //   }
+  //   else{
+  //     return 0; //This is to prevent the 2 from triggering completion
+  //   }
+  // }
+  if(connected && covered){output += 2;}
+  else if( output > 0){output -= 2;}
   // delay(200);
   //Serial.print(" | eyeCondition=");
-  Serial.println(eyeCondition);
+  // Serial.println(eyeCondition);
   return output;
 }
 
@@ -219,6 +221,7 @@ const unsigned long postingInterval = 10L * 1000L; // delay between updates, in 
 void parsing(char* response){
   Serial.print("Raw body: ");
   Serial.println(response);
+  // Serial.println("boop");
 
   // Now parse with strtok
   char* token = strtok(response, "=");  // split by '='
@@ -244,27 +247,33 @@ void parsing(char* response){
 void read_request() { //Purpose is to read the response from the server and send the body to where it can be parsed
 /* -------------------------------------------------------------------------- */  
   uint32_t received_data_num = 0;
-  char response[12]; //have it so it buffers as much as possible
+  char response[16]; //buffer out an area to fill the response into 16 should be enough
   int index = 0;
   bool bodyStarted = false;
   String line = "";
 
   // Wait for server data
   unsigned long timeout = millis();
-  while (!client.available() && millis() - timeout < 2000) {
-    delay(10);
+  while (!client.available()) {
+    delay(1);
   }
 
   // Read and print all available characters
-  if (client.connected()) {
+  // if (client.connected()) {
     while (client.available()) {
       char c = client.read();
-
+      if(c == '~'){
+          // client.stop();
+          // Serial.println("break");
+        break;
+      }
       if (bodyStarted) {
+        
         // Store response characters until buffer is full or connection ends
         if (index < sizeof(response) - 1) {
           response[index++] = c;
         }
+        
       } 
       else {
         // Detect end of HTTP headers (\r\n\r\n)
@@ -274,11 +283,12 @@ void read_request() { //Purpose is to read the response from the server and send
         }
       }
     }
-  }
+    
+  // }
   response[index] = '\0';  // Null-terminate C string
-
+  
   parsing((char*)response);
-
+  client.stop();
   // Serial.println("\n--- End of Response ---"); 
 }
 
@@ -288,7 +298,7 @@ void httpRequest(int data) {
 /* -------------------------------------------------------------------------- */  
   // close any connection before send a new request.
   // This will free the socket on the NINA module
-  client.stop();
+  // client.stop();
 
   // if there's a successful connection:
   if (client.connect(server, 3000)) { //Server address from above & Port
@@ -303,6 +313,7 @@ void httpRequest(int data) {
     client.println();
     // note the time that the connection was made:
     lastConnectionTime = millis();
+    read_request();
   } else {
     // if you couldn't make a connection:
     Serial.println("connection failed");
@@ -373,7 +384,7 @@ void loop() {
   // if there's incoming data from the net connection.
   // send it out the serial port.  This is for debugging
   // purposes only:
-  read_request();
+  // read_request();
   
   // if ten seconds have passed since your last connection,
   // then connect again and send data:

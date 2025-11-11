@@ -11,7 +11,7 @@ const int recalibratePin = 8;
 
 // Light threshold calibration
 int averageLight;
-const int lightThreshold = 33;
+const int lightThreshold = 5;
 bool lightOn = false;
 
 // Button state tracking
