@@ -23,7 +23,7 @@ bool lastReadState[4] = {false, false, false, false};
 int chargeNum = 0;
 const int maxCharge = 100;
 const int chargeAdd = 4;
-const int chargeLose = 1;
+const int chargeLose = 2;
 
 // function to calibrate the photoresistor to the room light level
 void calibrate()
@@ -82,8 +82,8 @@ int brainLoop()
       if (lightOn)
       {
         chargeNum += chargeAdd;
-        if (chargeNum > maxCharge)
-          chargeNum = maxCharge;
+        // if (chargeNum > maxCharge) Let it go over 100
+        //   chargeNum = maxCharge;
       }
       // new last button
       lastBtn = i;
@@ -100,8 +100,8 @@ int brainLoop()
   {
     chargeNum -= chargeLose;
     // keep lowest 0
-    if (chargeNum < 0)
-      chargeNum = 0;
+    // if (chargeNum < 0)
+    //   chargeNum = 0;
   }
 
   // brain station photoresistor
@@ -143,17 +143,46 @@ const unsigned long postingInterval = 10L * 1000L; // delay between updates, in 
 void read_request() {
 /* -------------------------------------------------------------------------- */  
   uint32_t received_data_num = 0;
+  char response[16]; //buffer out an area to fill the response into 16 should be enough
+  int index = 0;
+  bool bodyStarted = false;
+  String line = "";
 
-  while (client.available()) {
-    /* actual data reception */
-    char c = client.read();
-    /* print data to serial port */
-    Serial.print(c);
-    /* wrap data to 80 columns*/
-    received_data_num++;
-    if(received_data_num % 80 == 0) {}
+  // Wait for server data
+  unsigned long timeout = millis();
+  while (!client.available()) {
+    delay(1);
+  }
+
+  // Read and print all available characters
+  // if (client.connected()) {
+    while (client.available()) {
+      char c = client.read();
+      if(c == '~'){
+        break;
+      }
+      if (bodyStarted) {
+        
+        // Store response characters until buffer is full or connection ends
+        if (index < sizeof(response) - 1) {
+          response[index++] = c;
+        }
+        
+      } 
+      else {
+        // Detect end of HTTP headers (\r\n\r\n)
+        line += c;
+        if (line.endsWith("\r\n\r\n")) {
+          bodyStarted = true;
+        }
+      }
+    }
     
-  }  
+  // }
+  response[index] = '\0';  // Null-terminate C string
+  
+  parsing((char*)response);
+  client.stop();
 }
 
 // this method makes a HTTP connection to the server:
@@ -162,7 +191,7 @@ void httpRequest(int data) {
 /* -------------------------------------------------------------------------- */  
   // close any connection before send a new request.
   // This will free the socket on the NINA module
-  client.stop();
+  // client.stop();
 
   // if there's a successful connection:
   if (client.connect(server, 3000)) { //Server address from above & Port
@@ -181,6 +210,7 @@ void httpRequest(int data) {
     // if you couldn't make a connection:
     Serial.println("connection failed");
   }
+  read_request();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -249,7 +279,7 @@ void loop() {
   // if there's incoming data from the net connection.
   // send it out the serial port.  This is for debugging
   // purposes only:
-  read_request();
+  // read_request();
   
   // if ten seconds have passed since your last connection,
   // then connect again and send data:

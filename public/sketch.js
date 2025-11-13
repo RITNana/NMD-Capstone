@@ -225,7 +225,7 @@ function draw() {
     // smooth progress update
     console.log(st.inputDelay);
     if(st.inputDelay){
-      console.log(st.num);
+      // console.log(st.num);
       st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
       // st.progress = lerp(st.progress,st.progress + st.num,.1);
       // st.progress += st.num;
