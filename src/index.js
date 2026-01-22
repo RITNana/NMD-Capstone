@@ -50,7 +50,7 @@ const theGet = ( station, req, res, next) => {
   // Emit to clients if needed
   io.emit(`${station}-data`, req.headers.data);
   // if(latestStationData[station] === "eyeball" || latestStationData[station] === "tummy"){
-  res.type("text/plain").send(`${station}=${latestStationData[station]}`);
+  res.type("text/plain").send(`${station}=${latestStationData[station]}~`);
   latestStationData[station] = false;
   // console.log("sendin");
   // }

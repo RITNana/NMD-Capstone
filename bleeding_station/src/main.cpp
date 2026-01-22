@@ -10,7 +10,7 @@ const int buttonPin = 7;
 const int recalibratePin = 8;
 
 // Light threshold value
-const int lightThreshold = 33;
+const int lightThreshold = 5;
 
 // LED state flag
 bool ledsOn = false;
@@ -113,7 +113,7 @@ int bleedingLoop()
   // ✅ send ONLY the charge number
   // Serial.println(chargeNum);
   return chargeNum;
-  delay(100);
+  // delay(100);
 }
 
 
@@ -167,50 +167,52 @@ void parsing(char* response){
 
 /* just wrap the received data up to 80 columns in the serial print*/
 /* -------------------------------------------------------------------------- */
-void read_request() {
-  static char buffer[128];
+void read_request() { //Purpose is to read the response from the server and send the body to where it can be parsed
+/* -------------------------------------------------------------------------- */  
+  uint32_t received_data_num = 0;
+  char response[20]; //buffer out an area to fill the response into 20 should be enough
   int index = 0;
-  bool inBody = false;
+  bool bodyStarted = false;
+  String line = "";
 
-  while (client.available()) {
-    char c = client.read();
-    Serial.print(c);
+  // Wait for server data
+  unsigned long timeout = millis();
+  while (!client.available()) {
+    delay(1);
+  }
 
-    // Skip headers (find first blank line)
-    if (!inBody) {
-      static String header = "";
-      header += c;
-      if (header.endsWith("\r\n\r\n")) {
-        inBody = true;
+  // Read and print all available characters
+  // if (client.connected()) {
+    while (client.available()) {
+      char c = client.read();
+      if(c == '~'){
+          // client.stop();
+          // Serial.println("break");
+        break;
       }
-      continue;
+      if (bodyStarted) {
+        
+        // Store response characters until buffer is full or connection ends
+        if (index < sizeof(response) - 1) {
+          response[index++] = c;
+        }
+        
+      } 
+      else {
+        // Detect end of HTTP headers (\r\n\r\n)
+        line += c;
+        if (line.endsWith("\r\n\r\n")) {
+          bodyStarted = true;
+        }
+      }
     }
-
-    if (index < sizeof(buffer) - 1) {
-      buffer[index++] = c;
-    }
-  }
-
-  if (index == 0) {
-    // no new data
-    return;
-  }
-
-  buffer[index] = '\0';
-
-  // Example format: bleeding=HIGH
-  char* key = strtok(buffer, "=");
-  char* val = strtok(NULL, "=");
-
-  if (key && val) {
-    Serial.print(key);
-    Serial.print(": ");
-    Serial.println(val);
-  } else {
-    Serial.println(buffer);
-  }
-
-  client.stop(); // close to trigger next request immediately
+    
+  // }
+  response[index] = '\0';  // Null-terminate C string
+  
+  parsing((char*)response);
+  client.stop();
+  // Serial.println("\n--- End of Response ---"); 
 }
 
 // This things sends a group of headers in a httpRequest
@@ -219,7 +221,7 @@ void httpRequest(int data) {
 /* -------------------------------------------------------------------------- */  
   // close any connection before send a new request.
   // This will free the socket on the NINA module
-  client.stop();
+  // client.stop();
 
   //Each print line is a header
 
@@ -239,6 +241,7 @@ void httpRequest(int data) {
     // if you couldn't make a connection:
     Serial.println("connection failed");
   }
+  read_request();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -307,7 +310,7 @@ void loop() {
   // if there's incoming data from the net connection.
   // send it out the serial port.  This is for debugging
   // purposes only:
-  read_request();
+  // read_request();
   
   // if ten seconds have passed since your last connection,
   // then connect again and send data:

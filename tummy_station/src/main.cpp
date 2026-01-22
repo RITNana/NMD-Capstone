@@ -15,7 +15,7 @@ const int servoPinL = 8; // right
 int angleL = 90;
 int angleR = 180;
 
-const int lightThreshold = 33;
+const int lightThreshold = 5;
 
 int averageLight;
 
@@ -137,15 +137,14 @@ int tummyLoop()
 
   //Where it closes
   if (connectionLight > averageLight && pressed)
-  {
-    output += 1; // closed
-  }
+    {output += 2;}
+  else if( output > 0){output -= 2;}
 
   // Serial.println(connectionLight);
   // Serial.println(output);
   // output = servoR.read();
 
-  return output * 2;
+  return output;
 }
 
 // // -----------------------------------------------------
@@ -196,22 +195,24 @@ void parsing(char* response){
 void read_request() { //Purpose is to read the response from the server and send the body to where it can be parsed
 /* -------------------------------------------------------------------------- */  
   uint32_t received_data_num = 0;
-  char response[12]; //have it so it buffers as much as possible
+  char response[16]; //buffer the area to fill the http response into
   int index = 0;
   bool bodyStarted = false;
   String line = "";
 
   // Wait for server data
   unsigned long timeout = millis();
-  while (!client.available() && millis() - timeout < 2000) {
-    delay(10);
+  while (!client.available()) { // wait till client is available
+    delay(1);
   }
 
   // Read and print all available characters
-  if (client.connected()) {
+  // if (client.connected()) {
     while (client.available()) {
       char c = client.read();
-
+      if(c == '~'){ //the end of message
+        break;
+      }
       if (bodyStarted) {
         // Store response characters until buffer is full or connection ends
         if (index < sizeof(response) - 1) {
@@ -226,11 +227,11 @@ void read_request() { //Purpose is to read the response from the server and send
         }
       }
     }
-  }
+  // }
   response[index] = '\0';  // Null-terminate C string
-
+  
   parsing((char*)response);
-
+  client.stop(); // kill connection
   // Serial.println("\n--- End of Response ---"); 
 }
 
@@ -241,7 +242,7 @@ void httpRequest(int data)
   /* -------------------------------------------------------------------------- */
   // close any connection before send a new request.
   // This will free the socket on the NINA module
-  client.stop();
+  
 
   // if there's a successful connection:
   if (client.connect(server, 3000))
@@ -257,6 +258,7 @@ void httpRequest(int data)
     client.println();
     // note the time that the connection was made:
     lastConnectionTime = millis();
+    read_request();
   }
   else
   {
@@ -334,7 +336,7 @@ void loop()
   // if there's incoming data from the net connection.
   // send it out the serial port.  This is for debugging
   // purposes only:
-  read_request();
+  // read_request();
 
   // if ten seconds have passed since your last connection,
   // then connect again and send data:
