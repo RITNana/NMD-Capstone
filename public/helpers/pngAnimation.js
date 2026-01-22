@@ -3,7 +3,7 @@
 //IN PROGRESS
 
 window.pngAnimation = class {
-    constructor(folderPath, frameNums, frameRate = 12) {
+    constructor(folderPath, frameNums, frameRate = 8) {
         this.frames = [];
         this.frameNums = frameNums;
         this.frameRate = frameRate;

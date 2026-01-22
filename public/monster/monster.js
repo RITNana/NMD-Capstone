@@ -28,12 +28,11 @@ function setup() {
         taskVideo.loop(); // or .play()
         taskVideo.hide(); // we’ll draw it to the canvas
     });
-    //taskVideo.loop();
     taskVideo.hide();
 
-    //png sequence
-    anim = new pngAnimation('../media/BleedPNG', 81, 6)
-    anim.play();
+    //png sequence test
+    //anim = new pngAnimation('../media/BleedPNG', 81, 6)
+    //anim.play();
 
 }
 
