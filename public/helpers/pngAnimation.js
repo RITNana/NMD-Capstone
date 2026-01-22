@@ -3,7 +3,7 @@
 //IN PROGRESS
 
 window.pngAnimation = class {
-    constructor(folderPath, frameNums, frameRate = 12){
+    constructor(folderPath, frameNums, frameRate = 12) {
         this.frames = [];
         this.frameNums = frameNums;
         this.frameRate = frameRate;
@@ -13,9 +13,11 @@ window.pngAnimation = class {
 
         //preload frames
         for (let i = 0; i < frameNums; i++) {
-            const path = `${folderPath}/frame${i}.png`;
+            const path = `${folderPath}/${i}.png`;
             this.frames.push(loadImage(path));
         }
+
+        console.log("Loaded frames:", this.frames.length);
     }
 
     //start animation
@@ -30,13 +32,18 @@ window.pngAnimation = class {
     }
 
     // draw animation
-    draw(x, y, w, h){
+    draw(x, y) {
         if (!this.playing || this.frames.length === 0) return;
 
         const elapsed = millis() - this.startTime;
+        const frameLength = 1000 / this.frameRate;
 
-        this.curretFrame = Math.floor(elapsed / (1000 / this.frameRate));
+        const newFrame = Math.floor(elapsed / frameLength);
 
-        image(this.frames[this.currentFrame], x, y, w, h);
+        // loop 
+        this.currentFrame = newFrame % this.frameNums;
+        console.log(this.currentFrame);
+
+        image(this.frames[this.currentFrame], x, y);
     }
 }

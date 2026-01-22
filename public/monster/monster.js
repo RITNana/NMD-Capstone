@@ -6,6 +6,9 @@ const DISMISS_DURATION = 600;
 // video overlay
 let taskVideo;
 
+//png animation
+let anim;
+
 
 function preload() {
     
@@ -25,14 +28,21 @@ function setup() {
         taskVideo.loop(); // or .play()
         taskVideo.hide(); // we’ll draw it to the canvas
     });
-    taskVideo.loop();
+    //taskVideo.loop();
     taskVideo.hide();
+
+    //png sequence
+    anim = new pngAnimation('../media/BleedPNG', 81, 6)
+    anim.play();
 
 }
 
 function draw() {
     background(0);
     if (taskVideo) image(taskVideo, 0, 0, width, height);
+
+    // draw PNG animation 
+    if (anim) anim.draw(0, 0);
 }
 
 
