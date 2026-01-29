@@ -11,6 +11,9 @@ const int buttonPin = 2;
 const int servoPinR = 9; // left
 const int servoPinL = 8; // right
 
+const int stationPin1 = 12;
+const int stationPin2 = 13;
+
 // angles for recalibration
 int angleL = 90;
 int angleR = 180;
@@ -57,7 +60,8 @@ void tummySetup()
   Serial.println("starting...");
 
   pinMode(buttonPin, INPUT_PULLUP);
-
+  pinMode(stationPin1, OUTPUT);
+  pinMode(stationPin2, OUTPUT);
   servoR.attach(servoPinR);
   servoL.attach(servoPinL);
   servoR.write(angleR);
@@ -73,25 +77,60 @@ void close(){
 
     
 }
-void popout()
-{
+
+
+String direction = "_";
+void task(){
 
   if (Serial.available() > 0)
   {
     char key = Serial.read();
   }
-  if (remoteOpen == "true")
+  
+  if (direction == "go")
   {
+    digitalWrite(stationPin1,HIGH);
+    digitalWrite(stationPin2,HIGH);
     Serial.println("opening");
     servoR.write(90);
     servoL.write(180);
     delay(500);
 
     output = 0; // open
-    remoteOpen = "false"; // this really doesnt need to be here but cause it gets overridden very soon but whatever
+    direction = "_";
     close();
   }
+  if(direction == "stop"){
+    digitalWrite(stationPin1,LOW);
+    digitalWrite(stationPin2,LOW);
+    direction = "_";
+  }
+  if(direction == "reset"){
+    calibrate(A0);
+    direction = "_";
+  }
 }
+
+
+// void popout()
+// {
+
+//   if (Serial.available() > 0)
+//   {
+//     char key = Serial.read();
+//   }
+//   if (remoteOpen == "true")
+//   {
+//     Serial.println("opening");
+//     servoR.write(90);
+//     servoL.write(180);
+//     delay(500);
+
+//     output = 0; // open
+//     remoteOpen = "false"; // this really doesnt need to be here but cause it gets overridden very soon but whatever
+//     close();
+//   }
+// }
 
 
 // change to tummyLoop()
@@ -183,9 +222,9 @@ void parsing(char* response){
       Serial.println(key);
       Serial.print("Value: ");
       Serial.println(value);
-      remoteOpen = (String)value;
+      direction = (String)value;
       // Serial.print(String(go));
-      popout();
+      task();
     }
   }
 }

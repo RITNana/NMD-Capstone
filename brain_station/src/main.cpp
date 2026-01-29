@@ -9,6 +9,9 @@ const int photoresistorPin = A0;
 const int buttonPins[4] = {2, 3, 4, 5};
 const int recalibratePin = 8;
 
+const int stationPin1 = 12;
+const int stationPin2 = 13;
+
 // Light threshold calibration
 int averageLight;
 const int lightThreshold = 5;
@@ -52,7 +55,8 @@ void calibrate()
 void brainSetup()
 {
   // Serial.begin(9600);
-
+  pinMode(stationPin1, OUTPUT);
+  pinMode(stationPin2, OUTPUT);
   // Set button pins as input pullups
   for (int i = 0; i < 4; i++)
   {
@@ -137,6 +141,59 @@ char server[] = "192.168.137.1";
 
 unsigned long lastConnectionTime = 0;            // last time you connected to the server, in milliseconds
 const unsigned long postingInterval = 10L * 1000L; // delay between updates, in milliseconds
+
+String direction = "_";
+void task(){
+
+  if (Serial.available() > 0)
+  {
+    char key = Serial.read();
+  }
+  
+  if (direction == "go")
+  {
+    digitalWrite(stationPin1, HIGH);
+    digitalWrite(stationPin2, HIGH);
+    direction = "_";
+  }
+  if(direction == "stop"){
+    //TURN OFF THE LIGHTS
+    digitalWrite(stationPin1, LOW);
+    digitalWrite(stationPin2, LOW);
+    direction = "_";
+  }
+  if(direction == "reset"){
+    calibrate(A0);
+    direction = "_";
+  }
+}
+
+void parsing(char* response){
+  Serial.print("Raw body: ");
+  Serial.println(response);
+  // Serial.println("boop");
+
+  // Now parse with strtok
+  char* token = strtok(response, "=");  // split by '='
+
+  if (token != NULL) { //
+    char* key = token;
+    token = strtok(NULL, "=");
+    if (token != NULL) {
+      char* value = token;
+      Serial.print("Key: ");
+      Serial.println(key);
+      Serial.print("Value: ");
+      Serial.println(value);
+      direction = (String)value;
+      // Serial.print(String(go));
+      task();
+    }
+  }
+}
+
+
+
 
 /* just wrap the received data up to 80 columns in the serial print*/
 /* -------------------------------------------------------------------------- */

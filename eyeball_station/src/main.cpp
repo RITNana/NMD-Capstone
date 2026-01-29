@@ -9,6 +9,13 @@ int leftEyePin = A0;
 int rightEyePin = A1;
 int socketPin = A2;
 
+//PORT LIGHTS
+int portPin1 = 10;
+int portPin2 = 11; 
+//STATION LIGHTS
+const int stationPin1 = 12;
+const int stationPin2 = 13;
+
 int output;
 
 int count = 0;
@@ -56,7 +63,7 @@ void calibrate(int resistorPin)
     averageLightSocket = (sensorHigh + sensorLow) / 2;
   }
 }
-String go = "false";
+
 void eyeballSetup()
 {
   Serial.begin(9600);
@@ -64,6 +71,8 @@ void eyeballSetup()
   // while (!Serial)
   //{ /* wait on native USB boards */
   // }
+  pinMode(stationPin1,OUTPUT);
+  pinMode(stationPin2,OUTPUT);
 
   eyeballServo.attach(servoPin);
   eyeballServo.write(0);
@@ -88,33 +97,46 @@ bool eyesBright(int L, int R)
   return (L > (averageLightLeft + eyeHyst)) &&
          (R > (averageLightRight + eyeHyst));
 }
-
-void popout(){
+String direction = "_";
+void task(){
 
   if (Serial.available() > 0)
   {
     char key = Serial.read();
   }
   
-  if (go == "true")
-    {
-    // Serial.println(go);
-      eyeballServo.write(90);
-      delay(500);
-      eyeballServo.write(0);
-      // delay(500);
+  if (direction == "go")
+  {
+  // Serial.println(go);
+    eyeballServo.write(90);
+    delay(500);
+    eyeballServo.write(0);
+    // delay(500);
 
-      eyeCondition = 0;
+    eyeCondition = 0;
 
-      // Serial.println("Command: Turn servo to 180°");
-      // eyeballServo.write(90);
-      // delay(500);
-      count = 0;
-      output = 0;
-      //calibrate(leftEyePin);
-      //calibrate(rightEyePin);
-      go = "false";
-    }
+    // Serial.println("Command: Turn servo to 180°");
+    // eyeballServo.write(90);
+    // delay(500);
+    count = 0;
+    output = 0;
+    //calibrate(leftEyePin);
+    //calibrate(rightEyePin);
+    digitalWrite(stationPin1, HIGH);
+    digitalWrite(stationPin2, HIGH);
+    direction = "_";
+  }
+  if(direction == "stop"){
+    digitalWrite(stationPin1, LOW);
+    digitalWrite(stationPin2, LOW);
+    direction = "_";
+  }
+  if(direction == "reset"){
+    calibrate(A0);
+    calibrate(A1);
+    calibrate(A2);
+    direction = "_";
+  }
 }
 
 int eyeballLoop()
@@ -235,9 +257,9 @@ void parsing(char* response){
       Serial.println(key);
       Serial.print("Value: ");
       Serial.println(value);
-      go = (String)value;
+      direction = (String)value;
       // Serial.print(String(go));
-      popout();
+      task();
     }
   }
 }

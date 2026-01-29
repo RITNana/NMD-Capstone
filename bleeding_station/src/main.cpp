@@ -9,6 +9,9 @@ const int ledPins[] = {2, 3, 4};
 const int buttonPin = 7;
 const int recalibratePin = 8;
 
+const int stationPin1 = 12;
+const int stationPin2 = 13;
+
 // Light threshold value
 const int lightThreshold = 5;
 
@@ -46,7 +49,6 @@ int calibrate() {
   
 }
 
-
 void bleedingSetup()
 {
   // Set LED pins as OUTPUT
@@ -55,6 +57,8 @@ void bleedingSetup()
     pinMode(ledPins[i], OUTPUT);
   }
 
+  pinMode(stationPin1, OUTPUT);
+  pinMode(stationPin2, OUTPUT);
   // Set button pin as INPUT_PULLUP (active LOW)
   pinMode(buttonPin, INPUT_PULLUP);
   // recalibrate pin is setup the same
@@ -142,10 +146,35 @@ char server[] = "192.168.137.1";
 
 unsigned long lastConnectionTime = 0;            // last time you connected to the server, in milliseconds
 const unsigned long postingInterval = 1L * 10L; // delay between updates, in milliseconds
-// char* useful;
+String direction = "_";
+void task(){
+
+  if (Serial.available() > 0)
+  {
+    char key = Serial.read();
+  }
+  
+  if (direction == "go")
+  {
+    digitalWrite(stationPin1, HIGH);
+    digitalWrite(stationPin2, HIGH);
+    direction = "_";
+  }
+  if(direction == "stop"){
+    digitalWrite(stationPin1, LOW);
+    digitalWrite(stationPin2,LOW);
+    direction = "_";
+  }
+  if(direction == "reset"){
+    calibrate(A0);
+    direction = "_";
+  }
+}
+
 void parsing(char* response){
   Serial.print("Raw body: ");
   Serial.println(response);
+  // Serial.println("boop");
 
   // Now parse with strtok
   char* token = strtok(response, "=");  // split by '='
@@ -159,10 +188,11 @@ void parsing(char* response){
       Serial.println(key);
       Serial.print("Value: ");
       Serial.println(value);
-      // useful = value;
+      direction = (String)value;
+      // Serial.print(String(go));
+      task();
     }
   }
-  // if(useful){digitalWrite(ledPins[2], HIGH);}
 }
 
 /* just wrap the received data up to 80 columns in the serial print*/

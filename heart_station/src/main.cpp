@@ -7,6 +7,9 @@
 const int leftPin  = A1;
 const int rightPin = A0;
 
+const int stationPin1 = 12;
+const int stationPin2 = 13;
+
 // light level threshold
 const int lightThreshold = 5;
 
@@ -36,6 +39,8 @@ void calibrateBoth() {
 // setup
 void heartSetup() {
   // Serial.begin(9600); // Initialize serial monitor for debugging output
+  pinMode(stationPin1, OUTPUT);
+  pinMode(stationPin2, OUTPUT);
   calibrateBoth();
 }
 
@@ -95,24 +100,105 @@ char server[] = "192.168.137.1";
 unsigned long lastConnectionTime = 0;            // last time you connected to the server, in milliseconds
 const unsigned long postingInterval = 10L * 1000L; // delay between updates, in milliseconds
 
-/* just wrap the received data up to 80 columns in the serial print*/
-/* -------------------------------------------------------------------------- */
-void read_request() {
+
+String direction = "_";
+void task(){
+
+  if (Serial.available() > 0)
+  {
+    char key = Serial.read();
+  }
+  
+  if (direction == "go")
+  {
+    digitalWrite(stationPin1,HIGH);
+    digitalWrite(stationPin2,HIGH);
+    direction = "_";
+  }
+  if(direction == "stop"){
+    digitalWrite(stationPin1,LOW);
+    digitalWrite(stationPin2,LOW);
+    direction = "_";
+  }
+  if(direction == "reset"){
+    //update ports to be the correct ones
+    calibrate(A0);
+    calibrate(A1);
+    direction = "_";
+  }
+}
+
+void parsing(char* response){
+  Serial.print("Raw body: ");
+  Serial.println(response);
+  // Serial.println("boop");
+
+  // Now parse with strtok
+  char* token = strtok(response, "=");  // split by '='
+
+  if (token != NULL) { //
+    char* key = token;
+    token = strtok(NULL, "=");
+    if (token != NULL) {
+      char* value = token;
+      Serial.print("Key: ");
+      Serial.println(key);
+      Serial.print("Value: ");
+      Serial.println(value);
+      direction = (String)value;
+      // Serial.print(String(go));
+      task();
+    }
+  }
+}
+
+
+
+void read_request() { //Purpose is to read the response from the server and send the body to where it can be parsed
 /* -------------------------------------------------------------------------- */  
   uint32_t received_data_num = 0;
+  char response[16]; //buffer out an area to fill the response into 16 should be enough
+  int index = 0;
+  bool bodyStarted = false;
+  String line = "";
 
-  while (client.available()) {
-    /* actual data reception */
-    char c = client.read();
-    /* print data to serial port */
-    Serial.print(c);
-    /* wrap data to 80 columns*/
-    received_data_num++;
-    if(received_data_num % 80 == 0) { 
-      
+  // Wait for server data
+  unsigned long timeout = millis();
+  while (!client.available()) {
+    delay(1);
+  }
+
+  // Read and print all available characters
+  // if (client.connected()) {
+    while (client.available()) {
+      char c = client.read();
+      if(c == '~'){
+          // client.stop();
+          // Serial.println("break");
+        break;
+      }
+      if (bodyStarted) {
+        
+        // Store response characters until buffer is full or connection ends
+        if (index < sizeof(response) - 1) {
+          response[index++] = c;
+        }
+        
+      } 
+      else {
+        // Detect end of HTTP headers (\r\n\r\n)
+        line += c;
+        if (line.endsWith("\r\n\r\n")) {
+          bodyStarted = true;
+        }
+      }
     }
     
-  }  
+  // }
+  response[index] = '\0';  // Null-terminate C string
+  
+  parsing((char*)response);
+  client.stop();
 }
 
 // this method makes a HTTP connection to the server:
