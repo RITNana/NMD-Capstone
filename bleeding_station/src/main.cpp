@@ -4,7 +4,11 @@
 #include <Arduino.h>
 
 // Pin assignments
-const int photoresistorPin = A0;
+const int photoresistorLeftRedPin = A0;
+const int photoresistorLeftBluePin = A1;
+const int photoresistorRightRedPin = A2;
+const int photoresistorRightBluePin = A3;
+
 const int ledPins[] = {2, 3, 4};
 const int buttonPin = 7;
 const int recalibratePin = 8;
@@ -13,7 +17,7 @@ const int stationPin1 = 12;
 const int stationPin2 = 13;
 
 // Light threshold value
-const int lightThreshold = 5;
+const int lightThreshold = 15;
 
 // LED state flag
 bool ledsOn = false;
@@ -27,26 +31,33 @@ const int delayBetweenLEDs = 1000;
 // value for buttonHold
 int chargeNum = 0;
 
-// value on from the photoresistor calibration
-int averageLight;
 // function to calibrate the photoresistor to the room light level
-int calibrate() {
+// Baseline averages established via calibration
+int averageLightLeftBlue  = 0;
+int averageLightLeftRed = 0;
+int averageLightRightBlue = 0;
+int averageLightRightRed = 0;
+
+// Calibrate a single photoresistor and update its baseline
+void calibrateOne(int analogPin, int &averageOut) {
   int sensorLow = 1000;
   int sensorHigh = 0;
-  int timer = 0;
 
-  while (timer < 1000) {
-    int calibratingLightValue = analogRead(photoresistorPin);
-    if (calibratingLightValue > sensorHigh) {
-      sensorHigh = calibratingLightValue;
-    }
-    if (calibratingLightValue < sensorLow) {
-      sensorLow = calibratingLightValue;
-    }
-    timer++;
+  for (int i = 0; i < 1000; i++) {
+    int v = analogRead(analogPin);
+    if (v > sensorHigh) sensorHigh = v;
+    if (v < sensorLow)  sensorLow  = v;
   }
-  averageLight = (sensorHigh + sensorLow)/2;
-  
+  averageOut = (sensorHigh + sensorLow) / 2;
+}
+
+// Calibrate All sensors
+void calibrateAll() {
+  calibrateOne(photoresistorLeftRedPin,  averageLightLeftRed);
+  calibrateOne(photoresistorLeftBluePin, averageLightLeftBlue);
+  calibrateOne(photoresistorRightRedPin,  averageLightRightRed);
+  calibrateOne(photoresistorRightBluePin, averageLightRightBlue);
+  Serial.print("RECALIBATED");
 }
 
 void bleedingSetup()
@@ -67,18 +78,35 @@ void bleedingSetup()
   // Debugging
   // Serial.begin(9600);
   // Calibrate the photoresistor to start
-  calibrate();
+  calibrateAll();
 }
+bool redConnected = false;
+bool blueConnected = false;
 
 int bleedingLoop()
 {
-  int lightLevel = analogRead(photoresistorPin);
+  int leftRedVal  = analogRead(photoresistorLeftRedPin);
+  int leftBlueVal  = analogRead(photoresistorLeftBluePin);
+  int rightRedVal = analogRead(photoresistorRightRedPin);
+  int rightBlueVal = analogRead(photoresistorRightBluePin);
+
+  bool leftRedOn  = leftRedVal  > (averageLightLeftRed  + lightThreshold);
+  bool leftBlueOn  = leftBlueVal  > (averageLightLeftBlue  + lightThreshold);
+  bool rightRedOn = rightRedVal > (averageLightRightRed + lightThreshold);
+  bool rightBlueOn = rightBlueVal > (averageLightRightBlue + lightThreshold);
+  bool anyLightOn = leftRedOn || leftBlueOn || rightRedOn || rightBlueOn;
+
+
+  // NTS REMINDER TO ADD THE OTHER PINS 
+  redConnected = leftRedOn;
+  blueConnected = leftBlueOn;
+
   bool pressed = (digitalRead(buttonPin) == LOW); // INPUT_PULLUP: LOW = pressed
 
   // use only ONE of these definitions for bothTrueStreak (either global OR static)
   static uint8_t bothTrueStreak = 0;
 
-  if (lightLevel > averageLight + lightThreshold && pressed)
+  if (anyLightOn && pressed)
   {
     if (bothTrueStreak < 3)
       bothTrueStreak++;
@@ -90,13 +118,13 @@ int bleedingLoop()
 
   if (bothTrueStreak >= 3)
   {
-    chargeNum++;
+    chargeNum+= 4;
     bothTrueStreak = 0;
   }
-  else if (!pressed || lightLevel <= lightThreshold)
+  else if (!pressed || !anyLightOn)
   {
     if (chargeNum > 0)
-      chargeNum--;
+      chargeNum-= 2;
   }
 
   digitalWrite(ledPins[0], chargeNum > 10 ? HIGH : LOW);
@@ -105,7 +133,7 @@ int bleedingLoop()
 
   //call calibrate if the button is hit during runtime
   bool recalibrate = (digitalRead(recalibratePin) == LOW);
-  if(recalibrate){calibrate(); delay(200);}
+  if(recalibrate){calibrateAll(); delay(200);}
 
   // if(lightLevel > averageLight + lightThreshold){
   //   Serial.print("ON ");
@@ -114,7 +142,6 @@ int bleedingLoop()
   //   Serial.print("OFF ");
   // }
 
-  // ✅ send ONLY the charge number
   // Serial.println(chargeNum);
   return chargeNum;
   // delay(100);
@@ -166,7 +193,7 @@ void task(){
     direction = "_";
   }
   if(direction == "reset"){
-    calibrate(A0);
+    calibrateAll();
     direction = "_";
   }
 }
@@ -262,6 +289,10 @@ void httpRequest(int data) {
     client.println("Host: Bleeding"); //Required but the input doesnt matter
     client.print("Data:");
     client.println(data);
+    client.print("Red:");
+    client.println(redConnected);
+    client.print("Blue:");
+    client.println(blueConnected);
     // client.println("User-Agent: ArduinoWiFi/1.1"); //Not required
     // client.println("Connection: close");
     client.println(); // Leave this here since this ends the headers

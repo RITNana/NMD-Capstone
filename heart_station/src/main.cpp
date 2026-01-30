@@ -4,9 +4,14 @@
 // --- Pin assignments ---
 // Port 1 (left)  -> A1
 // Port 2 (right) -> A0
-const int leftPin  = A1;
-const int rightPin = A0;
+// const int leftPin  = A1;
+// const int rightPin = A0;
+const int photoresistorLeftRedPin = A0;
+const int photoresistorLeftBluePin = A1;
+const int photoresistorRightRedPin = A2;
+const int photoresistorRightBluePin = A3;
 
+//Station LEDs
 const int stationPin1 = 12;
 const int stationPin2 = 13;
 
@@ -14,8 +19,10 @@ const int stationPin2 = 13;
 const int lightThreshold = 5;
 
 // Baseline averages established via calibration
-int averageLightLeft  = 0;
-int averageLightRight = 0;
+int averageLightLeftBlue  = 0;
+int averageLightLeftRed = 0;
+int averageLightRightBlue = 0;
+int averageLightRightRed = 0;
 
 // Calibrate a single photoresistor and update its baseline
 void calibrateOne(int analogPin, int &averageOut) {
@@ -30,10 +37,12 @@ void calibrateOne(int analogPin, int &averageOut) {
   averageOut = (sensorHigh + sensorLow) / 2;
 }
 
-// Calibrate both sensors
-void calibrateBoth() {
-  calibrateOne(leftPin,  averageLightLeft);
-  calibrateOne(rightPin, averageLightRight);
+// Calibrate All sensors
+void calibrateAll() {
+  calibrateOne(photoresistorLeftRedPin,  averageLightLeftRed);
+  calibrateOne(photoresistorLeftBluePin, averageLightLeftBlue);
+  calibrateOne(photoresistorRightRedPin,  averageLightRightRed);
+  calibrateOne(photoresistorRightBluePin, averageLightRightBlue);
 }
 
 // setup
@@ -41,7 +50,7 @@ void heartSetup() {
   // Serial.begin(9600); // Initialize serial monitor for debugging output
   pinMode(stationPin1, OUTPUT);
   pinMode(stationPin2, OUTPUT);
-  calibrateBoth();
+  calibrateAll();
 }
 
 // Returns a single code per spec:
@@ -50,20 +59,26 @@ void heartSetup() {
 // 2 = right reached, left not
 // 3 = both reached
 int  heartLoop() {
-  int leftVal  = analogRead(leftPin);
-  int rightVal = analogRead(rightPin);
+  int leftRedVal  = analogRead(photoresistorLeftRedPin);
+  int leftBlueVal  = analogRead(photoresistorLeftBluePin);
+  int rightRedVal = analogRead(photoresistorRightRedPin);
+  int rightBlueVal = analogRead(photoresistorRightBluePin);
 
-  bool leftOn  = leftVal  > (averageLightLeft  + lightThreshold);
-  bool rightOn = rightVal > (averageLightRight + lightThreshold);
+  bool leftRedOn  = leftRedVal  > (averageLightLeftRed  + lightThreshold);
+  bool leftBlueOn  = leftBlueVal  > (averageLightLeftBlue  + lightThreshold);
+  bool rightRedOn = rightRedVal > (averageLightRightRed + lightThreshold);
+  bool rightBlueOn = rightBlueVal > (averageLightRightBlue + lightThreshold);
 
   int code = 0;
-  if (leftOn && rightOn) {
+  if (leftRedOn || leftBlueOn && rightRedOn || rightBlueOn ) {
     code = 3;
-  } else if (leftOn) {
+  } else if (leftRedOn || leftBlueOn) {
     code = 1;
-  } else if (rightOn) {
+  } else if (rightRedOn || rightBlueOn) {
     code = 2;
   }
+  
+  //Reminder to add the logic for the headers
 
   // Serial.print("Left: ");
   // Serial.print(leftVal);
@@ -108,7 +123,7 @@ void task(){
   {
     char key = Serial.read();
   }
-  
+
   if (direction == "go")
   {
     digitalWrite(stationPin1,HIGH);
@@ -122,8 +137,7 @@ void task(){
   }
   if(direction == "reset"){
     //update ports to be the correct ones
-    calibrate(A0);
-    calibrate(A1);
+    calibrateAll();
     direction = "_";
   }
 }
@@ -217,6 +231,10 @@ void httpRequest(int data) {
     client.println("Host: Heart"); //Required but the input doesnt matter
     client.print("Data:");
     client.println(data);
+        client.print("Red:");
+    client.println(redConnected);
+    client.print("Blue:");
+    client.println(blueConnected);
     // client.println("User-Agent: ArduinoWiFi/1.1"); //Not required
     // client.println("Connection: close");
     client.println();

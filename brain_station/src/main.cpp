@@ -5,7 +5,12 @@
 #include <Arduino.h>
 
 // Pin assignments
-const int photoresistorPin = A0;
+// Pin assignments
+const int photoresistorLeftRedPin = A0;
+const int photoresistorLeftBluePin = A1;
+const int photoresistorRightRedPin = A2;
+const int photoresistorRightBluePin = A3;
+
 const int buttonPins[4] = {2, 3, 4, 5};
 const int recalibratePin = 8;
 
@@ -13,9 +18,9 @@ const int stationPin1 = 12;
 const int stationPin2 = 13;
 
 // Light threshold calibration
-int averageLight;
-const int lightThreshold = 5;
-bool lightOn = false;
+// int averageLight;
+const int lightThreshold = 15;
+// bool lightOn = false;
 
 // Button state tracking
 int lastBtn = 5; // starts on button that doesnt exist
@@ -28,28 +33,32 @@ const int maxCharge = 100;
 const int chargeAdd = 4;
 const int chargeLose = 2;
 
-// function to calibrate the photoresistor to the room light level
-void calibrate()
-{
+// Baseline averages established via calibration
+int averageLightLeftBlue  = 0;
+int averageLightLeftRed = 0;
+int averageLightRightBlue = 0;
+int averageLightRightRed = 0;
+
+// Calibrate a single photoresistor and update its baseline
+void calibrateOne(int analogPin, int &averageOut) {
   int sensorLow = 1000;
   int sensorHigh = 0;
-  int timer = 0;
 
-  while (timer < 1000)
-  {
-    int calibratingLightValue = analogRead(photoresistorPin);
-    if (calibratingLightValue > sensorHigh)
-    {
-      sensorHigh = calibratingLightValue;
-    }
-    if (calibratingLightValue < sensorLow)
-    {
-      sensorLow = calibratingLightValue;
-    }
-    delay(1);
-    timer++;
+  for (int i = 0; i < 1000; i++) {
+    int v = analogRead(analogPin);
+    if (v > sensorHigh) sensorHigh = v;
+    if (v < sensorLow)  sensorLow  = v;
   }
-  averageLight = (sensorHigh + sensorLow) / 2;
+  averageOut = (sensorHigh + sensorLow) / 2;
+}
+
+// Calibrate All sensors
+void calibrateAll() {
+  calibrateOne(photoresistorLeftRedPin,  averageLightLeftRed);
+  calibrateOne(photoresistorLeftBluePin, averageLightLeftBlue);
+  calibrateOne(photoresistorRightRedPin,  averageLightRightRed);
+  calibrateOne(photoresistorRightBluePin, averageLightRightBlue);
+  Serial.print("RECALIBATED");
 }
 
 void brainSetup()
@@ -63,13 +72,26 @@ void brainSetup()
     pinMode(buttonPins[i], INPUT_PULLUP);
   }
 
-  calibrate();
+  calibrateAll();
 }
 
 int brainLoop()
 {
-  int lightLevel = analogRead(photoresistorPin);
-  bool lightOn = lightLevel > (averageLight + lightThreshold);
+  int leftRedVal  = analogRead(photoresistorLeftRedPin);
+  int leftBlueVal  = analogRead(photoresistorLeftBluePin);
+  int rightRedVal = analogRead(photoresistorRightRedPin);
+  int rightBlueVal = analogRead(photoresistorRightBluePin);
+
+  bool leftRedOn  = leftRedVal  > (averageLightLeftRed  + lightThreshold);
+  bool leftBlueOn  = leftBlueVal  > (averageLightLeftBlue  + lightThreshold);
+  bool rightRedOn = rightRedVal > (averageLightRightRed + lightThreshold);
+  bool rightBlueOn = rightBlueVal > (averageLightRightBlue + lightThreshold);
+  bool anyLightOn = leftRedOn || leftBlueOn || rightRedOn || rightBlueOn;
+
+
+  // NTS REMINDER TO ADD THE OTHER PINS 
+  redConnected = leftRedOn;
+  blueConnected = leftBlueOn;
 
   // start false
   bool anyPress = false;
@@ -83,7 +105,7 @@ int brainLoop()
     if (pressed && !lastReadState[i])
     {
       // light on
-      if (lightOn)
+      if (anyLightOn)
       {
         chargeNum += chargeAdd;
         // if (chargeNum > maxCharge) Let it go over 100
@@ -100,7 +122,7 @@ int brainLoop()
   }
 
   // passive charge loss
-  if (!anyPress || chargeNum > 0)
+  if (!anyPress && chargeNum > 0)
   {
     chargeNum -= chargeLose;
     // keep lowest 0
@@ -110,8 +132,8 @@ int brainLoop()
 
   // brain station photoresistor
   Serial.print("BRAIN_LIGHT:");
-  Serial.print(lightOn ? "ON " : "OFF ");
-
+  // Serial.print(lightOn ? "ON " : "OFF ");
+  Serial.println(lightLevel);
   // charge num
   Serial.print("CHARGE:");
   Serial.println(chargeNum);
@@ -151,19 +173,19 @@ void task(){
   }
   
   if (direction == "go")
-  {
-    digitalWrite(stationPin1, HIGH);
-    digitalWrite(stationPin2, HIGH);
-    direction = "_";
-  }
-  if(direction == "stop"){
-    //TURN OFF THE LIGHTS
+  { //For some unknown reason the lights are backwards on this
     digitalWrite(stationPin1, LOW);
     digitalWrite(stationPin2, LOW);
     direction = "_";
   }
+  if(direction == "stop"){
+    //TURN OFF THE LIGHTS
+    digitalWrite(stationPin1, HIGH);
+    digitalWrite(stationPin2, HIGH);
+    direction = "_";
+  }
   if(direction == "reset"){
-    calibrate(A0);
+    calibrateAll();
     direction = "_";
   }
 }
@@ -258,6 +280,10 @@ void httpRequest(int data) {
     client.println("Host: Brain"); //Required but the input doesnt matter
     client.print("Data:");
     client.println(data);
+    client.print("Red:");
+    client.println(redConnected);
+    client.print("Blue:");
+    client.println(blueConnected);
     // client.println("User-Agent: ArduinoWiFi/1.1"); //Not required
     // client.println("Connection: close");
     client.println();

@@ -144,13 +144,13 @@ function setup() {
       banish = "tummy";
     }
     //reset all pins on a given station
-    if (e.key == "z") {
+    if (e.key == "x") {
       socket.emit("brain", "reset");
     }
-    if (e.key == "x") {
+    if (e.key == "c") {
       socket.emit("eyeball", "reset");
     }
-    if (e.key == "c") {
+    if (e.key == "z") {
       socket.emit("bleeding", "reset");
     }
     if (e.key == "v") {
