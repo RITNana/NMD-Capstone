@@ -68,24 +68,26 @@ Cartoon Wet Hit by Universfield - https://pixabay.com/sound-effects/cartoon-wet-
 ---
 ### KEY BINDINGS
 
-1: game loop 1
-2: game loop 2
+**Game Control**
+- `1` – Start game loop 1  
+- `2` – Start game loop 2  
+- `3` – Stop game loop  
 
-ADD TASK
-q: bleeding
-w: brain
-e: eyeball
-r: tummy/intesines
+**Add Task**
+- `Q` – Bleeding
+- `W` – Brain
+- `E` – Eyeball
+- `R` – Tummy / Intestines
 
-REMOVE TASK
-a: bleeding
-s: brain
-d: eyeball
-f: tummy/intesines
+**Remove Task**
+- `A` – Bleeding
+- `S` – Brain
+- `D` – Eyeball
+- `F` – Tummy / Intestines
 
-RECALIBRATE PHOTORESISTOR
-z: bleeding
-x: brain
-c: eyeball
-v: tummy/intesines
-b: heart  (needs to be tested)
+**Recalibrate Photoresistor**
+- `Z` – Bleeding
+- `X` – Brain
+- `C` – Eyeball
+- `V` – Tummy / Intestines
+- `B` – Heart *(testing)*
