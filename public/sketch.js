@@ -156,6 +156,9 @@ function setup() {
     if (e.key == "v") {
       socket.emit("tummy", "reset");
     }
+    if (e.key == "b") {
+      socket.emit("heart", "reset");
+    }
 
     if (e.key == "1") { //For gameloop 1
       gameloop = 1;
