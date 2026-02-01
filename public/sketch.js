@@ -143,6 +143,19 @@ function setup() {
     if (e.key == "f") {
       banish = "tummy";
     }
+    //reset all pins on a given station
+    if (e.key == "x") {
+      socket.emit("brain", "reset");
+    }
+    if (e.key == "c") {
+      socket.emit("eyeball", "reset");
+    }
+    if (e.key == "z") {
+      socket.emit("bleeding", "reset");
+    }
+    if (e.key == "v") {
+      socket.emit("tummy", "reset");
+    }
 
     if (e.key == "1") { //For gameloop 1
       gameloop = 1;
@@ -197,6 +210,12 @@ function draw() {
   const barWidth = width * 0.8;
   const barHeight = 223 * (barWidth / 1480);
 
+  let currentYPos = 0;
+  function yPosManager(station) {
+    topOffset + (barHeight + space) * currentPos;
+
+  }
+
   // vertical placement for each station (stacked layout)
   const positions = {
     bleeding: { y: topOffset + (barHeight + space) * 0 },
@@ -223,7 +242,7 @@ function draw() {
     const st = stations[key];
     const posY = positions[key].y;
     // smooth progress update
-    console.log(st.inputDelay);
+    //console.log(st.inputDelay);
     if(st.inputDelay){
       // console.log(st.num);
       st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
@@ -250,9 +269,10 @@ function draw() {
       gameState++;
       updateGameState = true;
       st.inputDelay = false; //Possible solution for the first input completion
+      socket.emit(`${st.name}`, "stop"); //Trigger stop
     }
 
-    function callOrReset(othertask) {
+    function callAndReset(othertask) {
       st.offsetX = 0;
       translate(st.offsetX, posY);
       st.visible = true;
@@ -267,11 +287,11 @@ function draw() {
       // if(st.name == "eyeball" || st.name =="tummy"){
       st.inputDelay = true;
       // }
-      socket.emit(`${st.name}`, true);
+      socket.emit(`${st.name}`, "go");
     }
     //return a task from completion / reset all values 
-    if (st.name === newTask) { callOrReset(false); }
-    if (st.name === otherNewTask) { callOrReset(true); }
+    if (st.name === newTask) { callAndReset(false); }
+    if (st.name === otherNewTask) { callAndReset(true); }
 
     // draw station overlay
     if (st.visible || st.dismissing) {
@@ -330,7 +350,7 @@ function draw() {
 // ---- SHOW BAR PROGRESS ----
 // Map chargeNum to progress in 3 equal segments that line up with the LEDs
 function ledProgress(charge, th = thresholds) {
-  const [t0, t1, t2] = th
+  const [t0, t1, t2] = th;
 
   if (charge <= 0 || !heartConnected) return 0;
 

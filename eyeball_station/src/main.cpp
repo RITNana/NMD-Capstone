@@ -2,12 +2,23 @@
 #include <Servo.h>
 #include "WiFiS3.h"
 
-Servo eyeballServo;
+Servo eyeballLeftServo;
+Servo eyeballRightServo;
+int servoLeftPin = 8;
+int servoRightPin = 9;
+const int photoresistorLeftRedPin = A0;
+const int photoresistorLeftBluePin = A1;
+const int photoresistorRightRedPin = A2;
+const int photoresistorRightBluePin = A3;
+const int leftEyePin = A4;
+const int rightEyePin = A5;
 
-int servoPin = 9;
-int leftEyePin = A0;
-int rightEyePin = A1;
-int socketPin = A2;
+//PORT LIGHTS
+int portPin1 = 10;
+int portPin2 = 11; 
+//STATION LIGHTS
+const int stationPin1 = 12;
+const int stationPin2 = 13;
 
 int output;
 
@@ -23,40 +34,37 @@ int eyeCondition;
 const int sockHyst = 10; // hysteresis for socket "connected" threshold
 const int eyeHyst = 1;
 
-// function to calibrate the photoresistor to the room light level
-void calibrate(int resistorPin)
-{
+// Baseline averages established via calibration
+int averageLightLeftBlue  = 0;
+int averageLightLeftRed = 0;
+int averageLightRightBlue = 0;
+int averageLightRightRed = 0;
+
+// Calibrate a single photoresistor and update its baseline
+void calibrateOne(int analogPin, int &averageOut) {
   int sensorLow = 1000;
   int sensorHigh = 0;
-  int timer = 0;
 
-  while (timer < 1000)
-  {
-    int calibratingLightValue = analogRead(resistorPin);
-    if (calibratingLightValue > sensorHigh)
-    {
-      sensorHigh = calibratingLightValue;
-    }
-    if (calibratingLightValue < sensorLow)
-    {
-      sensorLow = calibratingLightValue;
-    }
-    timer++;
+  for (int i = 0; i < 1000; i++) {
+    int v = analogRead(analogPin);
+    if (v > sensorHigh) sensorHigh = v;
+    if (v < sensorLow)  sensorLow  = v;
   }
-  if (resistorPin == A0)
-  {
-    averageLightLeft = (sensorHigh + sensorLow) / 2;
-  }
-  else if (resistorPin == A1)
-  {
-    averageLightRight = (sensorHigh + sensorLow) / 2;
-  }
-  else if (resistorPin == A2)
-  {
-    averageLightSocket = (sensorHigh + sensorLow) / 2;
-  }
+  averageOut = (sensorHigh + sensorLow) / 2;
 }
-String go = "false";
+
+// Calibrate All sensors
+void calibrateAll() {
+  calibrateOne(photoresistorLeftRedPin,  averageLightLeftRed);
+  calibrateOne(photoresistorLeftBluePin, averageLightLeftBlue);
+  calibrateOne(photoresistorRightRedPin,  averageLightRightRed);
+  calibrateOne(photoresistorRightBluePin, averageLightRightBlue);
+  calibrateOne(leftEyePin, averageLightLeft);
+  calibrateOne(rightEyePin, averageLightRight);
+  Serial.print("RECALIBATED");
+}
+
+
 void eyeballSetup()
 {
   Serial.begin(9600);
@@ -64,15 +72,15 @@ void eyeballSetup()
   // while (!Serial)
   //{ /* wait on native USB boards */
   // }
+  pinMode(stationPin1,OUTPUT);
+  pinMode(stationPin2,OUTPUT);
 
-  eyeballServo.attach(servoPin);
-  eyeballServo.write(0);
+  eyeballLeftServo.attach(servoLeftPin);
+  eyeballRightServo.attach(servoRightPin);
+  eyeballLeftServo.write(180);
+  eyeballRightServo.write(0);
 
-  calibrate(leftEyePin);
-  delay(200);
-  calibrate(rightEyePin);
-  delay(200);
-  calibrate(socketPin);
+  calibrateAll();
 
   eyeCondition = 1;
 }
@@ -88,44 +96,73 @@ bool eyesBright(int L, int R)
   return (L > (averageLightLeft + eyeHyst)) &&
          (R > (averageLightRight + eyeHyst));
 }
-
-void popout(){
+String direction = "_";
+void task(){
 
   if (Serial.available() > 0)
   {
     char key = Serial.read();
   }
   
-  if (go == "true")
-    {
-    // Serial.println(go);
-      eyeballServo.write(90);
-      delay(500);
-      eyeballServo.write(0);
-      // delay(500);
+  if (direction == "go")
+  {
+  // Serial.println(go);
+    eyeballLeftServo.write(0);
+    eyeballRightServo.write(180);
+    delay(500);
+    eyeballLeftServo.write(180);
+    eyeballRightServo.write(0);
+    // delay(500);
 
-      eyeCondition = 0;
+    eyeCondition = 0;
 
-      // Serial.println("Command: Turn servo to 180°");
-      // eyeballServo.write(90);
-      // delay(500);
-      count = 0;
-      output = 0;
-      //calibrate(leftEyePin);
-      //calibrate(rightEyePin);
-      go = "false";
-    }
+    // Serial.println("Command: Turn servo to 180°");
+    // eyeballServo.write(90);
+    // delay(500);
+    count = 0;
+    output = 0;
+    //calibrate(leftEyePin);
+    //calibrate(rightEyePin);
+    digitalWrite(stationPin1, HIGH);
+    digitalWrite(stationPin2, HIGH);
+    direction = "_";
+  }
+  if(direction == "stop"){
+    digitalWrite(stationPin1, LOW);
+    digitalWrite(stationPin2, LOW);
+    direction = "_";
+  }
+  if(direction == "reset"){
+    calibrateAll();
+    direction = "_";
+  }
 }
-
+bool redConnected = false;
+bool blueConnected = false;
 int eyeballLoop()
 {
+
+  int leftRedVal  = analogRead(photoresistorLeftRedPin);
+  int leftBlueVal  = analogRead(photoresistorLeftBluePin);
+  int rightRedVal = analogRead(photoresistorRightRedPin);
+  int rightBlueVal = analogRead(photoresistorRightBluePin);
+
+  bool leftRedOn  = leftRedVal  > (averageLightLeftRed  + lightThreshold);
+  bool leftBlueOn  = leftBlueVal  > (averageLightLeftBlue  + lightThreshold);
+  bool rightRedOn = rightRedVal > (averageLightRightRed + lightThreshold);
+  bool rightBlueOn = rightBlueVal > (averageLightRightBlue + lightThreshold);
+  bool anyLightOn = leftRedOn || leftBlueOn || rightRedOn || rightBlueOn;
+
+
+  // NTS REMINDER TO ADD THE OTHER PINS 
+  redConnected = leftRedOn;
+  blueConnected = leftBlueOn;
+
 
   int leftLight = analogRead(leftEyePin);
   int rightLight = analogRead(rightEyePin);
 
-  int connectionLight = analogRead(socketPin);
 
-  bool connected = connectionLight > (averageLightSocket + sockHyst);
   bool covered = eyesCovered(leftLight,rightLight);
   //Serial.print("L=");
   //Serial.print(leftLight);
@@ -191,7 +228,7 @@ int eyeballLoop()
   //     return 0; //This is to prevent the 2 from triggering completion
   //   }
   // }
-  if(connected && covered){output += 2;}
+  if(anyLightOn && covered){output += 2;}
   else if( output > 0){output -= 2;}
   // delay(200);
   //Serial.print(" | eyeCondition=");
@@ -235,9 +272,9 @@ void parsing(char* response){
       Serial.println(key);
       Serial.print("Value: ");
       Serial.println(value);
-      go = (String)value;
+      direction = (String)value;
       // Serial.print(String(go));
-      popout();
+      task();
     }
   }
 }
@@ -308,9 +345,13 @@ void httpRequest(int data) {
     client.println("Host: Eyeball"); //Required but the input doesnt matter
     client.print("Data:");
     client.println(data);
+    client.print("Red:");
+    client.println(redConnected);
+    client.print("Blue:");
+    client.println(blueConnected);
     // client.println("User-Agent: ArduinoWiFi/1.1"); //Not required
     // client.println("Connection: close");
-    client.println();
+    client.println(); //leave this it ends the headers
     // note the time that the connection was made:
     lastConnectionTime = millis();
     read_request();
