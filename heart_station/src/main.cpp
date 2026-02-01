@@ -250,7 +250,7 @@ void httpRequest(int data) {
     client.println("Host: Heart"); //Required but the input doesnt matter
     client.print("Data:");
     client.println(data);
-        client.print("Red:");
+    client.print("Red:");
     client.println(redConnected);
     client.print("Blue:");
     client.println(blueConnected);
