@@ -13,6 +13,9 @@ const int ledPins[] = {2, 3, 4};
 const int buttonPin = 7;
 const int recalibratePin = 8;
 
+const int leftPortPin = 10;
+const int rightPortPin = 11;
+
 const int stationPin1 = 12;
 const int stationPin2 = 13;
 
@@ -70,6 +73,8 @@ void bleedingSetup()
 
   pinMode(stationPin1, OUTPUT);
   pinMode(stationPin2, OUTPUT);
+  pinMode(leftPortPin, OUTPUT);
+  pinMode(rightPortPin, OUTPUT);
   // Set button pin as INPUT_PULLUP (active LOW)
   pinMode(buttonPin, INPUT_PULLUP);
   // recalibrate pin is setup the same
@@ -96,6 +101,11 @@ int bleedingLoop()
   bool rightBlueOn = rightBlueVal > (averageLightRightBlue + lightThreshold);
   bool anyLightOn = leftRedOn || leftBlueOn || rightRedOn || rightBlueOn;
 
+  //Port lights
+  if(leftBlueOn || leftRedOn){digitalWrite(rightPortPin, HIGH);}
+  else{digitalWrite(leftPortPin, LOW);}
+  if(rightBlueOn || rightRedOn){digitalWrite(rightPortPin, HIGH);}
+  else{digitalWrite(rightPortPin, LOW);}
 
   // NTS REMINDER TO ADD THE OTHER PINS 
   redConnected = leftRedOn;

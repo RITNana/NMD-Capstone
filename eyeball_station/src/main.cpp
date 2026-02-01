@@ -14,8 +14,8 @@ const int leftEyePin = A4;
 const int rightEyePin = A5;
 
 //PORT LIGHTS
-int portPin1 = 10;
-int portPin2 = 11; 
+int leftPortPin = 10;
+int rightPortPin = 11; 
 //STATION LIGHTS
 const int stationPin1 = 12;
 const int stationPin2 = 13;
@@ -72,6 +72,8 @@ void eyeballSetup()
   // while (!Serial)
   //{ /* wait on native USB boards */
   // }
+  pinMode(leftPortPin, OUTPUT);
+  pinMode(rightPortPin, OUTPUT);
   pinMode(stationPin1,OUTPUT);
   pinMode(stationPin2,OUTPUT);
 
@@ -153,6 +155,11 @@ int eyeballLoop()
   bool rightBlueOn = rightBlueVal > (averageLightRightBlue + lightThreshold);
   bool anyLightOn = leftRedOn || leftBlueOn || rightRedOn || rightBlueOn;
 
+  //Port lights
+  if(leftBlueOn || leftRedOn){digitalWrite(rightPortPin, HIGH);}
+  else{digitalWrite(leftPortPin, LOW);}
+  if(rightBlueOn || rightRedOn){digitalWrite(rightPortPin, HIGH);}
+  else{digitalWrite(rightPortPin, LOW);}
 
   // NTS REMINDER TO ADD THE OTHER PINS 
   redConnected = leftRedOn;
