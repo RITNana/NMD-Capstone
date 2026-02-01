@@ -50,13 +50,34 @@ function preload() {
 let banish = "";
 let newTask = "";
 let otherNewTask = "";
+//useDaisy is to use it or not
+//daisyTask is the name of the task you have to go through, endTask is the end task , 
+//daisyTube is the color of tube going from heart to daisy and chain from daisy to end
+let daisy = {useDaisy: false, daisyTask: "", endTask: "", daisyTube: "", chainTube: ""}
 
+let portData = {brain: {red: "0", blue: "0"}, eyeball: {red: "0", blue: "0"}, bleeding: {red: "0", blue: "0"}, heart: {red: "0", blue: "0"}, tummy: {red: "0", blue: "0"}}
+let tubeLocation = {red: [], blue: []}
 let gameState = 0;
 let gameloop = 0;
 let updateGameState = false;
 let useGameLoop = false;
 let heartConnected = false;
 let heartLast = 0;
+//Function to fill in tube location based on portData sudo-returning the locations
+function tubeFinder(){
+  //reset the json before going
+  tubeLocation.red = [];
+  tubeLocation.blue = [];
+  for(const station in portData){
+    if (portData[station].red !== "0"){
+      tubeLocation.red.push(station);
+    }
+    if (portData[station].blue !== "0"){
+      tubeLocation.blue.push(station);
+    }
+  }
+}
+
 //Gameloop 1 for Prototype 2
 function gameLoop1(state) {
   if (state == 1) {
@@ -159,6 +180,9 @@ function setup() {
     if (e.key == "v") {
       socket.emit("tummy", "reset");
     }
+    if (e.key == "b") {
+      socket.emit("heart", "reset");
+    }
 
     if (e.key == "1") { //For gameloop 1
       gameloop = 1;
@@ -190,6 +214,18 @@ function SocketListeners() {
   socket.on("bleeding-data", (p) => stations.bleeding.num = (String(p).trim()));
   socket.on("heart-data", (p) => stations.heart.num = (String(p).trim()));
   socket.on("tummy-data", (p) => stations.tummy.num = (String(p).trim()));
+
+    socket.on("brain-red", (p) => portData.brain.red = (String(p).trim()));
+  socket.on("eyeball-red", (p) => portData.eyeball.red = (String(p).trim()));
+  socket.on("bleeding-red", (p) => portData.bleeding.red = (String(p).trim()));
+  socket.on("heart-red", (p) => portData.heart.red = (String(p).trim()));
+  socket.on("tummy-red", (p) => portData.tummy.red = (String(p).trim()));
+
+    socket.on("brain-blue", (p) => portData.brain.blue = (String(p).trim()));
+  socket.on("eyeball-blue", (p) => portData.eyeball.blue = (String(p).trim()));
+  socket.on("bleeding-blue", (p) => portData.bleeding.blue = (String(p).trim()));
+  socket.on("heart-blue", (p) => portData.heart.blue = (String(p).trim()));
+  socket.on("tummy-blue", (p) => portData.tummy.blue = (String(p).trim()));
 }
 
 // ---- DRAW STATIONS ----
@@ -224,6 +260,8 @@ function draw() {
   // stations.bleeding.num = 15;
   // stations.tummy.num = 7;
   // stations.heart.num = 1;
+  //Trigger the tube finder to be updated
+  tubeFinder();
 
 
   // ---UPDATE STATIONS---
@@ -231,8 +269,15 @@ function draw() {
     const st = stations[key];
 
     // smooth progress update
-    if (st.inputDelay) {
-      st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
+    //console.log(st.inputDelay);
+    //NTS Daisy chaining will go into this if also TEST THIS
+    if(tubeLocation.blue.heart && tubeLocation.blue.key || tubeLocation.red.heart && tubeLocation.red.key){
+      if(st.inputDelay){
+      // console.log(st.num);
+        st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
+      // st.progress = lerp(st.progress,st.progress + st.num,.1);
+      // st.progress += st.num;
+      }
     }
     // detect completion
     if (!st.dismissing && st.visible && st.progress >= 0.995) {
@@ -280,11 +325,11 @@ function draw() {
       if (st.name === otherNewTask) otherNewTask = "";
     }
 
-    if (st.name == "heart") {
-      if (st.num == "1" || st.num == "2" || st.num == "3" || heartLast == "1" || heartLast == "2" || heartLast == "3") { heartConnected = true; }
-      else { heartConnected = false; }
-      heartLast = st.num;
-    }
+//     if (st.name == "heart") {
+//       if (st.num == "1" || st.num == "2" || st.num == "3" || heartLast == "1" || heartLast == "2" || heartLast == "3") { heartConnected = true; }
+//       else { heartConnected = false; }
+//       heartLast = st.num;
+//     }
 
   }
 
@@ -320,17 +365,16 @@ function draw() {
 
       pop();
     }
-  }
+    if (updateGameState && useGameLoop) {
+      if (gameloop == 1) {
+        gameLoop1(gameState);
+      }
+      if (gameloop == 2) {
+        gameLoop2(gameState);
+      }
+      updateGameState = false;
+    }
 
-  // ---GAME LOOP UPDATE---
-  if (updateGameState && useGameLoop) {
-    if (gameloop == 1) {
-      gameLoop1(gameState);
-    }
-    if (gameloop == 2) {
-      gameLoop2(gameState);
-    }
-    updateGameState = false;
   }
 }
 
@@ -340,7 +384,8 @@ function draw() {
 function ledProgress(charge, th = thresholds) {
   const [t0, t1, t2] = th;
 
-  if (charge <= 0 || !heartConnected) return 0;
+  // if (charge <= 0 || !heartConnected) return 0;
+  if(charge <= 0) return 0;
 
   if (charge <= t0) {
     // first third

@@ -14,6 +14,8 @@ const int photoresistorRightBluePin = A3;
 const int buttonPins[4] = {2, 3, 4, 5};
 const int recalibratePin = 8;
 
+const int leftPortPin = 10;
+const int rightPortPin = 11;
 const int stationPin1 = 12;
 const int stationPin2 = 13;
 
@@ -66,6 +68,8 @@ void brainSetup()
   // Serial.begin(9600);
   pinMode(stationPin1, OUTPUT);
   pinMode(stationPin2, OUTPUT);
+  pinMode(leftPortPin, OUTPUT);
+  pinMode(rightPortPin, OUTPUT);
   // Set button pins as input pullups
   for (int i = 0; i < 4; i++)
   {
@@ -88,6 +92,11 @@ int brainLoop()
   bool rightBlueOn = rightBlueVal > (averageLightRightBlue + lightThreshold);
   bool anyLightOn = leftRedOn || leftBlueOn || rightRedOn || rightBlueOn;
 
+  //Port lights
+  if(leftBlueOn || leftRedOn){digitalWrite(rightPortPin, HIGH);}
+  else{digitalWrite(leftPortPin, LOW);}
+  if(rightBlueOn || rightRedOn){digitalWrite(rightPortPin, HIGH);}
+  else{digitalWrite(rightPortPin, LOW);}
 
   // NTS REMINDER TO ADD THE OTHER PINS 
   redConnected = leftRedOn;

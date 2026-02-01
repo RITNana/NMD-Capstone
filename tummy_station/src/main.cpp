@@ -15,6 +15,8 @@ const int buttonPin = 2;
 const int servoPinR = 9; // left
 const int servoPinL = 8; // right
 
+const int leftPortPin = 10;
+const int rightPortPin = 11;
 const int stationPin1 = 12;
 const int stationPin2 = 13;
 
@@ -70,6 +72,8 @@ void tummySetup()
   Serial.println("starting...");
 
   pinMode(buttonPin, INPUT_PULLUP);
+  pinMode(leftPortPin, OUTPUT);
+  pinMode(rightPortPin, OUTPUT);
   pinMode(stationPin1, OUTPUT);
   pinMode(stationPin2, OUTPUT);
   servoR.attach(servoPinR);
@@ -157,6 +161,11 @@ int tummyLoop()
   bool rightBlueOn = rightBlueVal > (averageLightRightBlue + lightThreshold);
   bool anyLightOn = leftRedOn || leftBlueOn || rightRedOn || rightBlueOn;
 
+  //Port lights
+  if(leftBlueOn || leftRedOn){digitalWrite(rightPortPin, HIGH);}
+  else{digitalWrite(leftPortPin, LOW);}
+  if(rightBlueOn || rightRedOn){digitalWrite(rightPortPin, HIGH);}
+  else{digitalWrite(rightPortPin, LOW);}
 
   // NTS REMINDER TO ADD THE OTHER PINS 
   redConnected = leftRedOn;

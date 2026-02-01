@@ -49,6 +49,8 @@ const theGet = ( station, req, res, next) => {
   // console.log("Query params:", req.query);
   // Emit to clients if needed
   io.emit(`${station}-data`, req.headers.data);
+  io.emit(`${station}-red`, req.headers.red);
+  io.emit(`${station}-blue`, req.headers.blue);
   // if(latestStationData[station] === "eyeball" || latestStationData[station] === "tummy"){
   res.type("text/plain").send(`${station}=${latestStationData[station]}~`);
   latestStationData[station] = "_"; //reset to neutral
