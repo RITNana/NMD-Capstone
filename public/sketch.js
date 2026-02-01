@@ -13,6 +13,9 @@ let fullFrames = 0;
 const FULL_FRAMES_TO_CONFIRM = 12; // ~12 frames ≈ 200ms at 60fps
 const DISMISS_DURATION = 600;
 
+//tracks what tasks are currrently shown
+let visibleTasks = [];
+
 // video overlay
 let taskVideo;
 let bleedingBar;
@@ -29,10 +32,9 @@ let stations = {
   brain: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [80, 180, 255], name: "brain", inputDelay: false },
   eyeball: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [255, 230, 100], name: "eyeball", inputDelay: false },
   bleeding: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [201, 22, 22], name: "bleeding", inputDelay: false },
-  heart: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [255, 120, 180], name: "heart",inputDelay: false },
-  tummy: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [120, 255, 150], name: "tummy",inputDelay: false }
+  heart: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [255, 120, 180], name: "heart", inputDelay: false },
+  tummy: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [120, 255, 150], name: "tummy", inputDelay: false }
 };
-
 
 function preload() {
   bleedingBar = loadImage("media/Task 1_NotComplete.png");
@@ -42,6 +44,7 @@ function preload() {
 
   headerImage = loadImage("media/TopBar.png");
 }
+
 
 //Feed in the name of the task for newTask or banish to get that task back on screen or banish it as if its complete
 let banish = "";
@@ -228,57 +231,43 @@ function SocketListeners() {
 // ---- DRAW STATIONS ----
 function draw() {
   background(0);
-  if (taskVideo) image(taskVideo, 0, 0, width, height);
 
+  //video and header
+  if (taskVideo) image(taskVideo, 0, 0, width, height);
   if (headerImage) {
     image(headerImage, 0, 0, width, headerImage.height * (width / headerImage.width));
   }
 
-  //
-  // ---  DRAW BARS ---
-  //
-
-  //offsets
+  //layout constants
   const topOffset = 50;
   const space = -3;
-
-  // for image size scale
   const barWidth = width * 0.8;
   const barHeight = 223 * (barWidth / 1480);
-
-  let currentYPos = 0;
-  function yPosManager(station) {
-    topOffset + (barHeight + space) * currentPos;
-
-  }
-
-  // vertical placement for each station (stacked layout)
-  const positions = {
-    bleeding: { y: topOffset + (barHeight + space) * 0 },
-    brain: { y: topOffset + (barHeight + space) * 1 },
-    eyeball: { y: topOffset + (barHeight + space) * 2 },
-    tummy: { y: topOffset + (barHeight + space) * 3 },
-    heart: { y: 240000 } //BEGONE HEALTH BAR
-  };
-
-  // calculate centered X position for all bars
   const centeredX = (width - barWidth) / 2;
 
-  // layout info for each station image and bar position
-  const stationLayouts = {
-    bleeding: { img: bleedingBar, x: centeredX, y: 0, w: barWidth, h: barHeight },
+  //layouts of stations
+  let stationLayouts = {
     brain: { img: brainBar, x: centeredX, y: 0, w: barWidth, h: barHeight },
     eyeball: { img: eyeBar, x: centeredX, y: 0, w: barWidth, h: barHeight },
+    bleeding: { img: bleedingBar, x: centeredX, y: 0, w: barWidth, h: barHeight },
+    heart: { img: null, x: centeredX, y: 0, w: barWidth, h: barHeight },
     tummy: { img: tummyBar, x: centeredX, y: 0, w: barWidth, h: barHeight }
   };
 
+  //test
+  // stations.brain.num = 5;
+  // stations.eyeball.num = 10;
+  // stations.bleeding.num = 15;
+  // stations.tummy.num = 7;
+  // stations.heart.num = 1;
   //Trigger the tube finder to be updated
   tubeFinder();
 
-  //ITERATE THOUGH STATIONS
+
+  // ---UPDATE STATIONS---
   for (const key in stations) {
     const st = stations[key];
-    const posY = positions[key].y;
+
     // smooth progress update
     //console.log(st.inputDelay);
     //NTS Daisy chaining will go into this if also TEST THIS
@@ -295,16 +284,22 @@ function draw() {
       st.dismissing = true;
       st.dismissStart = millis();
     }
+
     // handle dismissal animation
     if (st.dismissing || st.name === banish) {
       const t = constrain((millis() - st.dismissStart) / DISMISS_DURATION, 0, 1);
       const e = 1 - pow(1 - t, 3);
       st.offsetX = e * (width + 48);
       st.fade = 1 - e;
+
       if (t >= 1) {
         st.dismissing = false;
         st.visible = false;
         st.fade = 0;
+
+        //remove from visibleTasks
+        const index = visibleTasks.indexOf(st.name);
+        if (index > -1) visibleTasks.splice(index, 1);
       }
       banish = ""
       gameState++;
@@ -313,54 +308,56 @@ function draw() {
       socket.emit(`${st.name}`, "stop"); //Trigger stop
     }
 
-    function callAndReset(othertask) {
+    //return a task from completion / reset all values 
+    if (st.name === newTask || st.name === otherNewTask) {
       st.offsetX = 0;
-      translate(st.offsetX, posY);
       st.visible = true;
       st.dismissing = false;
       st.fade = 1;
-      banish = false;
-      if (!othertask) newTask = "";
-      if (othertask) otherNewTask = "";
       st.progress = 0;
-      // st.num = 0;
       st.dismissStart = 0;
-      // if(st.name == "eyeball" || st.name =="tummy"){
       st.inputDelay = true;
-      // }
       socket.emit(`${st.name}`, "go");
-    }
-    //return a task from completion / reset all values 
-    if (st.name === newTask) { callAndReset(false); }
-    if (st.name === otherNewTask) { callAndReset(true); }
 
-    // draw station overlay
+      //add task to visibleTasks
+      if (!visibleTasks.includes(st.name)) visibleTasks.push(st.name)
+      if (st.name === newTask) newTask = "";
+      if (st.name === otherNewTask) otherNewTask = "";
+    }
+
+//     if (st.name == "heart") {
+//       if (st.num == "1" || st.num == "2" || st.num == "3" || heartLast == "1" || heartLast == "2" || heartLast == "3") { heartConnected = true; }
+//       else { heartConnected = false; }
+//       heartLast = st.num;
+//     }
+
+  }
+
+  // --- STACK STATIONS ---
+  for (let i = 0; i < visibleTasks.length; i++) {
+    const key = visibleTasks[i];
+    const st = stations[key];
+    const posY = topOffset + i * (barHeight + space);
+
     if (st.visible || st.dismissing) {
       push();
       translate(st.offsetX, posY);
-
-      // progress fill
       noStroke();
       fill(st.color[0], st.color[1], st.color[2], 220 * st.fade);
       rect(barX, barY, barW * st.progress, barH);
 
-      // pick the right image for the station
-      const layout = stationLayouts[st.name] || {};
-      const img = layout.img;
-
-      // draw the correct overlay image
-      if (img) {
+      //image
+      const layout = stationLayouts[st.name];
+      if (layout && layout.img) {
         tint(255, 255 * st.fade);
-        image(img, layout.x, layout.y, layout.w, layout.h);
+        image(layout.img, layout.x, layout.y, layout.w, layout.h);
         noTint();
       }
 
-      //connection status
+      // connection status text
       textSize(12);
       textStyle(NORMAL);
       textAlign(LEFT, CENTER);
-
-      //NEEDS TO CHNAGE so it relates to if connected or not, NOT THE CHARGE
       if (st.progress > 0) {
         fill(255, 255 * st.fade);
         text("CONNECTED", 620, 40);
@@ -377,12 +374,7 @@ function draw() {
       }
       updateGameState = false;
     }
-    //When it was 1 tube from the heart to something
-    // if (st.name == "heart") {
-    //   if (st.num == "1" || st.num == "2" || st.num == "3" || heartLast == "1" || heartLast == "2" || heartLast == "3") { heartConnected = true; }
-    //   else { heartConnected = false; }
-    //   heartLast = st.num;
-    // }
+
   }
 }
 

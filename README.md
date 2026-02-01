@@ -64,3 +64,30 @@ git merge origin/main (then merge)
 
 Sound 
 Cartoon Wet Hit by Universfield - https://pixabay.com/sound-effects/cartoon-wet-hit-352447/
+
+---
+### KEY BINDINGS
+
+**Game Control**
+- `1` – Start game loop 1  
+- `2` – Start game loop 2  
+- `3` – Stop game loop  
+
+**Add Task**
+- `Q` – Bleeding
+- `W` – Brain
+- `E` – Eyeball
+- `R` – Tummy / Intestines
+
+**Remove Task**
+- `A` – Bleeding
+- `S` – Brain
+- `D` – Eyeball
+- `F` – Tummy / Intestines
+
+**Recalibrate Photoresistor**
+- `Z` – Bleeding
+- `X` – Brain
+- `C` – Eyeball
+- `V` – Tummy / Intestines
+- `B` – Heart *(testing)*
