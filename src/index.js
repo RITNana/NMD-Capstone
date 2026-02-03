@@ -47,11 +47,12 @@ const theGet = ( station, req, res, next) => {
   console.log(`Received request for /${station} from ${req.ip}`);
   console.log("Headers:", req.headers);
   // console.log("Query params:", req.query);
-  // Emit to clients if needed
+  // THESE SEND TO sketch.js
   io.emit(`${station}-data`, req.headers.data);
   io.emit(`${station}-red`, req.headers.red);
   io.emit(`${station}-blue`, req.headers.blue);
   // if(latestStationData[station] === "eyeball" || latestStationData[station] === "tummy"){
+  //THESE SENDS TO ARDUINOS
   res.type("text/plain").send(`${station}=${latestStationData[station]}~`);
   latestStationData[station] = "_"; //reset to neutral
   // console.log("sendin");
@@ -200,7 +201,7 @@ const startServer = () => {
     console.log("Server + Socket.IO listening on http://localhost:3000");
   });
 
-
+  //These are from the arduino
   io.on("connection", (socket) => {
     console.log("Web client connected:", socket.id);
     // Listen for each station's socket emit

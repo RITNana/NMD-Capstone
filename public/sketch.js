@@ -89,6 +89,11 @@ function gameLoop1(state) {
   if (state == 3) {
     newTask = "bleeding"
     otherNewTask = "brain"
+
+    // Daisy in theory
+    daisy.useDaisy === true;
+    daisy.daisyTask === "bleeding";
+    daisy.endTask === "brain";
   }
   if (state == 4) {
     newTask = "eyeball"
@@ -134,7 +139,6 @@ function setup() {
   });
   taskVideo.loop();
   taskVideo.hide();
-
   // same-origin socket.io
   socket = io();
   SocketListeners();
@@ -168,6 +172,7 @@ function setup() {
       banish = "tummy";
     }
     //reset all pins on a given station
+    //these get sent to index.js
     if (e.key == "x") {
       socket.emit("brain", "reset");
     }
@@ -207,7 +212,7 @@ function setup() {
 
 
 // ---- Socket Listeners ----
-//They should be strings
+//They should be strings they come from index.js
 function SocketListeners() {
   socket.on("brain-data", (p) => stations.brain.num = (String(p).trim()));
   socket.on("eyeball-data", (p) => stations.eyeball.num = (String(p).trim()));
@@ -270,13 +275,34 @@ function draw() {
 
     // smooth progress update
     //console.log(st.inputDelay);
-    //NTS Daisy chaining will go into this if also TEST THIS
-    if(tubeLocation.blue.heart && tubeLocation.blue.key || tubeLocation.red.heart && tubeLocation.red.key){
+    //NTS if NOT Daisy chaining will go into this if also TEST THIS
+    if(!daisy.useDaisy && ((tubeLocation.blue.heart && tubeLocation.blue.key) || (tubeLocation.red.heart && tubeLocation.red.key))){
       if(st.inputDelay){
       // console.log(st.num);
         st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
       // st.progress = lerp(st.progress,st.progress + st.num,.1);
       // st.progress += st.num;
+      }
+    }
+    //NTS -- If using Daisy -- TEST THIS
+    let blueDaisy = (daisy.daisyTask == tubeLocation.blue.key); //the task being chained (daisy-ed?) through is connected with blue
+    let redDaisy = (daisy.daisyTask == tubeLocation.red.key); //the task being chained (daisy-ed?) through is connected with red
+    let blueEnd = (daisy.endTask == tubeLocation.blue.key); //the end task is connected with blue
+    let redEnd = (daisy.endTask == tubeLocation.red.key); //the end task is connected with red
+    //for the heart -> daisy
+    if(daisy.useDaisy){
+      if(st.inputDelay &&
+          ((blueDaisy && tubeLocation.blue.heart) || //Blue tube Heart to Daisy
+            (redDaisy && tubeLocation.red.heart)) // Red tube heart to Daisy 
+          ){st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);}
+      
+      //for the daisy -> end
+      else if(st.inputDelay &&
+        ((blueEnd && blueDaisy) || //blue at end and daisy 
+          (redEnd && redDaisy)) //red at end and daisy
+      ){st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);}
+      else{
+        //NTS send decrement to the end station ?
       }
     }
     // detect completion
