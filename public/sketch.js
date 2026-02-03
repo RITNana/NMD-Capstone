@@ -29,11 +29,11 @@ const barH = 30;
 
 // stations and their states
 let stations = {
-  brain: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [80, 180, 255], name: "brain", inputDelay: false },
-  eyeball: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [255, 230, 100], name: "eyeball", inputDelay: false },
-  bleeding: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [201, 22, 22], name: "bleeding", inputDelay: false },
-  heart: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [255, 120, 180], name: "heart", inputDelay: false },
-  tummy: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [120, 255, 150], name: "tummy", inputDelay: false }
+  brain: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [80, 180, 255], name: "brain", inputDelay: false, timerStart: 0, totalTime: 0 },
+  eyeball: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [255, 230, 100], name: "eyeball", inputDelay: false, timerStart: 0, totalTime: 0 },
+  bleeding: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [201, 22, 22], name: "bleeding", inputDelay: false, timerStart: 0, totalTime: 0 },
+  heart: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [255, 120, 180], name: "heart", inputDelay: false, timerStart: 0, totalTime: 0 },
+  tummy: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [120, 255, 150], name: "tummy", inputDelay: false, timerStart: 0, totalTime: 0 }
 };
 
 function preload() {
@@ -252,6 +252,13 @@ function draw() {
         st.visible = false;
         st.fade = 0;
 
+        //time
+        st.totalTime = (millis() - st.timerStart) / 1000; // in seconds
+
+        // Calculate score now
+        const points = scoring(st.totalTime);
+        console.log(`${st.name} scored:`, points);
+
         //remove from visibleTasks
         const index = visibleTasks.indexOf(st.name);
         if (index > -1) visibleTasks.splice(index, 1);
@@ -272,6 +279,11 @@ function draw() {
       st.progress = 0;
       st.dismissStart = 0;
       st.inputDelay = true;
+
+      //timer
+      st.timerStart = int(millis() / 1000);
+      st.totalTime = 0;
+
       socket.emit(`${st.name}`, "go");
 
       //add task to visibleTasks
