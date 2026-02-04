@@ -108,31 +108,31 @@ function draw() {
         if (taskVideo) image(taskVideo, 0, 0, width, height);
     }
 
-    if (!scoringComplete) {
-        if (totalTaskTime >= 5 && !scored_0_5) {
-            let taskResult = scoring()
-            scored_0_5 = true;
-            totalScore += taskResult
-        }
+    // if (!scoringComplete) {
+    //     if (totalTaskTime >= 5 && !scored_0_5) {
+    //         let taskResult = scoring()
+    //         scored_0_5 = true;
+    //         totalScore += taskResult
+    //     }
 
-        if (totalTaskTime >= 10 && !scored_5_10) {
-            let taskResult = scoring()
-            scored_5_10 = true;
-            totalScore += taskResult
-        }
+    //     if (totalTaskTime >= 10 && !scored_5_10) {
+    //         let taskResult = scoring()
+    //         scored_5_10 = true;
+    //         totalScore += taskResult
+    //     }
 
-        if (totalTaskTime >= 14 && !scored_10_14) {
-            let taskResult = scoring()
-            scored_10_14 = true
-            totalScore += taskResult
-        }
+    //     if (totalTaskTime >= 14 && !scored_10_14) {
+    //         let taskResult = scoring()
+    //         scored_10_14 = true
+    //         totalScore += taskResult
+    //     }
 
-        if (totalTaskTime >= 15 && !scored_15) {
-            let taskResult = scoring()
-            scored_15 = true
-            totalScore += taskResult
-        }
-    }
+    //     if (totalTaskTime >= 15 && !scored_15) {
+    //         let taskResult = scoring()
+    //         scored_15 = true
+    //         totalScore += taskResult
+    //     }
+    // }
 
     if (totalTaskTime >= 30) {
         totalTaskTime = 0
@@ -163,33 +163,33 @@ function draw() {
 
 // ----- SCORING -----
 
-function scoring() {
-  if (totalTaskTime > 0 && totalTaskTime <= 5) {
-    score = int(random(45, 51))
-    multiplier = int(random(6.0, 8.1))
-    taskSum = score * multiplier
-    console.log("Excellent! " + taskSum)
-    return taskSum
-  }
-  else if (totalTaskTime > 5 && totalTaskTime <= 10) {
-    score = int(random(35, 41))
-    multiplier = int(random(3.0, 5.1))
-    taskSum = score * multiplier
-    console.log("Not too shabby " + taskSum)
-    return taskSum
-  } else if (totalTaskTime > 10 && totalTaskTime <= 14) {
-    score = int(random(30, 36))
-    multiplier = int(random(1.5, 3.1))
-    taskSum = score * multiplier
-    console.log("You can do better " + taskSum)
-    return taskSum
-  } else if (totalTaskTime >= 15) {
-    score = 25
-    taskSum = score
-    print("Are you even trying? " + taskSum)
-    return taskSum
-  }
-}
+// function scoring() {
+//   if (totalTaskTime > 0 && totalTaskTime <= 5) {
+//     score = int(random(45, 51))
+//     multiplier = int(random(6.0, 8.1))
+//     taskSum = score * multiplier
+//     console.log("Excellent! " + taskSum)
+//     return taskSum
+//   }
+//   else if (totalTaskTime > 5 && totalTaskTime <= 10) {
+//     score = int(random(35, 41))
+//     multiplier = int(random(3.0, 5.1))
+//     taskSum = score * multiplier
+//     console.log("Not too shabby " + taskSum)
+//     return taskSum
+//   } else if (totalTaskTime > 10 && totalTaskTime <= 14) {
+//     score = int(random(30, 36))
+//     multiplier = int(random(1.5, 3.1))
+//     taskSum = score * multiplier
+//     console.log("You can do better " + taskSum)
+//     return taskSum
+//   } else if (totalTaskTime >= 15) {
+//     score = 25
+//     taskSum = score
+//     print("Are you even trying? " + taskSum)
+//     return taskSum
+//   }
+// }
 
 
 

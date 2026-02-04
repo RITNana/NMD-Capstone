@@ -252,8 +252,11 @@ function draw() {
         st.visible = false;
         st.fade = 0;
 
-        //time
-        st.totalTime = (millis() - st.timerStart) / 1000; // in seconds
+        // stop timer
+        st.totalTime = (millis() - st.timerStart) / 1000; // seconds
+        st.timerStart = 0; // reset for next time
+
+        console.log(`${st.name} time:`, st.totalTime);
 
         // Calculate score now
         const points = scoring(st.totalTime);
@@ -281,7 +284,7 @@ function draw() {
       st.inputDelay = true;
 
       //timer
-      st.timerStart = int(millis() / 1000);
+      st.timerStart = millis();
       st.totalTime = 0;
 
       socket.emit(`${st.name}`, "go");
