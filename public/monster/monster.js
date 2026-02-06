@@ -69,7 +69,7 @@ function preload() {
 
 
 function setup() {
-    createCanvas(780, 1528);
+    createCanvas(1078, 1915);
     textFont("system-ui");
 
     taskVideo = createVideo(`../media/video/monsters/${chosenMonster}.mp4`, () => {

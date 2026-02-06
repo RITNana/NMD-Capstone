@@ -24,25 +24,36 @@ let veinStatus = "";
 //layout constants
 const barX = 282;
 const barY = 27;
-const barW = 323;
+const barW = 375;
 const barH = 30;
+
+//game time
+let gameDuration = 120 * 1000;
+let gameTimeStart = 0;
+let gameOver = false;
 
 // stations and their states
 let stations = {
-  brain: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [80, 180, 255], name: "brain", inputDelay: false, timerStart: 0, totalTime: 0 },
-  eyeball: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [255, 230, 100], name: "eyeball", inputDelay: false, timerStart: 0, totalTime: 0 },
-  bleeding: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [201, 22, 22], name: "bleeding", inputDelay: false, timerStart: 0, totalTime: 0 },
-  heart: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [255, 120, 180], name: "heart", inputDelay: false, timerStart: 0, totalTime: 0 },
-  tummy: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [120, 255, 150], name: "tummy", inputDelay: false, timerStart: 0, totalTime: 0 }
+  brain: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "brain", inputDelay: false, timerStart: 0, totalTime: 0 },
+  eyeball: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "eyeball", inputDelay: false, timerStart: 0, totalTime: 0 },
+  bleeding: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "bleeding", inputDelay: false, timerStart: 0, totalTime: 0 },
+  heart: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "heart", inputDelay: false, timerStart: 0, totalTime: 0 },
+  tummy: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "tummy", inputDelay: false, timerStart: 0, totalTime: 0 },
+  bleedEye: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "daisyBrain", inputDelay: false, timerStart: 0, totalTime: 0 },
+  brainTummy: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "daisyBleed", inputDelay: false, timerStart: 0, totalTime: 0 }
 };
 
 function preload() {
-  bleedingBar = loadImage("media/Task 1_NotComplete.png");
-  brainBar = loadImage("media/Task 2_NotComplete.png");
-  tummyBar = loadImage("media/Task 3_NotComplete.png");
-  eyeBar = loadImage("media/Task 4_NotComplete.png");
+  bleedingBar = loadImage("media/Bleeding.png");
+  brainBar = loadImage("media/Brain.png");
+  tummyBar = loadImage("media/Stomach.png");
+  eyeBar = loadImage("media/Eye.png");
 
-  headerImage = loadImage("media/TopBar.png");
+  daisyBleedBar = loadImage("media/DaisyBleed.png");
+  daisyBrainBar = loadImage("media/DaisyBrain.png");
+
+  headerImage = loadImage("media/VitalsBoardLogo.png");
+  timerImage = loadImage("media/ClockLogo.png");
 }
 
 
@@ -101,6 +112,9 @@ function gameLoop2(state) {
 function setup() {
   createCanvas(720, 400);
   textFont("system-ui");
+
+  //start timer
+  gameTimeStart = millis();
 
   taskVideo = createVideo("media/video/Background.mp4", () => {
     // make it autoplay-safe
@@ -196,17 +210,28 @@ function SocketListeners() {
 function draw() {
   background(0);
 
+  let headScale = 0.3;
+  let timeScale = 0.12;
+
   //video and header
   if (taskVideo) image(taskVideo, 0, 0, width, height);
   if (headerImage) {
-    image(headerImage, 0, 0, width, headerImage.height * (width / headerImage.width));
+    w = width * headScale;
+    h = w * (headerImage.height / headerImage.width);
+    image(headerImage, (width - w) / 2, 7, w, h);
+  }
+  if (timerImage) {
+    w = width * timeScale;
+    h = w * (timerImage.height / timerImage.width);
+    image(timerImage, width - 110, 25, w, h);
   }
 
   //layout constants
-  const topOffset = 50;
-  const space = -3;
-  const barWidth = width * 0.8;
-  const barHeight = 223 * (barWidth / 1480);
+  const topOffset = 90;
+  const space = 24;
+  const ratio = 357 / 4308;
+  const barWidth = width * 0.9;
+  const barHeight = barWidth * ratio;
   const centeredX = (width - barWidth) / 2;
 
   //layouts of stations
@@ -215,14 +240,16 @@ function draw() {
     eyeball: { img: eyeBar, x: centeredX, y: 0, w: barWidth, h: barHeight },
     bleeding: { img: bleedingBar, x: centeredX, y: 0, w: barWidth, h: barHeight },
     heart: { img: null, x: centeredX, y: 0, w: barWidth, h: barHeight },
-    tummy: { img: tummyBar, x: centeredX, y: 0, w: barWidth, h: barHeight }
+    tummy: { img: tummyBar, x: centeredX, y: 0, w: barWidth, h: barHeight },
+    bleedEye: { img: daisyBleedEyeBar, x: centeredX, y: 0, w: barWidth, h: barHeight },
+    brainTummy: { img: daisyBrainTummyBar, x: centeredX, y: 0, w: barWidth, h: barHeight }
   };
 
   //test
   // stations.brain.num = 5;
-  // stations.eyeball.num = 10;
-  // stations.bleeding.num = 15;
-  // stations.tummy.num = 7;
+  // stations.eyeball.num = 29;
+  // stations.bleeding.num = 12;
+  // stations.tummy.num = 8;
   // stations.heart.num = 1;
 
 
@@ -310,27 +337,19 @@ function draw() {
     const posY = topOffset + i * (barHeight + space);
 
     if (st.visible || st.dismissing) {
+      const layout = stationLayouts[st.name];
+
       push();
       translate(st.offsetX, posY);
       noStroke();
-      fill(st.color[0], st.color[1], st.color[2], 220 * st.fade);
-      rect(barX, barY, barW * st.progress, barH);
+      fill(228, 44, 46);
+      rect(barX - 10, barY - 10, barW * st.progress, barH - 10);
 
       //image
-      const layout = stationLayouts[st.name];
       if (layout && layout.img) {
         tint(255, 255 * st.fade);
         image(layout.img, layout.x, layout.y, layout.w, layout.h);
         noTint();
-      }
-
-      // connection status text
-      textSize(12);
-      textStyle(NORMAL);
-      textAlign(LEFT, CENTER);
-      if (st.progress > 0) {
-        fill(255, 255 * st.fade);
-        text("CONNECTED", 620, 40);
       }
 
       pop();
@@ -346,6 +365,24 @@ function draw() {
       gameLoop2(gameState);
     }
     updateGameState = false;
+  }
+
+  // ----GAME TIMER----
+  //added game over thing just in case we want to do it for imagine
+  if (!gameOver) {
+    let time = millis() - gameTimeStart;
+
+    let minutes = floor(time / 60000);
+    let seconds = floor((time % 60000) / 1000);
+
+    //format
+    let Ttext = nf(minutes, 2) + ':' + nf(seconds, 2);
+
+    textSize(20);
+    textAlign(RIGHT, CENTER);
+    fill(225);
+    text(Ttext, width - 25, 41);
+
   }
 }
 
