@@ -20,7 +20,7 @@ const int stationPin1 = 12;
 const int stationPin2 = 13;
 
 // Light threshold value
-const int lightThreshold = 15;
+int lightThreshold = 15;
 
 // LED state flag
 bool ledsOn = false;
@@ -209,6 +209,14 @@ void task(){
   if(direction == "reset"){
     calibrateAll();
     direction = "_";
+  }
+  if(direction == "incre"){
+    lightThreshold += 3;
+    direction = "_";
+  }
+  if(direction == "decre"){
+    lightThreshold -= 3;
+    direction = "_"
   }
 }
 

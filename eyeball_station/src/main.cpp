@@ -24,7 +24,7 @@ int output;
 
 int count = 0;
 
-const int lightThreshold = 15;
+int lightThreshold = 15;
 
 int averageLightLeft;
 int averageLightRight;
@@ -137,6 +137,14 @@ void task(){
   if(direction == "reset"){
     calibrateAll();
     direction = "_";
+  }
+    if(direction == "incre"){
+    lightThreshold += 3;
+    direction = "_";
+  }
+  if(direction == "decre"){
+    lightThreshold -= 3;
+    direction = "_"
   }
 }
 bool redConnected = false;

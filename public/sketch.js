@@ -163,6 +163,20 @@ function setup() {
     if (e.key == "v") {socket.emit("tummy", "reset");}
     if (e.key == "b") {socket.emit("heart", "reset");}
 
+    //increment light threshold
+    if (e.key == "u") {socket.emit("brain", "incre");}
+    if (e.key == "i") {socket.emit("eyeball", "incre");}
+    if (e.key == "y") {socket.emit("bleeding", "incre");}
+    if (e.key == "o") {socket.emit("tummy", "incre");}
+    if (e.key == "p") {socket.emit("heart", "incre");}
+    //decrement light threshold
+    if (e.key == "j") {socket.emit("brain", "decre");}
+    if (e.key == "k") {socket.emit("eyeball", "decre");}
+    if (e.key == "h") {socket.emit("bleeding", "decre");}
+    if (e.key == "l") {socket.emit("tummy", "decre");}
+    if (e.key == ";") {socket.emit("heart", "decre");}
+
+
     if (e.key == "1") { //For gameloop 1
       gameloop = 1;
       gameState = 1;

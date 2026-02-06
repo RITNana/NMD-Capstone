@@ -24,7 +24,7 @@ const int stationPin2 = 13;
 int angleL = 90;
 int angleR = 180;
 
-const int lightThreshold = 5;
+int lightThreshold = 15;
 
 int averageLight;
 
@@ -120,6 +120,14 @@ void task(){
   if(direction == "reset"){
     calibrateAll();
     direction = "_";
+  }
+  if(direction == "incre"){
+    lightThreshold += 3;
+    direction = "_";
+  }
+  if(direction == "decre"){
+    lightThreshold -= 3;
+    direction = "_"
   }
 }
 
