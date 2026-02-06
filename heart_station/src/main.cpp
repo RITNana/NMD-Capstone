@@ -11,6 +11,9 @@ const int photoresistorLeftBluePin = A1;
 const int photoresistorRightRedPin = A2;
 const int photoresistorRightBluePin = A3;
 
+//Port LEDS
+const int leftPortPin = 10;
+const int rightPortPin = 11;
 //Station LEDs
 const int stationPin1 = 12;
 const int stationPin2 = 13;
@@ -50,6 +53,11 @@ void heartSetup() {
   // Serial.begin(9600); // Initialize serial monitor for debugging output
   pinMode(stationPin1, OUTPUT);
   pinMode(stationPin2, OUTPUT);
+  pinMode(leftPortPin, OUTPUT);
+  pinMode(rightPortPin, OUTPUT);
+  //Heart Station is always on
+  digitalWrite(stationPin1,HIGH);
+  digitalWrite(stationPin2, HIGH);
   calibrateAll();
 }
 
@@ -58,6 +66,8 @@ void heartSetup() {
 // 1 = left reached, right not
 // 2 = right reached, left not
 // 3 = both reached
+bool redConnected = false;
+bool blueConnected = false;
 int  heartLoop() {
   int leftRedVal  = analogRead(photoresistorLeftRedPin);
   int leftBlueVal  = analogRead(photoresistorLeftBluePin);
@@ -68,6 +78,15 @@ int  heartLoop() {
   bool leftBlueOn  = leftBlueVal  > (averageLightLeftBlue  + lightThreshold);
   bool rightRedOn = rightRedVal > (averageLightRightRed + lightThreshold);
   bool rightBlueOn = rightBlueVal > (averageLightRightBlue + lightThreshold);
+
+  redConnected = leftRedOn;
+  blueConnected = leftBlueOn;
+  
+  //Port light managing
+  if(leftBlueOn || leftRedOn){digitalWrite(rightPortPin, HIGH);}
+  else{digitalWrite(leftPortPin, LOW);}
+  if(rightBlueOn || rightRedOn){digitalWrite(rightPortPin, HIGH);}
+  else{digitalWrite(rightPortPin, LOW);}
 
   int code = 0;
   if (leftRedOn || leftBlueOn && rightRedOn || rightBlueOn ) {
@@ -171,7 +190,7 @@ void parsing(char* response){
 void read_request() { //Purpose is to read the response from the server and send the body to where it can be parsed
 /* -------------------------------------------------------------------------- */  
   uint32_t received_data_num = 0;
-  char response[16]; //buffer out an area to fill the response into 16 should be enough
+  char response[20]; //buffer out an area to fill the response into 16 should be enough
   int index = 0;
   bool bodyStarted = false;
   String line = "";
@@ -221,17 +240,17 @@ void httpRequest(int data) {
 /* -------------------------------------------------------------------------- */  
   // close any connection before send a new request.
   // This will free the socket on the NINA module
-  client.stop();
+  // client.stop();
 
   // if there's a successful connection:
   if (client.connect(server, 3000)) { //Server address from above & Port
-    // Serial.println("connecting..."); //Really here for logging 
+    Serial.println("connecting..."); //Really here for logging 
     // send the HTTP GET request:
     client.println("GET /heart HTTP/1.1"); //GET request at '/' using HTTP/1.1
     client.println("Host: Heart"); //Required but the input doesnt matter
     client.print("Data:");
     client.println(data);
-        client.print("Red:");
+    client.print("Red:");
     client.println(redConnected);
     client.print("Blue:");
     client.println(blueConnected);
@@ -244,6 +263,7 @@ void httpRequest(int data) {
     // if you couldn't make a connection:
     Serial.println("connection failed");
   }
+  read_request();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -312,7 +332,7 @@ void loop() {
   // if there's incoming data from the net connection.
   // send it out the serial port.  This is for debugging
   // purposes only:
-  read_request();
+  // read_request();
   
   // if ten seconds have passed since your last connection,
   // then connect again and send data:
