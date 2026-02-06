@@ -176,8 +176,8 @@ int tummyLoop()
   else{digitalWrite(rightPortPin, LOW);}
 
   // NTS REMINDER TO ADD THE OTHER PINS 
-  redConnected = leftRedOn;
-  blueConnected = leftBlueOn;
+  redConnected = leftRedOn || rightRedOn;
+  blueConnected = leftBlueOn || rightBlueOn;
   
   bool pressed = (digitalRead(buttonPin) == LOW);
 

@@ -19,7 +19,7 @@ const int stationPin1 = 12;
 const int stationPin2 = 13;
 
 // light level threshold
-const int lightThreshold = 5;
+int lightThreshold = 15;
 
 // Baseline averages established via calibration
 int averageLightLeftBlue  = 0;
@@ -79,8 +79,8 @@ int  heartLoop() {
   bool rightRedOn = rightRedVal > (averageLightRightRed + lightThreshold);
   bool rightBlueOn = rightBlueVal > (averageLightRightBlue + lightThreshold);
 
-  redConnected = leftRedOn;
-  blueConnected = leftBlueOn;
+  redConnected = leftRedOn || rightRedOn;
+  blueConnected = leftBlueOn || rightBlueOn;
   
   //Port light managing
   if(leftBlueOn || leftRedOn){digitalWrite(rightPortPin, HIGH);}
@@ -157,6 +157,14 @@ void task(){
   if(direction == "reset"){
     //update ports to be the correct ones
     calibrateAll();
+    direction = "_";
+  }
+  if(direction == "incre"){
+    lightThreshold += 3;
+    direction = "_";
+  }
+  if(direction == "decre"){
+    lightThreshold -= 3;
     direction = "_";
   }
 }
