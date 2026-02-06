@@ -94,6 +94,10 @@ int bleedingLoop()
   int leftBlueVal  = analogRead(photoresistorLeftBluePin);
   int rightRedVal = analogRead(photoresistorRightRedPin);
   int rightBlueVal = analogRead(photoresistorRightBluePin);
+  Serial.println(leftRedVal);
+  Serial.println(leftBlueVal);
+  Serial.println(rightRedVal);
+  Serial.println(rightBlueVal);
 
   bool leftRedOn  = leftRedVal  > (averageLightLeftRed  + lightThreshold);
   bool leftBlueOn  = leftBlueVal  > (averageLightLeftBlue  + lightThreshold);
@@ -342,7 +346,7 @@ void printWifiStatus() {
 void setup() {
 /* -------------------------------------------------------------------------- */  
   //Initialize serial and wait for port to open:
-  Serial.begin(115200);
+  Serial.begin(9600);
   bleedingSetup();
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only

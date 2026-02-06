@@ -78,7 +78,8 @@ void brainSetup()
 
   calibrateAll();
 }
-
+  bool redConnected = false;
+  bool blueConnected = false;
 int brainLoop()
 {
   int leftRedVal  = analogRead(photoresistorLeftRedPin);
@@ -142,7 +143,7 @@ int brainLoop()
   // brain station photoresistor
   Serial.print("BRAIN_LIGHT:");
   // Serial.print(lightOn ? "ON " : "OFF ");
-  Serial.println(lightLevel);
+  // Serial.println(lightLevel);
   // charge num
   Serial.print("CHARGE:");
   Serial.println(chargeNum);

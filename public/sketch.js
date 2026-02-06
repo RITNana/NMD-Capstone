@@ -27,7 +27,7 @@ const barY = 27;
 const barW = 323;
 const barH = 30;
 
-// stations and their states
+// stations and their states AKA the Hell JSON
 let stations = {
   brain: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [80, 180, 255], name: "brain", inputDelay: false },
   eyeball: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, color: [255, 230, 100], name: "eyeball", inputDelay: false },
@@ -89,6 +89,11 @@ function gameLoop1(state) {
   if (state == 3) {
     newTask = "bleeding"
     otherNewTask = "brain"
+
+    // Daisy in theory
+    daisy.useDaisy = true;
+    daisy.daisyTask = "bleeding";
+    daisy.endTask = "brain";
   }
   if (state == 4) {
     newTask = "eyeball"
@@ -134,7 +139,6 @@ function setup() {
   });
   taskVideo.loop();
   taskVideo.hide();
-
   // same-origin socket.io
   socket = io();
   SocketListeners();
@@ -142,47 +146,22 @@ function setup() {
   //Some event listeners for manual control of the game
   addEventListener("keydown", (e) => {
     //These bring in new tasks
-    if (e.key == "w") {
-      newTask = "brain";
-    }
-    if (e.key == "e") {
-      newTask = "eyeball";
-    }
-    if (e.key == "q") {
-      newTask = "bleeding";
-    }
-    if (e.key == "r") {
-      newTask = "tummy";
-    }
+    if (e.key == "w") {newTask = "brain";}
+    if (e.key == "e") {newTask = "eyeball";}
+    if (e.key == "q") {newTask = "bleeding";}
+    if (e.key == "r") {newTask = "tummy";}
     //these atomize task from the list
-    if (e.key == "s") {
-      banish = "brain";
-    }
-    if (e.key == "d") {
-      banish = "eyeball";
-    }
-    if (e.key == "a") {
-      banish = "bleeding";
-    }
-    if (e.key == "f") {
-      banish = "tummy";
-    }
+    if (e.key == "s") {banish = "brain";}
+    if (e.key == "d") {banish = "eyeball";}
+    if (e.key == "a") {banish = "bleeding";}
+    if (e.key == "f") {banish = "tummy";}
     //reset all pins on a given station
-    if (e.key == "x") {
-      socket.emit("brain", "reset");
-    }
-    if (e.key == "c") {
-      socket.emit("eyeball", "reset");
-    }
-    if (e.key == "z") {
-      socket.emit("bleeding", "reset");
-    }
-    if (e.key == "v") {
-      socket.emit("tummy", "reset");
-    }
-    if (e.key == "b") {
-      socket.emit("heart", "reset");
-    }
+    //these get sent to index.js
+    if (e.key == "x") {socket.emit("brain", "reset");}
+    if (e.key == "c") {socket.emit("eyeball", "reset");}
+    if (e.key == "z") {socket.emit("bleeding", "reset");}
+    if (e.key == "v") {socket.emit("tummy", "reset");}
+    if (e.key == "b") {socket.emit("heart", "reset");}
 
     if (e.key == "1") { //For gameloop 1
       gameloop = 1;
@@ -202,12 +181,19 @@ function setup() {
       updateGameState = false;
       useGameLoop = false;
     }
+    if(e.key == "4"){ //manual daisy task
+          daisy.useDaisy = true;
+          // console.log(daisy.useDaisy);
+        daisy.daisyTask = "bleeding";
+        // console.log(daisy.daisyTask);
+        daisy.endTask = "brain";
+    }
   })
 }
 
 
 // ---- Socket Listeners ----
-//They should be strings
+//They should be strings they come from index.js
 function SocketListeners() {
   socket.on("brain-data", (p) => stations.brain.num = (String(p).trim()));
   socket.on("eyeball-data", (p) => stations.eyeball.num = (String(p).trim()));
@@ -215,13 +201,13 @@ function SocketListeners() {
   socket.on("heart-data", (p) => stations.heart.num = (String(p).trim()));
   socket.on("tummy-data", (p) => stations.tummy.num = (String(p).trim()));
 
-    socket.on("brain-red", (p) => portData.brain.red = (String(p).trim()));
+  socket.on("brain-red", (p) => portData.brain.red = (String(p).trim()));
   socket.on("eyeball-red", (p) => portData.eyeball.red = (String(p).trim()));
   socket.on("bleeding-red", (p) => portData.bleeding.red = (String(p).trim()));
   socket.on("heart-red", (p) => portData.heart.red = (String(p).trim()));
   socket.on("tummy-red", (p) => portData.tummy.red = (String(p).trim()));
 
-    socket.on("brain-blue", (p) => portData.brain.blue = (String(p).trim()));
+  socket.on("brain-blue", (p) => portData.brain.blue = (String(p).trim()));
   socket.on("eyeball-blue", (p) => portData.eyeball.blue = (String(p).trim()));
   socket.on("bleeding-blue", (p) => portData.bleeding.blue = (String(p).trim()));
   socket.on("heart-blue", (p) => portData.heart.blue = (String(p).trim()));
@@ -262,7 +248,12 @@ function draw() {
   // stations.heart.num = 1;
   //Trigger the tube finder to be updated
   tubeFinder();
-
+  let blueDaisy = (tubeLocation.blue.includes(daisy.daisyTask)); //the task being chained (daisy-ed?) through is connected with blue
+  let redDaisy = (tubeLocation.red.includes(daisy.daisyTask)); //the task being chained (daisy-ed?) through is connected with red
+  let blueEnd = (tubeLocation.blue.includes(daisy.endTask)); //the end task is connected with blue
+  let redEnd = (tubeLocation.red.includes(daisy.endTask)); //the end task is connected with red
+  let blueHeart = (tubeLocation.blue.includes('heart'));
+  let redHeart = (tubeLocation.red.includes('heart'));
 
   // ---UPDATE STATIONS---
   for (const key in stations) {
@@ -270,14 +261,28 @@ function draw() {
 
     // smooth progress update
     //console.log(st.inputDelay);
-    //NTS Daisy chaining will go into this if also TEST THIS
-    if(tubeLocation.blue.heart && tubeLocation.blue.key || tubeLocation.red.heart && tubeLocation.red.key){
-      if(st.inputDelay){
-      // console.log(st.num);
-        st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
-      // st.progress = lerp(st.progress,st.progress + st.num,.1);
-      // st.progress += st.num;
-      }
+    if(!daisy.useDaisy && st.inputDelay && 
+        ((blueHeart && tubeLocation.blue.includes(key)) || 
+        (redHeart && tubeLocation.red.includes(key)))){
+      st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
+    }
+      
+
+    if(daisy.useDaisy){
+      //minimum the hear to the daisy is needed 
+      if(st.inputDelay &&
+        ((blueDaisy && blueHeart) || //Blue tube Heart to Daisy
+          (redDaisy && redHeart)) // Red tube heart to Daisy 
+        ){
+          //for the heart -> daisy
+          if(st.name == daisy.daisyTask) {st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);} 
+          //for the daisy -> end
+          else if (st.name == daisy.endTask){
+            if(((blueEnd && blueDaisy) || //blue at end and daisy 
+                (redEnd && redDaisy)) //red at end and daisy
+            ){st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);}
+          };
+        }
     }
     // detect completion
     if (!st.dismissing && st.visible && st.progress >= 0.995) {
@@ -316,6 +321,7 @@ function draw() {
       st.fade = 1;
       st.progress = 0;
       st.dismissStart = 0;
+      //Reminder that input delay's logic is backwards so if its false it stops the input and true it lets input throu
       st.inputDelay = true;
       socket.emit(`${st.name}`, "go");
 
@@ -365,16 +371,15 @@ function draw() {
 
       pop();
     }
-    if (updateGameState && useGameLoop) {
-      if (gameloop == 1) {
-        gameLoop1(gameState);
-      }
-      if (gameloop == 2) {
-        gameLoop2(gameState);
-      }
-      updateGameState = false;
+  }
+  if (updateGameState && useGameLoop) {
+    if (gameloop == 1) {
+      gameLoop1(gameState);
     }
-
+    if (gameloop == 2) {
+      gameLoop2(gameState);
+    }
+    updateGameState = false;
   }
 }
 
