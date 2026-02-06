@@ -250,8 +250,8 @@ function draw() {
   tubeFinder();
   let blueDaisy = (tubeLocation.blue.includes(daisy.daisyTask)); //the task being chained (daisy-ed?) through is connected with blue
   let redDaisy = (tubeLocation.red.includes(daisy.daisyTask)); //the task being chained (daisy-ed?) through is connected with red
-  let blueEnd = (tubeLocation.blue.includes(daisy.daisyTask)); //the end task is connected with blue
-  let redEnd = (tubeLocation.red.includes(daisy.daisyTask)); //the end task is connected with red
+  let blueEnd = (tubeLocation.blue.includes(daisy.endTask)); //the end task is connected with blue
+  let redEnd = (tubeLocation.red.includes(daisy.endTask)); //the end task is connected with red
   let blueHeart = (tubeLocation.blue.includes('heart'));
   let redHeart = (tubeLocation.red.includes('heart'));
 
@@ -261,24 +261,28 @@ function draw() {
 
     // smooth progress update
     //console.log(st.inputDelay);
-    //NTS if NOT Daisy chaining will go into this if also TEST THIS
     if(!daisy.useDaisy && st.inputDelay && 
         ((blueHeart && tubeLocation.blue.includes(key)) || 
         (redHeart && tubeLocation.red.includes(key)))){
       st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
     }
       
-    //for the heart -> daisy
+
     if(daisy.useDaisy){
+      //minimum the hear to the daisy is needed 
       if(st.inputDelay &&
         ((blueDaisy && blueHeart) || //Blue tube Heart to Daisy
           (redDaisy && redHeart)) // Red tube heart to Daisy 
-        ){st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1); 
-    //for the daisy -> end
-          if(((blueEnd && blueDaisy) || //blue at end and daisy 
-              (redEnd && redDaisy)) //red at end and daisy
-          ){st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);}
-        };
+        ){
+          //for the heart -> daisy
+          if(st.name == daisy.daisyTask) {st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);} 
+          //for the daisy -> end
+          else if (st.name == daisy.endTask){
+            if(((blueEnd && blueDaisy) || //blue at end and daisy 
+                (redEnd && redDaisy)) //red at end and daisy
+            ){st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);}
+          };
+        }
     }
     // detect completion
     if (!st.dismissing && st.visible && st.progress >= 0.995) {
