@@ -521,19 +521,31 @@ function draw() {
 
     //--- DAISY STATIONS ---
     if (key === "bleedEye" || key === "brainTummy") {
-      const ds = daisyTasks.bleedEye;
+      const ds = daisyTasks[key];
 
       push();
       translate(ds.offsetX, posY);
-      noStroke();
-      fill(228, 44, 46);
-      rect(barX - 10, barY - 10, barW * ds.progress, barH * daisyMult - 10);
 
+      //draw two bars
+      const parts = ds.parts;
+      const partSpace = 54;
+
+      for (let i = 0; i < parts.length; i++) {
+        const part = parts[i];
+        const progress = ds.partProgress[part];
+        noStroke();
+        fill(228, 44, 46);
+        rect(barX - 10, barY - 10, barW * progress, barH - 10);
+        //rect(barX - 10, barY - 10+ i*partSpace, barW * 1, barH - 10);
+      }
+
+
+      //draw image
       tint(255, 255 * ds.fade);
       image(ds.img, centeredX, 0, barWidth, barHeight * daisyMult);
       noTint();
-      pop();
 
+      pop();
       continue;
     }
 
