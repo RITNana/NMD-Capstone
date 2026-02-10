@@ -276,11 +276,11 @@ function draw() {
   };
 
   //test
-  stations.brain.num = 5;
-  stations.eyeball.num = 29;
-  stations.bleeding.num = 12;
-  stations.tummy.num = 8;
-  stations.heart.num = 1;
+  // stations.brain.num = 5;
+  // stations.eyeball.num = 29;
+  // stations.bleeding.num = 12;
+  // stations.tummy.num = 8;
+  // stations.heart.num = 1;
 
   //Trigger the tube finder to be updated
   tubeFinder();
