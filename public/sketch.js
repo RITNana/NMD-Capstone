@@ -39,9 +39,14 @@ let stations = {
   bleeding: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "bleeding", inputDelay: false, timerStart: 0, totalTime: 0 },
   heart: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "heart", inputDelay: false, timerStart: 0, totalTime: 0 },
   tummy: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "tummy", inputDelay: false, timerStart: 0, totalTime: 0 },
-  bleedEye: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "daisyBrain", inputDelay: false, timerStart: 0, totalTime: 0 },
-  brainTummy: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "daisyBleed", inputDelay: false, timerStart: 0, totalTime: 0 }
 };
+
+// daisy chain stations
+let daisyTasks = {
+  bleedEye: { parts: ["bleeding", "eyeball"], progress: 0, partProgress: { bleeding: 0, eyeball: 0 }, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, timerStart: 0, totalTime: 0, img: null },
+  brainTummy: { parts: ["brain", "tummy"], progress: 0, partProgress: { brain: 0, tummy: 0 }, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, timerStart: 0, totalTime: 0, img: null },
+};
+
 
 function preload() {
   bleedingBar = loadImage("media/Bleeding.png");
@@ -51,6 +56,10 @@ function preload() {
 
   daisyBleedBar = loadImage("media/DaisyBleed.png");
   daisyBrainBar = loadImage("media/DaisyBrain.png");
+
+  //set image
+  daisyTasks.bleedEye.img = daisyBleedBar;
+  daisyTasks.brainTummy.img = daisyBrainBar;
 
   headerImage = loadImage("media/VitalsBoardLogo.png");
   timerImage = loadImage("media/ClockLogo.png");
@@ -64,10 +73,10 @@ let otherNewTask = "";
 //useDaisy is to use it or not
 //daisyTask is the name of the task you have to go through, endTask is the end task , 
 //daisyTube is the color of tube going from heart to daisy and chain from daisy to end
-let daisy = {useDaisy: false, daisyTask: "", endTask: "", daisyTube: "", chainTube: ""}
+let daisy = { useDaisy: false, daisyTask: "", endTask: "", daisyTube: "", chainTube: "" }
 
-let portData = {brain: {red: "0", blue: "0"}, eyeball: {red: "0", blue: "0"}, bleeding: {red: "0", blue: "0"}, heart: {red: "0", blue: "0"}, tummy: {red: "0", blue: "0"}}
-let tubeLocation = {red: [], blue: []}
+let portData = { brain: { red: "0", blue: "0" }, eyeball: { red: "0", blue: "0" }, bleeding: { red: "0", blue: "0" }, heart: { red: "0", blue: "0" }, tummy: { red: "0", blue: "0" } }
+let tubeLocation = { red: [], blue: [] }
 let gameState = 0;
 let gameloop = 0;
 let updateGameState = false;
@@ -75,15 +84,15 @@ let useGameLoop = false;
 let heartConnected = false;
 let heartLast = 0;
 //Function to fill in tube location based on portData sudo-returning the locations
-function tubeFinder(){
+function tubeFinder() {
   //reset the json before going
   tubeLocation.red = [];
   tubeLocation.blue = [];
-  for(const station in portData){
-    if (portData[station].red !== "0"){
+  for (const station in portData) {
+    if (portData[station].red !== "0") {
       tubeLocation.red.push(station);
     }
-    if (portData[station].blue !== "0"){
+    if (portData[station].blue !== "0") {
       tubeLocation.blue.push(station);
     }
   }
@@ -160,22 +169,40 @@ function setup() {
   //Some event listeners for manual control of the game
   addEventListener("keydown", (e) => {
     //These bring in new tasks
-    if (e.key == "w") {newTask = "brain";}
-    if (e.key == "e") {newTask = "eyeball";}
-    if (e.key == "q") {newTask = "bleeding";}
-    if (e.key == "r") {newTask = "tummy";}
+    if (e.key == "w") { newTask = "brain"; }
+    if (e.key == "e") { newTask = "eyeball"; }
+    if (e.key == "q") { newTask = "bleeding"; }
+    if (e.key == "r") { newTask = "tummy"; }
+    if (e.key == "t") {
+      const ct = daisyTasks.bleedEye;
+      ct.visible = true;
+      ct.progress = 0;
+      ct.fade = 1;
+      ct.offsetX = 0;
+      ct.dismissing = false;
+      ct.timerStart = millis();
+
+      if (!visibleTasks.includes("bleedEye")) {
+        visibleTasks.push("bleedEye");
+      }
+    }
+
     //these atomize task from the list
-    if (e.key == "s") {banish = "brain";}
-    if (e.key == "d") {banish = "eyeball";}
-    if (e.key == "a") {banish = "bleeding";}
-    if (e.key == "f") {banish = "tummy";}
+    if (e.key == "s") { banish = "brain"; }
+    if (e.key == "d") { banish = "eyeball"; }
+    if (e.key == "a") { banish = "bleeding"; }
+    if (e.key == "f") { banish = "tummy"; }
+    if (e.key == "g") {
+      daisyTasks.bleedEye.dismissing = true;
+      daisyTasks.bleedEye.dismissStart = millis();
+    }
     //reset all pins on a given station
     //these get sent to index.js
-    if (e.key == "x") {socket.emit("brain", "reset");}
-    if (e.key == "c") {socket.emit("eyeball", "reset");}
-    if (e.key == "z") {socket.emit("bleeding", "reset");}
-    if (e.key == "v") {socket.emit("tummy", "reset");}
-    if (e.key == "b") {socket.emit("heart", "reset");}
+    if (e.key == "x") { socket.emit("brain", "reset"); }
+    if (e.key == "c") { socket.emit("eyeball", "reset"); }
+    if (e.key == "z") { socket.emit("bleeding", "reset"); }
+    if (e.key == "v") { socket.emit("tummy", "reset"); }
+    if (e.key == "b") { socket.emit("heart", "reset"); }
 
     if (e.key == "1") { //For gameloop 1
       gameloop = 1;
@@ -195,12 +222,12 @@ function setup() {
       updateGameState = false;
       useGameLoop = false;
     }
-    if(e.key == "4"){ //manual daisy task
-          daisy.useDaisy = true;
-          // console.log(daisy.useDaisy);
-        daisy.daisyTask = "bleeding";
-        // console.log(daisy.daisyTask);
-        daisy.endTask = "brain";
+    if (e.key == "4") { //manual daisy task
+      daisy.useDaisy = true;
+      // console.log(daisy.useDaisy);
+      daisy.daisyTask = "bleeding";
+      // console.log(daisy.daisyTask);
+      daisy.endTask = "brain";
     }
   })
 }
@@ -255,6 +282,7 @@ function draw() {
   const barWidth = width * 0.9;
   const barHeight = barWidth * ratio;
   const centeredX = (width - barWidth) / 2;
+  const daisyMult = 2;
 
   //layouts of stations
   let stationLayouts = {
@@ -263,8 +291,8 @@ function draw() {
     bleeding: { img: bleedingBar, x: centeredX, y: 0, w: barWidth, h: barHeight },
     heart: { img: null, x: centeredX, y: 0, w: barWidth, h: barHeight },
     tummy: { img: tummyBar, x: centeredX, y: 0, w: barWidth, h: barHeight },
-    bleedEye: { img: daisyBleedEyeBar, x: centeredX, y: 0, w: barWidth, h: barHeight },
-    brainTummy: { img: daisyBrainTummyBar, x: centeredX, y: 0, w: barWidth, h: barHeight }
+    bleedEye: { img: daisyBleedBar, x: centeredX, y: 0, w: barWidth, h: barHeight },
+    brainTummy: { img: daisyBrainBar, x: centeredX, y: 0, w: barWidth, h: barHeight }
   };
 
   //test
@@ -273,6 +301,7 @@ function draw() {
   // stations.bleeding.num = 12;
   // stations.tummy.num = 8;
   // stations.heart.num = 1;
+
   //Trigger the tube finder to be updated
   tubeFinder();
   let blueDaisy = (tubeLocation.blue.includes(daisy.daisyTask)); //the task being chained (daisy-ed?) through is connected with blue
@@ -288,28 +317,28 @@ function draw() {
 
     // smooth progress update
     //console.log(st.inputDelay);
-    if(!daisy.useDaisy && st.inputDelay && 
-        ((blueHeart && tubeLocation.blue.includes(key)) || 
-        (redHeart && tubeLocation.red.includes(key)))){
+    if (!daisy.useDaisy && st.inputDelay &&
+      ((blueHeart && tubeLocation.blue.includes(key)) ||
+        (redHeart && tubeLocation.red.includes(key)))) {
       st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
     }
-      
 
-    if(daisy.useDaisy){
+
+    if (daisy.useDaisy) {
       //minimum the hear to the daisy is needed 
-      if(st.inputDelay &&
+      if (st.inputDelay &&
         ((blueDaisy && blueHeart) || //Blue tube Heart to Daisy
           (redDaisy && redHeart)) // Red tube heart to Daisy 
-        ){
-          //for the heart -> daisy
-          if(st.name == daisy.daisyTask) {st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);} 
-          //for the daisy -> end
-          else if (st.name == daisy.endTask){
-            if(((blueEnd && blueDaisy) || //blue at end and daisy 
-                (redEnd && redDaisy)) //red at end and daisy
-            ){st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);}
-          };
-        }
+      ) {
+        //for the heart -> daisy
+        if (st.name == daisy.daisyTask) { st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1); }
+        //for the daisy -> end
+        else if (st.name == daisy.endTask) {
+          if (((blueEnd && blueDaisy) || //blue at end and daisy 
+            (redEnd && redDaisy)) //red at end and daisy
+          ) { st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1); }
+        };
+      }
     }
     // detect completion
     if (!st.dismissing && st.visible && st.progress >= 0.995) {
@@ -373,19 +402,93 @@ function draw() {
       if (st.name === otherNewTask) otherNewTask = "";
     }
 
-//     if (st.name == "heart") {
-//       if (st.num == "1" || st.num == "2" || st.num == "3" || heartLast == "1" || heartLast == "2" || heartLast == "3") { heartConnected = true; }
-//       else { heartConnected = false; }
-//       heartLast = st.num;
-//     }
+    //     if (st.name == "heart") {
+    //       if (st.num == "1" || st.num == "2" || st.num == "3" || heartLast == "1" || heartLast == "2" || heartLast == "3") { heartConnected = true; }
+    //       else { heartConnected = false; }
+    //       heartLast = st.num;
+    //     }
+
+    //update daisy chain tasks
+    for (const key in daisyTasks) {
+      const ds = daisyTasks[key];
+
+      if (!ds.visible) continue;
+
+      if (ds.parts.includes(st.name)) {
+        ds.partProgress[st.name] = st.progress;
+
+        //combine parts
+        let minProg = 1;
+        for (const part of ds.parts) {
+          minProg = Math.min(minProg, ds.partProgress[part]);
+        }
+        ds.progress = minProg;
+
+        if (ds.progress >= 0.995) {
+          ds.dismissing = true;
+          ds.dismissStart = millis();
+        }
+      }
+      // dismiss like normal stations
+      if (ds.dismissing || key === banish) {
+        const t = constrain((millis() - ds.dismissStart) / DISMISS_DURATION, 0, 1);
+        const e = 1 - pow(1 - t, 3);
+        ds.offsetX = e * (width + 48);
+        ds.fade = 1 - e;
+
+        if (t >= 1) {
+          ds.dismissing = false;
+          ds.visible = false;
+          ds.fade = 0;
+
+          // stop timer
+          ds.totalTime = (millis() - ds.timerStart) / 1000;
+          ds.timerStart = 0;
+
+          console.log(`${key} time:`, ds.totalTime);
+
+          const points = scoring(ds.totalTime);
+          console.log(`${key} scored:`, points);
+
+          // remove from visibleTasks
+          const index = visibleTasks.indexOf(key);
+          if (index > -1) visibleTasks.splice(index, 1);
+        }
+
+        if (key === banish) banish = "";
+      }
+    }
 
   }
 
   // --- STACK STATIONS ---
   for (let i = 0; i < visibleTasks.length; i++) {
     const key = visibleTasks[i];
-    const st = stations[key];
     const posY = topOffset + i * (barHeight + space);
+
+
+    //--- DAISY STATIONS ---
+    if (key === "bleedEye" || key === "brainTummy") {
+      const ds = daisyTasks.bleedEye;
+
+      push();
+      translate(ds.offsetX, posY);
+      noStroke();
+      fill(228, 44, 46);
+      rect(barX - 10, barY - 10, barW * ds.progress, barH * daisyMult - 10);
+
+      tint(255, 255 * ds.fade);
+      image(ds.img, centeredX, 0, barWidth, barHeight * daisyMult);
+      noTint();
+      pop();
+
+      continue;
+    }
+
+
+    //--- NORMAL STATIONS ---
+    const st = stations[key];
+    //if (!st) continue;
 
     if (st.visible || st.dismissing) {
       const layout = stationLayouts[st.name];
@@ -442,7 +545,7 @@ function ledProgress(charge, th = thresholds) {
   const [t0, t1, t2] = th;
 
   // if (charge <= 0 || !heartConnected) return 0;
-  if(charge <= 0) return 0;
+  if (charge <= 0) return 0;
 
   if (charge <= t0) {
     // first third
