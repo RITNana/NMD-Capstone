@@ -2,140 +2,246 @@
 #include <Servo.h>
 #include "WiFiS3.h"
 
+Servo eyeballLeftServo;
+Servo eyeballRightServo;
+int servoLeftPin = 8;
+int servoRightPin = 9;
+const int photoresistorLeftRedPin = A0;
+const int photoresistorLeftBluePin = A1;
+const int photoresistorRightRedPin = A2;
+const int photoresistorRightBluePin = A3;
+const int leftEyePin = A4;
+const int rightEyePin = A5;
 
-Servo eyeballServo;
+//PORT LIGHTS
+int leftPortPin = 10;
+int rightPortPin = 11; 
+//STATION LIGHTS
+const int stationPin1 = 12;
+const int stationPin2 = 13;
 
-int servoPin = 9;
-int leftEyePin = A0;
-int rightEyePin = A1;
-int socketPin = A2;
+int output;
 
 int count = 0;
 
-const int lightThreshold = 33;
-
-//temp var
-int countTurn = 0;
-
-enum State
-{
-  IDLE,
-  DROP,
-  WAIT_FOR_RETURN,
-  RESTORE,
-  COOLDOWN
-};
-State state = IDLE;
+const int lightThreshold = 15;
 
 int averageLightLeft;
 int averageLightRight;
 int averageLightSocket;
-// function to calibrate the photoresistor to the room light level
-int calibrate(int resistorPin) {
+int eyeCondition;
+
+const int sockHyst = 10; // hysteresis for socket "connected" threshold
+const int eyeHyst = 1;
+
+// Baseline averages established via calibration
+int averageLightLeftBlue  = 0;
+int averageLightLeftRed = 0;
+int averageLightRightBlue = 0;
+int averageLightRightRed = 0;
+
+// Calibrate a single photoresistor and update its baseline
+void calibrateOne(int analogPin, int &averageOut) {
   int sensorLow = 1000;
   int sensorHigh = 0;
-  int timer = 0;
 
-  while (timer < 1000) {
-    int calibratingLightValue = analogRead(resistorPin);
-    if (calibratingLightValue > sensorHigh) {
-      sensorHigh = calibratingLightValue;
-    }
-    if (calibratingLightValue < sensorLow) {
-      sensorLow = calibratingLightValue;
-    }
-    timer++;
+  for (int i = 0; i < 1000; i++) {
+    int v = analogRead(analogPin);
+    if (v > sensorHigh) sensorHigh = v;
+    if (v < sensorLow)  sensorLow  = v;
   }
-  if(resistorPin == A0){
-    averageLightLeft = (sensorHigh + sensorLow)/2;
-  }
-  else if(resistorPin == A1){
-    averageLightRight = (sensorHigh + sensorLow)/2;
-  }
-  else if(resistorPin = A2){
-    averageLightSocket = (sensorHigh + sensorLow)/2;
-  }
-  
+  averageOut = (sensorHigh + sensorLow) / 2;
+}
+
+// Calibrate All sensors
+void calibrateAll() {
+  calibrateOne(photoresistorLeftRedPin,  averageLightLeftRed);
+  calibrateOne(photoresistorLeftBluePin, averageLightLeftBlue);
+  calibrateOne(photoresistorRightRedPin,  averageLightRightRed);
+  calibrateOne(photoresistorRightBluePin, averageLightRightBlue);
+  calibrateOne(leftEyePin, averageLightLeft);
+  calibrateOne(rightEyePin, averageLightRight);
+  Serial.print("RECALIBATED");
 }
 
 
 void eyeballSetup()
 {
-  // Serial.begin(9600);
+  Serial.begin(9600);
   // delay(200);
-  while (!Serial)
-  { /* wait on native USB boards */
-  }
+  // while (!Serial)
+  //{ /* wait on native USB boards */
+  // }
+  pinMode(leftPortPin, OUTPUT);
+  pinMode(rightPortPin, OUTPUT);
+  pinMode(stationPin1,OUTPUT);
+  pinMode(stationPin2,OUTPUT);
 
-  //Serial.println("Booting...");
+  eyeballLeftServo.attach(servoLeftPin);
+  eyeballRightServo.attach(servoRightPin);
+  eyeballLeftServo.write(180);
+  eyeballRightServo.write(0);
 
-  eyeballServo.attach(servoPin);
-  eyeballServo.write(0);
+  calibrateAll();
 
-  calibrate(leftEyePin);
-  calibrate(rightEyePin);
-  calibrate(socketPin);
+  eyeCondition = 1;
 }
 
+// helper: are eyes covered/bright?
+bool eyesCovered(int L, int R)
+{
+  return (L <= (averageLightLeft - eyeHyst)) &&
+         (R <= (averageLightRight - eyeHyst));
+}
+bool eyesBright(int L, int R)
+{
+  return (L > (averageLightLeft + eyeHyst)) &&
+         (R > (averageLightRight + eyeHyst));
+}
+String direction = "_";
+void task(){
+
+  if (Serial.available() > 0)
+  {
+    char key = Serial.read();
+  }
+  
+  if (direction == "go")
+  {
+  // Serial.println(go);
+    eyeballLeftServo.write(0);
+    eyeballRightServo.write(180);
+    delay(500);
+    eyeballLeftServo.write(180);
+    eyeballRightServo.write(0);
+    // delay(500);
+
+    eyeCondition = 0;
+
+    // Serial.println("Command: Turn servo to 180°");
+    // eyeballServo.write(90);
+    // delay(500);
+    count = 0;
+    output = 0;
+    //calibrate(leftEyePin);
+    //calibrate(rightEyePin);
+    digitalWrite(stationPin1, HIGH);
+    digitalWrite(stationPin2, HIGH);
+    direction = "_";
+  }
+  if(direction == "stop"){
+    digitalWrite(stationPin1, LOW);
+    digitalWrite(stationPin2, LOW);
+    direction = "_";
+  }
+  if(direction == "reset"){
+    calibrateAll();
+    direction = "_";
+  }
+}
+bool redConnected = false;
+bool blueConnected = false;
 int eyeballLoop()
 {
+
+  int leftRedVal  = analogRead(photoresistorLeftRedPin);
+  int leftBlueVal  = analogRead(photoresistorLeftBluePin);
+  int rightRedVal = analogRead(photoresistorRightRedPin);
+  int rightBlueVal = analogRead(photoresistorRightBluePin);
+
+  bool leftRedOn  = leftRedVal  > (averageLightLeftRed  + lightThreshold);
+  bool leftBlueOn  = leftBlueVal  > (averageLightLeftBlue  + lightThreshold);
+  bool rightRedOn = rightRedVal > (averageLightRightRed + lightThreshold);
+  bool rightBlueOn = rightBlueVal > (averageLightRightBlue + lightThreshold);
+  bool anyLightOn = leftRedOn || leftBlueOn || rightRedOn || rightBlueOn;
+
+  //Port lights
+  if(leftBlueOn || leftRedOn){digitalWrite(rightPortPin, HIGH);}
+  else{digitalWrite(leftPortPin, LOW);}
+  if(rightBlueOn || rightRedOn){digitalWrite(rightPortPin, HIGH);}
+  else{digitalWrite(rightPortPin, LOW);}
+
+  // NTS REMINDER TO ADD THE OTHER PINS 
+  redConnected = leftRedOn;
+  blueConnected = leftBlueOn;
+
 
   int leftLight = analogRead(leftEyePin);
   int rightLight = analogRead(rightEyePin);
 
-  int connectionLight = analogRead(socketPin);
 
-  //if(connectionLight > (averageLightSocket-20)){
-  //  Serial.print("Connected | ");
-  //}
-  //else{
-  //  Serial.print("Not Connected | ");
-  //}
-
-  // Print the readings to the console
-  //Serial.print("Left: ");
+  bool covered = eyesCovered(leftLight,rightLight);
+  //Serial.print("L=");
   //Serial.print(leftLight);
-  //Serial.print(" | Right: ");
-  //Serial.println(rightLight);
+  //Serial.print(" R=");
+  //Serial.print(rightLight);
+  //Serial.print(" Sock=");
+  //Serial.print(connectionLight);
+  //Serial.print(" | AvgL=");
+  //Serial.print(averageLightLeft);
+  //Serial.print(" AvgR=");
+  //Serial.print(averageLightRight);
+  //Serial.print(" AvgSock=");
+  //Serial.print(averageLightSocket);
+  //Serial.print(" | conn=");
+  //Serial.print(connected ? "Y" : "N");
+  // popout();
+  
 
-  if (Serial.available() > 0) {
-    char key = Serial.read(); // read one character
 
-    // if (key == 'k' || key == 'K') {
-    if(countTurn == 0){ //NTS Change this condition
-      //Serial.println("Command: Turn servo to 180°");
-      eyeballServo.write(180);
-      delay(500); 
-      count = 0;
-      calibrate(averageLightLeft);
-      calibrate(averageLightRight);
-      countTurn = 1;
-    }
-  }
 
-  bool preconditions = (count == 0) && (connectionLight > (averageLightSocket));
-  if (leftLight < averageLightLeft && rightLight < averageLightRight && preconditions) {
-    //Serial.println("Low light detected! Returning to initial position...");
-
-    // Smoothly move back to 0°
-    for (int pos = 180; pos >= 0; pos--) {
-      eyeballServo.write(pos);
-      delay(10);  // slow movement
-    }
-    count = 1;
-    calibrate(averageLightLeft);
-    calibrate(averageLightRight);
-  }
-
-  delay(200);
-
-  int eyeAngle = eyeballServo.read();
-
-  Serial.println(eyeAngle);
-
-  return eyeAngle;
+  // --- State machine ---
+  // 0 = eyes bright (normal), 1 = eyes covered, 2 = eyes popped out (latched)
+  // if (eyeCondition == 0)
+  // {
+  //   // go to 1 when both eyes are covered
+  //   if (eyesCovered(leftLight, rightLight))
+  //   {
+  //     eyeCondition = 1;
+  //   }
+  // }
+  // else if (eyeCondition == 1)
+  // {
+  //   // if eyes become bright:
+  //   if (eyesBright(leftLight, rightLight))
+  //   {
+  //     if (connected)
+  //     {
+  //       // socket light present -> OK to go back to 0
+  //       eyeCondition = 0;
+  //     }
+  //     else
+  //     {
+  //       // socket dark -> latch "popped out"
+  //       eyeCondition = 2;
+  //     }
+  //   }
+  //   // (stay 1 if still covered)
+  // }
+  // else if (eyeCondition == 2)
+  // {
+  //   // popped out: must see socket light before allowing return to 0
+  //   if (connected && eyesBright(leftLight, rightLight))
+  //   {
+  //     eyeCondition = 0;
+  //   }
+  //   // user can cover again anytime -> show 1
+  //   else if (eyesCovered(leftLight, rightLight))
+  //   {
+  //     eyeCondition = 1;
+  //     output += 2;
+  //   }
+  //   else{
+  //     return 0; //This is to prevent the 2 from triggering completion
+  //   }
+  // }
+  if(anyLightOn && covered){output += 2;}
+  else if( output > 0){output -= 2;}
+  // delay(200);
+  //Serial.print(" | eyeCondition=");
+  // Serial.println(eyeCondition);
+  return output;
 }
-
 
 
 char ssid[] = "F00KKA9";        // your network SSID (name)
@@ -155,22 +261,79 @@ char server[] = "192.168.137.1";
 unsigned long lastConnectionTime = 0;            // last time you connected to the server, in milliseconds
 const unsigned long postingInterval = 10L * 1000L; // delay between updates, in milliseconds
 
+
+void parsing(char* response){
+  Serial.print("Raw body: ");
+  Serial.println(response);
+  // Serial.println("boop");
+
+  // Now parse with strtok
+  char* token = strtok(response, "=");  // split by '='
+
+  if (token != NULL) { //
+    char* key = token;
+    token = strtok(NULL, "=");
+    if (token != NULL) {
+      char* value = token;
+      Serial.print("Key: ");
+      Serial.println(key);
+      Serial.print("Value: ");
+      Serial.println(value);
+      direction = (String)value;
+      // Serial.print(String(go));
+      task();
+    }
+  }
+}
+
 /* just wrap the received data up to 80 columns in the serial print*/
 /* -------------------------------------------------------------------------- */
-void read_request() {
+void read_request() { //Purpose is to read the response from the server and send the body to where it can be parsed
 /* -------------------------------------------------------------------------- */  
   uint32_t received_data_num = 0;
+  char response[16]; //buffer out an area to fill the response into 16 should be enough
+  int index = 0;
+  bool bodyStarted = false;
+  String line = "";
 
-  while (client.available()) {
-    /* actual data reception */
-    char c = client.read();
-    /* print data to serial port */
-    Serial.print(c);
-    /* wrap data to 80 columns*/
-    received_data_num++;
-    if(received_data_num % 80 == 0) {}
+  // Wait for server data
+  unsigned long timeout = millis();
+  while (!client.available()) {
+    delay(1);
+  }
+
+  // Read and print all available characters
+  // if (client.connected()) {
+    while (client.available()) {
+      char c = client.read();
+      if(c == '~'){
+          // client.stop();
+          // Serial.println("break");
+        break;
+      }
+      if (bodyStarted) {
+        
+        // Store response characters until buffer is full or connection ends
+        if (index < sizeof(response) - 1) {
+          response[index++] = c;
+        }
+        
+      } 
+      else {
+        // Detect end of HTTP headers (\r\n\r\n)
+        line += c;
+        if (line.endsWith("\r\n\r\n")) {
+          bodyStarted = true;
+        }
+      }
+    }
     
-  }  
+  // }
+  response[index] = '\0';  // Null-terminate C string
+  
+  parsing((char*)response);
+  client.stop();
+  // Serial.println("\n--- End of Response ---"); 
 }
 
 // this method makes a HTTP connection to the server:
@@ -179,7 +342,7 @@ void httpRequest(int data) {
 /* -------------------------------------------------------------------------- */  
   // close any connection before send a new request.
   // This will free the socket on the NINA module
-  client.stop();
+  // client.stop();
 
   // if there's a successful connection:
   if (client.connect(server, 3000)) { //Server address from above & Port
@@ -189,11 +352,16 @@ void httpRequest(int data) {
     client.println("Host: Eyeball"); //Required but the input doesnt matter
     client.print("Data:");
     client.println(data);
+    client.print("Red:");
+    client.println(redConnected);
+    client.print("Blue:");
+    client.println(blueConnected);
     // client.println("User-Agent: ArduinoWiFi/1.1"); //Not required
     // client.println("Connection: close");
-    client.println();
+    client.println(); //leave this it ends the headers
     // note the time that the connection was made:
     lastConnectionTime = millis();
+    read_request();
   } else {
     // if you couldn't make a connection:
     Serial.println("connection failed");
@@ -264,7 +432,7 @@ void loop() {
   // if there's incoming data from the net connection.
   // send it out the serial port.  This is for debugging
   // purposes only:
-  read_request();
+  // read_request();
   
   // if ten seconds have passed since your last connection,
   // then connect again and send data:

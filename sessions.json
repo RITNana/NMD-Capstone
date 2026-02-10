@@ -1,0 +1,9 @@
+{
+    "000":{
+       "monsterType":0,
+       "headScore": 250,
+        "eyeScore":  400,
+        "bleedingScore":  100,
+        "stomach":  200
+    }
+ }

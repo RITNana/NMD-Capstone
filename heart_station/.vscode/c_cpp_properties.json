@@ -10,6 +10,7 @@
             "includePath": [
                 "c:/Users/83tuc/Documents/CapstoneStuf/NMD-Capstone/heart_station/include",
                 "c:/Users/83tuc/Documents/CapstoneStuf/NMD-Capstone/heart_station/src",
+                "C:/Users/83tuc/.platformio/packages/framework-arduinorenesas-uno/libraries/WiFiS3/src",
                 "C:/Users/83tuc/.platformio/packages/framework-arduinorenesas-uno/cores/arduino/tinyusb",
                 "C:/Users/83tuc/.platformio/packages/framework-arduinorenesas-uno/cores/arduino",
                 "C:/Users/83tuc/.platformio/packages/framework-arduinorenesas-uno/cores/arduino/api/deprecated",
@@ -35,7 +36,6 @@
                 "C:/Users/83tuc/.platformio/packages/framework-arduinorenesas-uno/libraries/SoftwareSerial/src",
                 "C:/Users/83tuc/.platformio/packages/framework-arduinorenesas-uno/libraries/Storage",
                 "C:/Users/83tuc/.platformio/packages/framework-arduinorenesas-uno/libraries/WDT/src",
-                "C:/Users/83tuc/.platformio/packages/framework-arduinorenesas-uno/libraries/WiFiS3/src",
                 "C:/Users/83tuc/.platformio/packages/framework-arduinorenesas-uno/libraries/Wire",
                 ""
             ],
@@ -44,6 +44,7 @@
                 "path": [
                     "c:/Users/83tuc/Documents/CapstoneStuf/NMD-Capstone/heart_station/include",
                     "c:/Users/83tuc/Documents/CapstoneStuf/NMD-Capstone/heart_station/src",
+                    "C:/Users/83tuc/.platformio/packages/framework-arduinorenesas-uno/libraries/WiFiS3/src",
                     "C:/Users/83tuc/.platformio/packages/framework-arduinorenesas-uno/cores/arduino/tinyusb",
                     "C:/Users/83tuc/.platformio/packages/framework-arduinorenesas-uno/cores/arduino",
                     "C:/Users/83tuc/.platformio/packages/framework-arduinorenesas-uno/cores/arduino/api/deprecated",
@@ -69,13 +70,12 @@
                     "C:/Users/83tuc/.platformio/packages/framework-arduinorenesas-uno/libraries/SoftwareSerial/src",
                     "C:/Users/83tuc/.platformio/packages/framework-arduinorenesas-uno/libraries/Storage",
                     "C:/Users/83tuc/.platformio/packages/framework-arduinorenesas-uno/libraries/WDT/src",
-                    "C:/Users/83tuc/.platformio/packages/framework-arduinorenesas-uno/libraries/WiFiS3/src",
                     "C:/Users/83tuc/.platformio/packages/framework-arduinorenesas-uno/libraries/Wire",
                     ""
                 ]
             },
             "defines": [
-                "PLATFORMIO=60118",
+                "PLATFORMIO=60119",
                 "ARDUINO_UNOWIFIR4",
                 "ARDUINO_ARCH_RENESAS_UNO",
                 "ARDUINO_UNOR4_WIFI",
