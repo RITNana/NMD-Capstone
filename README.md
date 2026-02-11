@@ -92,17 +92,31 @@ Cartoon Wet Hit by Universfield - https://pixabay.com/sound-effects/cartoon-wet-
 - `V` – Tummy / Intestines
 - `B` – Heart 
 
-**Increase the Photoresistor Light Threshold**
+**Increase the Photoresistor on the LEFT Light Threshold**
+- `6` – Bleeding
+- `7` – Brain
+- `8` – Eyeball
+- `9` – Tummy / Intestines
+- `0` – Heart 
+
+**Decrease the Photoresistor on the LEFT Light Threshold**
 - `Y` – Bleeding
 - `U` – Brain
 - `I` – Eyeball
 - `O` – Tummy / Intestines
 - `P` – Heart 
 
-**Decrease the Photoresistor Light Threshold**
+**Increase the Photoresistor on the RIGHT Light Threshold**
 - `H` – Bleeding
 - `J` – Brain
 - `K` – Eyeball
 - `L` – Tummy / Intestines
 - `;` – Heart 
+
+**Decrease the Photoresistor on the RIGHT Light Threshold**
+- `N` – Bleeding
+- `M` – Brain
+- `,` – Eyeball
+- `.` – Tummy / Intestines
+- `/` – Heart 
 

@@ -69,6 +69,7 @@ function preload() {
 let banish = "";
 let newTask = "";
 let otherNewTask = "";
+let useGameLoop = false;
 //useDaisy is to use it or not
 //daisyTask is the name of the task you have to go through, endTask is the end task , 
 //daisyTube is the color of tube going from heart to daisy and chain from daisy to end
@@ -200,18 +201,30 @@ function setup() {
     if (e.key == "v") { socket.emit("tummy", "reset"); }
     if (e.key == "b") { socket.emit("heart", "reset"); }
 
-    //increment light threshold
-    if (e.key == "u") {socket.emit("brain", "incre");}
-    if (e.key == "i") {socket.emit("eyeball", "incre");}
-    if (e.key == "y") {socket.emit("bleeding", "incre");}
-    if (e.key == "o") {socket.emit("tummy", "incre");}
-    if (e.key == "p") {socket.emit("heart", "incre");}
-    //decrement light threshold
-    if (e.key == "j") {socket.emit("brain", "decre");}
-    if (e.key == "k") {socket.emit("eyeball", "decre");}
-    if (e.key == "h") {socket.emit("bleeding", "decre");}
-    if (e.key == "l") {socket.emit("tummy", "decre");}
-    if (e.key == ";") {socket.emit("heart", "decre");}
+    //increment LEFT light threshold
+    if (e.key == "7") {socket.emit("brain", "leftIncre");}
+    if (e.key == "8") {socket.emit("eyeball", "leftIncre");}
+    if (e.key == "6") {socket.emit("bleeding", "leftIncre");}
+    if (e.key == "9") {socket.emit("tummy", "leftIncre");}
+    if (e.key == "0") {socket.emit("heart", "leftIncre");}
+    //decrement LEFT light threshold
+    if (e.key == "u") {socket.emit("brain", "leftDecre");}
+    if (e.key == "i") {socket.emit("eyeball", "leftDecre");}
+    if (e.key == "y") {socket.emit("bleeding", "leftDecre");}
+    if (e.key == "o") {socket.emit("tummy", "leftDecre");}
+    if (e.key == "p") {socket.emit("heart", "leftDecre");}
+    //increment RIGHT light threshold
+    if (e.key == "j") {socket.emit("brain", "rightIncre");}
+    if (e.key == "k") {socket.emit("eyeball", "rightIncre");}
+    if (e.key == "h") {socket.emit("bleeding", "rightIncre");}
+    if (e.key == "l") {socket.emit("tummy", "rightIncre");}
+    if (e.key == ";") {socket.emit("heart", "rightIncre");}
+    //decrement RIGHT light threshold
+    if (e.key == "m") {socket.emit("brain", "rightDecre");}
+    if (e.key == ",") {socket.emit("eyeball", "rightDecre");}
+    if (e.key == "n") {socket.emit("bleeding", "rightDecre");}
+    if (e.key == ".") {socket.emit("tummy", "rightDecre");}
+    if (e.key == "/") {socket.emit("heart", "rightDecre");}
 
 
     if (e.key == "1") { //For gameloop 1

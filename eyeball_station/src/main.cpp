@@ -24,7 +24,8 @@ int output;
 
 int count = 0;
 
-int lightThreshold = 15;
+int leftLightThreshold = 15;
+int rightLightThreshold = 15;
 
 int averageLightLeft;
 int averageLightRight;
@@ -138,12 +139,20 @@ void task(){
     calibrateAll();
     direction = "_";
   }
-    if(direction == "incre"){
-    lightThreshold += 3;
+  if(direction == "leftIncre"){
+    leftLightThreshold += 3;
     direction = "_";
   }
-  if(direction == "decre"){
-    lightThreshold -= 3;
+  if(direction == "leftDecre"){
+    leftLightThreshold -= 3;
+    direction = "_";
+  }
+  if(direction == "rightIncre"){
+    rightLightThreshold += 3;
+    direction = "_";
+  }
+  if(direction == "rightDecre"){
+    rightLightThreshold -= 3;
     direction = "_";
   }
 }
@@ -157,10 +166,10 @@ int eyeballLoop()
   int rightRedVal = analogRead(photoresistorRightRedPin);
   int rightBlueVal = analogRead(photoresistorRightBluePin);
 
-  bool leftRedOn  = leftRedVal  > (averageLightLeftRed  + lightThreshold);
-  bool leftBlueOn  = leftBlueVal  > (averageLightLeftBlue  + lightThreshold);
-  bool rightRedOn = rightRedVal > (averageLightRightRed + lightThreshold);
-  bool rightBlueOn = rightBlueVal > (averageLightRightBlue + lightThreshold);
+  bool leftRedOn  = leftRedVal  > (averageLightLeftRed  + leftLightThreshold);
+  bool leftBlueOn  = leftBlueVal  > (averageLightLeftBlue  + leftLightThreshold);
+  bool rightRedOn = rightRedVal > (averageLightRightRed + rightLightThreshold);
+  bool rightBlueOn = rightBlueVal > (averageLightRightBlue + rightLightThreshold);
   bool anyLightOn = leftRedOn || leftBlueOn || rightRedOn || rightBlueOn;
 
   //Port lights
@@ -364,8 +373,10 @@ void httpRequest(int data) {
     client.println(redConnected);
     client.print("Blue:");
     client.println(blueConnected);
-    client.print("LT:");
-    client.println(lightThreshold);
+    client.print("LLT:");
+    client.println(leftLightThreshold);
+    client.print("RLT:");
+    client.println(rightLightThreshold);
     // client.println("User-Agent: ArduinoWiFi/1.1"); //Not required
     // client.println("Connection: close");
     client.println(); //leave this it ends the headers
