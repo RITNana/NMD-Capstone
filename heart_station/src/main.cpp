@@ -88,6 +88,10 @@ int  heartLoop() {
   if(rightBlueOn || rightRedOn){digitalWrite(rightPortPin, HIGH);}
   else{digitalWrite(rightPortPin, LOW);}
 
+  //Turning on the station lights cause theyre always on
+  digitalWrite(stationPin1, HIGH);
+  digitalWrite(stationPin2, HIGH);
+
   int code = 0;
   if (leftRedOn || leftBlueOn && rightRedOn || rightBlueOn ) {
     code = 3;
@@ -262,6 +266,8 @@ void httpRequest(int data) {
     client.println(redConnected);
     client.print("Blue:");
     client.println(blueConnected);
+    client.print("LT:");
+    client.println(lightThreshold);
     // client.println("User-Agent: ArduinoWiFi/1.1"); //Not required
     // client.println("Connection: close");
     client.println();

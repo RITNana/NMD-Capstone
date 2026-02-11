@@ -201,7 +201,7 @@ const startServer = () => {
     console.log("Server + Socket.IO listening on http://localhost:3000");
   });
 
-  //These are from the arduino
+  //These are from the arduino as well as the website
   io.on("connection", (socket) => {
     console.log("Web client connected:", socket.id);
     // Listen for each station's socket emit

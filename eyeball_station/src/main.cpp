@@ -144,7 +144,7 @@ void task(){
   }
   if(direction == "decre"){
     lightThreshold -= 3;
-    direction = "_"
+    direction = "_";
   }
 }
 bool redConnected = false;
@@ -364,6 +364,8 @@ void httpRequest(int data) {
     client.println(redConnected);
     client.print("Blue:");
     client.println(blueConnected);
+    client.print("LT:");
+    client.println(lightThreshold);
     // client.println("User-Agent: ArduinoWiFi/1.1"); //Not required
     // client.println("Connection: close");
     client.println(); //leave this it ends the headers

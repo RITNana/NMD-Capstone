@@ -60,7 +60,6 @@ let tubeLocation = {red: [], blue: []}
 let gameState = 0;
 let gameloop = 0;
 let updateGameState = false;
-let useGameLoop = false;
 let heartConnected = false;
 let heartLast = 0;
 //Function to fill in tube location based on portData sudo-returning the locations
@@ -77,51 +76,67 @@ function tubeFinder(){
     }
   }
 }
-
+let currentIndex = 0;
+let currentLoop = 0;
+let gameIndex = 0;
+let loop1 = ["bleeding", "brain", "eyeball", "tummy"];
+let loop2 = ["brain", "bleeding", "tummy", "eyeball"];
 //Gameloop 1 for Prototype 2
-function gameLoop1(state) {
-  if (state == 1) {
-    newTask = "bleeding"
+function gameLoop1() {
+  if(loop1[gameIndex]){
+    newTask = loop1[gameIndex];
+    currentIndex = gameIndex;
   }
-  if (state == 2) {
-    newTask = "brain"
+  else{
+    // index = 0;
   }
-  if (state == 3) {
-    newTask = "bleeding"
-    otherNewTask = "brain"
 
-    // Daisy in theory
-    daisy.useDaisy = true;
-    daisy.daisyTask = "bleeding";
-    daisy.endTask = "brain";
-  }
-  if (state == 4) {
-    newTask = "eyeball"
-  }
-  if (state == 5) {
-    newTask = "tummy"
-    useGameLoop = false;
-  }
+  // if (state == 1) {
+  //   newTask = "bleeding";
+  // }
+  // else if (state == 2) {
+  //   newTask = "brain";
+  // }
+  // else if (state == 3) {
+  //   newTask = "bleeding";
+  //   otherNewTask = "brain";
+
+  //   // Daisy in theory
+  //   daisy.useDaisy = true;
+  //   daisy.daisyTask = "bleeding";
+  //   daisy.endTask = "brain";
+  // }
+  // else if (state == 4) {
+  //   newTask = "eyeball";
+  // }
+  // else if (state == 5) {
+  //   newTask = "tummy";
+  //   useGameLoop = false;
+  // }
 }
 // Gameloop 2 for Prototype 2
 function gameLoop2(state) {
-  if (state == 1) {
-    newTask = "brain"
+  if(loop2[gameIndex]){
+    newTask = loop2[gameIndex];
+    currentIndex = gameIndex;
   }
-  if (state == 2) {
-    newTask = "bleeding"
-  }
-  if (state == 3) {
-    newTask = "brain"
-    otherNewTask = "bleeding"
-  }
-  if (state == 4) {
-    newTask = "tummy"
-  }
-  if (state == 5) {
-    newTask = "eyeball"
-    useGameLoop = false;
-  }
+  // if (state == 1) {
+  //   newTask = "brain"
+  // }
+  // if (state == 2) {
+  //   newTask = "bleeding"
+  // }
+  // if (state == 3) {
+  //   newTask = "brain"
+  //   otherNewTask = "bleeding"
+  // }
+  // if (state == 4) {
+  //   newTask = "tummy"
+  // }
+  // if (state == 5) {
+  //   newTask = "eyeball"
+  //   useGameLoop = false;
+  // }
 }
 
 function setup() {
@@ -178,21 +193,26 @@ function setup() {
 
 
     if (e.key == "1") { //For gameloop 1
-      gameloop = 1;
-      gameState = 1;
-      updateGameState = true;
+      // gameloop = 1;
+      // gameState = 1;
+      // updateGameState = true;
+      currentLoop = 1;
+      gameIndex = 0;
       useGameLoop = true;
+      gameLoop1();
     }
     if (e.key == "2") { //For gameloop 2
-      gameloop = 2;
-      gameState = 1;
-      updateGameState = true;
+      // gameloop = 2;
+      // gameState = 1;
+      gameIndex = 0;
       useGameLoop = true;
+      gameLoop2();
     }
     if (e.key == "3") { //For manual control
-      gameloop = 0;
-      gameState = 1;
-      updateGameState = false;
+      // gameloop = 0;
+      // gameState = 1;
+      // currentLoop = 2;
+      gameIndex = 0;
       useGameLoop = false;
     }
     if(e.key == "4"){ //manual daisy task
@@ -315,14 +335,18 @@ function draw() {
         st.dismissing = false;
         st.visible = false;
         st.fade = 0;
-
+        if(useGameLoop){
+        gameIndex++;
+        if(currentLoop === 1){ gameLoop1();};
+        if(currentLoop === 2){ gameLoop2();};
+      }
         //remove from visibleTasks
         const index = visibleTasks.indexOf(st.name);
         if (index > -1) visibleTasks.splice(index, 1);
       }
       banish = ""
-      gameState++;
-      updateGameState = true;
+      // gameState++;
+      // updateGameState = true;
       st.inputDelay = false; //Possible solution for the first input completion
       socket.emit(`${st.name}`, "stop"); //Trigger stop
     }
@@ -386,14 +410,15 @@ function draw() {
       pop();
     }
   }
-  if (updateGameState && useGameLoop) {
+  if (updateGameState) {
     if (gameloop == 1) {
-      gameLoop1(gameState);
+      gameIndex = 0;
+      gameLoop1();
     }
-    if (gameloop == 2) {
-      gameLoop2(gameState);
-    }
-    updateGameState = false;
+    // if (gameloop == 2) {
+    //   gameLoop2(gameState);
+    // }
+    // updateGameState = false;
   }
 }
 
