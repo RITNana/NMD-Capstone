@@ -77,7 +77,7 @@
                 ]
             },
             "defines": [
-                "PLATFORMIO=60118",
+                "PLATFORMIO=60119",
                 "ARDUINO_UNOWIFIR4",
                 "ARDUINO_ARCH_RENESAS_UNO",
                 "ARDUINO_UNOR4_WIFI",
