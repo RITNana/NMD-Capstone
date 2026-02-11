@@ -19,7 +19,8 @@ const int stationPin1 = 12;
 const int stationPin2 = 13;
 
 // light level threshold
-const int lightThreshold = 5;
+int leftLightThreshold = 15;
+int rightLightThreshold = 15;
 
 // Baseline averages established via calibration
 int averageLightLeftBlue  = 0;
@@ -74,19 +75,23 @@ int  heartLoop() {
   int rightRedVal = analogRead(photoresistorRightRedPin);
   int rightBlueVal = analogRead(photoresistorRightBluePin);
 
-  bool leftRedOn  = leftRedVal  > (averageLightLeftRed  + lightThreshold);
-  bool leftBlueOn  = leftBlueVal  > (averageLightLeftBlue  + lightThreshold);
-  bool rightRedOn = rightRedVal > (averageLightRightRed + lightThreshold);
-  bool rightBlueOn = rightBlueVal > (averageLightRightBlue + lightThreshold);
+  bool leftRedOn  = leftRedVal  > (averageLightLeftRed  + leftLightThreshold);
+  bool leftBlueOn  = leftBlueVal  > (averageLightLeftBlue  + leftLightThreshold);
+  bool rightRedOn = rightRedVal > (averageLightRightRed + rightLightThreshold);
+  bool rightBlueOn = rightBlueVal > (averageLightRightBlue + rightLightThreshold);
 
-  redConnected = leftRedOn;
-  blueConnected = leftBlueOn;
+  redConnected = leftRedOn || rightRedOn;
+  blueConnected = leftBlueOn || rightBlueOn;
   
   //Port light managing
   if(leftBlueOn || leftRedOn){digitalWrite(rightPortPin, HIGH);}
   else{digitalWrite(leftPortPin, LOW);}
   if(rightBlueOn || rightRedOn){digitalWrite(rightPortPin, HIGH);}
   else{digitalWrite(rightPortPin, LOW);}
+
+  //Turning on the station lights cause theyre always on
+  digitalWrite(stationPin1, HIGH);
+  digitalWrite(stationPin2, HIGH);
 
   int code = 0;
   if (leftRedOn || leftBlueOn && rightRedOn || rightBlueOn ) {
@@ -157,6 +162,22 @@ void task(){
   if(direction == "reset"){
     //update ports to be the correct ones
     calibrateAll();
+    direction = "_";
+  }
+  if(direction == "leftIncre"){
+    leftLightThreshold += 3;
+    direction = "_";
+  }
+  if(direction == "leftDecre"){
+    leftLightThreshold -= 3;
+    direction = "_";
+  }
+  if(direction == "rightIncre"){
+    rightLightThreshold += 3;
+    direction = "_";
+  }
+  if(direction == "rightDecre"){
+    rightLightThreshold -= 3;
     direction = "_";
   }
 }
@@ -254,6 +275,10 @@ void httpRequest(int data) {
     client.println(redConnected);
     client.print("Blue:");
     client.println(blueConnected);
+    client.print("LLT:");
+    client.println(leftLightThreshold);
+    client.print("RLT:");
+    client.println(rightLightThreshold);
     // client.println("User-Agent: ArduinoWiFi/1.1"); //Not required
     // client.println("Connection: close");
     client.println();

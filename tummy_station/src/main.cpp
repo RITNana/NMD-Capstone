@@ -24,7 +24,8 @@ const int stationPin2 = 13;
 int angleL = 90;
 int angleR = 180;
 
-const int lightThreshold = 5;
+int leftLightThreshold = 15;
+int rightLightThreshold = 15;
 
 int averageLight;
 
@@ -121,6 +122,22 @@ void task(){
     calibrateAll();
     direction = "_";
   }
+  if(direction == "leftIncre"){
+    leftLightThreshold += 3;
+    direction = "_";
+  }
+  if(direction == "leftDecre"){
+    leftLightThreshold -= 3;
+    direction = "_";
+  }
+  if(direction == "rightIncre"){
+    rightLightThreshold += 3;
+    direction = "_";
+  }
+  if(direction == "rightDecre"){
+    rightLightThreshold -= 3;
+    direction = "_";
+  }
 }
 
 
@@ -155,10 +172,10 @@ int tummyLoop()
   int rightRedVal = analogRead(photoresistorRightRedPin);
   int rightBlueVal = analogRead(photoresistorRightBluePin);
 
-  bool leftRedOn  = leftRedVal  > (averageLightLeftRed  + lightThreshold);
-  bool leftBlueOn  = leftBlueVal  > (averageLightLeftBlue  + lightThreshold);
-  bool rightRedOn = rightRedVal > (averageLightRightRed + lightThreshold);
-  bool rightBlueOn = rightBlueVal > (averageLightRightBlue + lightThreshold);
+  bool leftRedOn  = leftRedVal  > (averageLightLeftRed  + leftLightThreshold);
+  bool leftBlueOn  = leftBlueVal  > (averageLightLeftBlue  + leftLightThreshold);
+  bool rightRedOn = rightRedVal > (averageLightRightRed + rightLightThreshold);
+  bool rightBlueOn = rightBlueVal > (averageLightRightBlue + rightLightThreshold);
   bool anyLightOn = leftRedOn || leftBlueOn || rightRedOn || rightBlueOn;
 
   //Port lights
@@ -168,8 +185,8 @@ int tummyLoop()
   else{digitalWrite(rightPortPin, LOW);}
 
   // NTS REMINDER TO ADD THE OTHER PINS 
-  redConnected = leftRedOn;
-  blueConnected = leftBlueOn;
+  redConnected = leftRedOn || rightRedOn;
+  blueConnected = leftBlueOn || rightBlueOn;
   
   bool pressed = (digitalRead(buttonPin) == LOW);
 
@@ -322,6 +339,10 @@ void httpRequest(int data)
     client.println(redConnected);
     client.print("Blue:");
     client.println(blueConnected);
+    client.print("LLT:");
+    client.println(leftLightThreshold);
+    client.print("RLT:");
+    client.println(rightLightThreshold);
     // client.println("User-Agent: ArduinoWiFi/1.1"); //Not required
     // client.println("Connection: close");
     client.println();
