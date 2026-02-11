@@ -24,7 +24,7 @@ int output;
 
 int count = 0;
 
-const int lightThreshold = 15;
+int lightThreshold = 15;
 
 int averageLightLeft;
 int averageLightRight;
@@ -138,6 +138,14 @@ void task(){
     calibrateAll();
     direction = "_";
   }
+    if(direction == "incre"){
+    lightThreshold += 3;
+    direction = "_";
+  }
+  if(direction == "decre"){
+    lightThreshold -= 3;
+    direction = "_";
+  }
 }
 bool redConnected = false;
 bool blueConnected = false;
@@ -162,8 +170,8 @@ int eyeballLoop()
   else{digitalWrite(rightPortPin, LOW);}
 
   // NTS REMINDER TO ADD THE OTHER PINS 
-  redConnected = leftRedOn;
-  blueConnected = leftBlueOn;
+  redConnected = leftRedOn || rightRedOn;
+  blueConnected = leftBlueOn || rightBlueOn;
 
 
   int leftLight = analogRead(leftEyePin);
@@ -356,6 +364,8 @@ void httpRequest(int data) {
     client.println(redConnected);
     client.print("Blue:");
     client.println(blueConnected);
+    client.print("LT:");
+    client.println(lightThreshold);
     // client.println("User-Agent: ArduinoWiFi/1.1"); //Not required
     // client.println("Connection: close");
     client.println(); //leave this it ends the headers

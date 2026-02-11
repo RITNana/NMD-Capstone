@@ -21,7 +21,7 @@ const int stationPin2 = 13;
 
 // Light threshold calibration
 // int averageLight;
-const int lightThreshold = 15;
+int lightThreshold = 15;
 // bool lightOn = false;
 
 // Button state tracking
@@ -100,8 +100,8 @@ int brainLoop()
   else{digitalWrite(rightPortPin, LOW);}
 
   // NTS REMINDER TO ADD THE OTHER PINS 
-  redConnected = leftRedOn;
-  blueConnected = leftBlueOn;
+  redConnected = leftRedOn || rightRedOn;
+  blueConnected = leftBlueOn || rightBlueOn;
 
   // start false
   bool anyPress = false;
@@ -196,6 +196,14 @@ void task(){
   }
   if(direction == "reset"){
     calibrateAll();
+    direction = "_";
+  }
+    if(direction == "incre"){
+    lightThreshold += 3;
+    direction = "_";
+  }
+  if(direction == "decre"){
+    lightThreshold -= 3;
     direction = "_";
   }
 }
@@ -294,6 +302,8 @@ void httpRequest(int data) {
     client.println(redConnected);
     client.print("Blue:");
     client.println(blueConnected);
+    client.print("LT:");
+    client.println(lightThreshold);
     // client.println("User-Agent: ArduinoWiFi/1.1"); //Not required
     // client.println("Connection: close");
     client.println();

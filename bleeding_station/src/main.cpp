@@ -20,7 +20,7 @@ const int stationPin1 = 12;
 const int stationPin2 = 13;
 
 // Light threshold value
-const int lightThreshold = 15;
+int lightThreshold = 15;
 
 // LED state flag
 bool ledsOn = false;
@@ -112,8 +112,8 @@ int bleedingLoop()
   else{digitalWrite(rightPortPin, LOW);}
 
   // NTS REMINDER TO ADD THE OTHER PINS 
-  redConnected = leftRedOn;
-  blueConnected = leftBlueOn;
+  redConnected = leftRedOn || rightRedOn;
+  blueConnected = leftBlueOn || rightBlueOn;
 
   bool pressed = (digitalRead(buttonPin) == LOW); // INPUT_PULLUP: LOW = pressed
 
@@ -208,6 +208,14 @@ void task(){
   }
   if(direction == "reset"){
     calibrateAll();
+    direction = "_";
+  }
+  if(direction == "incre"){
+    lightThreshold += 3;
+    direction = "_";
+  }
+  if(direction == "decre"){
+    lightThreshold -= 3;
     direction = "_";
   }
 }
@@ -307,6 +315,8 @@ void httpRequest(int data) {
     client.println(redConnected);
     client.print("Blue:");
     client.println(blueConnected);
+    client.print("LT:");
+    client.println(lightThreshold);
     // client.println("User-Agent: ArduinoWiFi/1.1"); //Not required
     // client.println("Connection: close");
     client.println(); // Leave this here since this ends the headers
