@@ -39,13 +39,14 @@ let stations = {
   bleeding: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "bleeding", inputDelay: false, timerStart: 0, totalTime: 0 },
   heart: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "heart", inputDelay: false, timerStart: 0, totalTime: 0 },
   tummy: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "tummy", inputDelay: false, timerStart: 0, totalTime: 0 },
-}
+};
 
 // daisy chain stations
 let daisyTasks = {
   bleedEye: { parts: ["bleeding", "eyeball"], progress: 0, partProgress: { bleeding: 0, eyeball: 0 }, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, timerStart: 0, totalTime: 0, img: null },
   brainTummy: { parts: ["brain", "tummy"], progress: 0, partProgress: { brain: 0, tummy: 0 }, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, timerStart: 0, totalTime: 0, img: null },
 };
+
 
 function preload() {
   bleedingBar = loadImage("media/Bleeding.png");
@@ -188,11 +189,29 @@ function setup() {
     if (e.key == "e") { newTask = "eyeball"; }
     if (e.key == "q") { newTask = "bleeding"; }
     if (e.key == "r") { newTask = "tummy"; }
+    if (e.key == "t") {
+      const ct = daisyTasks.bleedEye;
+      ct.visible = true;
+      ct.progress = 0;
+      ct.fade = 1;
+      ct.offsetX = 0;
+      ct.dismissing = false;
+      ct.timerStart = millis();
+
+      if (!visibleTasks.includes("bleedEye")) {
+        visibleTasks.push("bleedEye");
+      }
+    }
+
     //these atomize task from the list
     if (e.key == "s") { banish = "brain"; }
     if (e.key == "d") { banish = "eyeball"; }
     if (e.key == "a") { banish = "bleeding"; }
     if (e.key == "f") { banish = "tummy"; }
+    if (e.key == "g") {
+      daisyTasks.bleedEye.dismissing = true;
+      daisyTasks.bleedEye.dismissStart = millis();
+    }
     //reset all pins on a given station
     //these get sent to index.js
     if (e.key == "x") { socket.emit("brain", "reset"); }
@@ -310,6 +329,7 @@ function draw() {
   const barWidth = width * 0.9;
   const barHeight = barWidth * ratio;
   const centeredX = (width - barWidth) / 2;
+  const daisyMult = 2;
 
   //layouts of stations
   let stationLayouts = {
@@ -440,13 +460,87 @@ function draw() {
     //       heartLast = st.num;
     //     }
 
+    //update daisy chain tasks
+    for (const key in daisyTasks) {
+      const ds = daisyTasks[key];
+
+      if (!ds.visible) continue;
+
+      if (ds.parts.includes(st.name)) {
+        ds.partProgress[st.name] = st.progress;
+
+        //combine parts
+        let minProg = 1;
+        for (const part of ds.parts) {
+          minProg = Math.min(minProg, ds.partProgress[part]);
+        }
+        ds.progress = minProg;
+
+        if (ds.progress >= 0.995) {
+          ds.dismissing = true;
+          ds.dismissStart = millis();
+        }
+      }
+      // dismiss like normal stations
+      if (ds.dismissing || key === banish) {
+        const t = constrain((millis() - ds.dismissStart) / DISMISS_DURATION, 0, 1);
+        const e = 1 - pow(1 - t, 3);
+        ds.offsetX = e * (width + 48);
+        ds.fade = 1 - e;
+
+        if (t >= 1) {
+          ds.dismissing = false;
+          ds.visible = false;
+          ds.fade = 0;
+
+          // stop timer
+          ds.totalTime = (millis() - ds.timerStart) / 1000;
+          ds.timerStart = 0;
+
+          console.log(`${key} time:`, ds.totalTime);
+
+          const points = scoring(ds.totalTime);
+          console.log(`${key} scored:`, points);
+
+          // remove from visibleTasks
+          const index = visibleTasks.indexOf(key);
+          if (index > -1) visibleTasks.splice(index, 1);
+        }
+
+        if (key === banish) banish = "";
+      }
+    }
+
   }
 
   // --- STACK STATIONS ---
   for (let i = 0; i < visibleTasks.length; i++) {
     const key = visibleTasks[i];
-    const st = stations[key];
     const posY = topOffset + i * (barHeight + space);
+
+
+    //--- DAISY STATIONS ---
+    if (key === "bleedEye" || key === "brainTummy") {
+      const ds = daisyTasks.bleedEye;
+
+      push();
+      translate(ds.offsetX, posY);
+      noStroke();
+      fill(228, 44, 46);
+      rect(barX - 10, barY - 10, barW * ds.progress, barH * daisyMult - 10);
+
+      tint(255, 255 * ds.fade);
+      image(ds.img, centeredX, 0, barWidth, barHeight * daisyMult);
+      noTint();
+      pop();
+
+      continue;
+    }
+
+
+    //--- NORMAL STATIONS ---
+    const st = stations[key];
+    //if (!st) continue;
 
     if (st.visible || st.dismissing) {
       const layout = stationLayouts[st.name];
