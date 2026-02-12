@@ -216,29 +216,29 @@ function setup() {
     if (e.key == "b") { socket.emit("heart", "reset"); }
 
     //increment LEFT light threshold
-    if (e.key == "7") { socket.emit("brain", "leftIncre"); }
-    if (e.key == "8") { socket.emit("eyeball", "leftIncre"); }
-    if (e.key == "6") { socket.emit("bleeding", "leftIncre"); }
-    if (e.key == "9") { socket.emit("tummy", "leftIncre"); }
-    if (e.key == "0") { socket.emit("heart", "leftIncre"); }
+    if (e.key == "7") { socket.emit("brain", "leftInc"); }
+    if (e.key == "8") { socket.emit("eyeball", "leftInc"); }
+    if (e.key == "6") { socket.emit("bleeding", "leftInc"); }
+    if (e.key == "9") { socket.emit("tummy", "leftInc"); }
+    if (e.key == "0") { socket.emit("heart", "leftInc"); }
     //decrement LEFT light threshold
-    if (e.key == "u") { socket.emit("brain", "leftDecre"); }
-    if (e.key == "i") { socket.emit("eyeball", "leftDecre"); }
-    if (e.key == "y") { socket.emit("bleeding", "leftDecre"); }
-    if (e.key == "o") { socket.emit("tummy", "leftDecre"); }
-    if (e.key == "p") { socket.emit("heart", "leftDecre"); }
+    if (e.key == "u") { socket.emit("brain", "leftDec"); }
+    if (e.key == "i") { socket.emit("eyeball", "leftDec"); }
+    if (e.key == "y") { socket.emit("bleeding", "leftDec"); }
+    if (e.key == "o") { socket.emit("tummy", "leftDec"); }
+    if (e.key == "p") { socket.emit("heart", "leftDec"); }
     //increment RIGHT light threshold
-    if (e.key == "j") { socket.emit("brain", "rightIncre"); }
-    if (e.key == "k") { socket.emit("eyeball", "rightIncre"); }
-    if (e.key == "h") { socket.emit("bleeding", "rightIncre"); }
-    if (e.key == "l") { socket.emit("tummy", "rightIncre"); }
-    if (e.key == ";") { socket.emit("heart", "rightIncre"); }
+    if (e.key == "j") { socket.emit("brain", "rightInc"); }
+    if (e.key == "k") { socket.emit("eyeball", "rightInc"); }
+    if (e.key == "h") { socket.emit("bleeding", "rightInc"); }
+    if (e.key == "l") { socket.emit("tummy", "rightInc"); }
+    if (e.key == ";") { socket.emit("heart", "rightInc"); }
     //decrement RIGHT light threshold
-    if (e.key == "m") { socket.emit("brain", "rightDecre"); }
-    if (e.key == ",") { socket.emit("eyeball", "rightDecre"); }
-    if (e.key == "n") { socket.emit("bleeding", "rightDecre"); }
-    if (e.key == ".") { socket.emit("tummy", "rightDecre"); }
-    if (e.key == "/") { socket.emit("heart", "rightDecre"); }
+    if (e.key == "m") { socket.emit("brain", "rightDec"); }
+    if (e.key == ",") { socket.emit("eyeball", "rightDec"); }
+    if (e.key == "n") { socket.emit("bleeding", "rightDec"); }
+    if (e.key == ".") { socket.emit("tummy", "rightDec"); }
+    if (e.key == "/") { socket.emit("heart", "rightDec"); }
 
 
     if (e.key == "1") { //For gameloop 1

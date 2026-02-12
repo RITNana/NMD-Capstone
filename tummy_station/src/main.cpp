@@ -122,19 +122,19 @@ void task(){
     calibrateAll();
     direction = "_";
   }
-  if(direction == "leftIncre"){
+  if(direction == "leftInc"){
     leftLightThreshold += 3;
     direction = "_";
   }
-  if(direction == "leftDecre"){
+  if(direction == "leftDec"){
     leftLightThreshold -= 3;
     direction = "_";
   }
-  if(direction == "rightIncre"){
+  if(direction == "rightInc"){
     rightLightThreshold += 3;
     direction = "_";
   }
-  if(direction == "rightDecre"){
+  if(direction == "rightDec"){
     rightLightThreshold -= 3;
     direction = "_";
   }
@@ -277,7 +277,7 @@ void parsing(char* response){
 void read_request() { //Purpose is to read the response from the server and send the body to where it can be parsed
 /* -------------------------------------------------------------------------- */  
   uint32_t received_data_num = 0;
-  char response[16]; //buffer the area to fill the http response into
+  char response[24]; //buffer the area to fill the http response into
   int index = 0;
   bool bodyStarted = false;
   String line = "";
@@ -285,6 +285,11 @@ void read_request() { //Purpose is to read the response from the server and send
   // Wait for server data
   unsigned long timeout = millis();
   while (!client.available()) { // wait till client is available
+    if (!client.connected()) {
+      Serial.println("Client disconnected while waiting for data");
+      client.stop();
+      return;
+    }
     delay(1);
   }
 
@@ -377,6 +382,19 @@ void printWifiStatus()
   Serial.println(" dBm");
 }
 
+void connectToWifi(){
+    // attempt to connect to WiFi network:
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print("Attempting to connect to SSID: ");
+    Serial.println(ssid);
+    // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
+    WiFi.begin(ssid, pass);
+
+    // wait 10 seconds for connection:
+    //delay(10000);
+  }
+}
+
 /* -------------------------------------------------------------------------- */
 void setup()
 {
@@ -394,8 +412,7 @@ void setup()
   {
     Serial.println("Communication with WiFi module failed!");
     // don't continue
-    while (true)
-      ;
+    while (true);
   }
 
   String fv = WiFi.firmwareVersion();
@@ -405,16 +422,7 @@ void setup()
   }
 
   // attempt to connect to WiFi network:
-  while (status != WL_CONNECTED)
-  {
-    Serial.print("Attempting to connect to SSID: ");
-    Serial.println(ssid);
-    // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
-    status = WiFi.begin(ssid, pass);
-
-    // wait 10 seconds for connection:
-    // delay(10000);
-  }
+  connectToWifi();
   // you're connected now, so print out the status:
   printWifiStatus();
 }
@@ -434,6 +442,9 @@ void loop()
   //   httpRequest();
   // }
   int valuedata = tummyLoop();
+  if(WiFi.status() != WL_CONNECTED){
+    connectToWifi();
+  }
   httpRequest(valuedata);
 }
 
