@@ -32,6 +32,31 @@ let gameDuration = 120 * 1000;
 let gameTimeStart = 0;
 let gameOver = false;
 
+//score calculation
+let scoreData = {
+  "000": {
+    monsterType: 0,
+    headScore: 0,
+    eyeScore: 0,
+    bleedingScore: 0,
+    stomachScore: 0,
+    bleedEye: 0,
+    brainTummy: 0,
+  }
+};
+
+//sounds
+let connectSound;
+
+//track port states
+let previousPortState = {
+  brain: { red: "0", blue: "0" },
+  eyeball: { red: "0", blue: "0" },
+  bleeding: { red: "0", blue: "0" },
+  heart: { red: "0", blue: "0" },
+  tummy: { red: "0", blue: "0" }
+};
+
 // stations and their states AKA the Hell JSON
 let stations = {
   brain: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "brain", inputDelay: false, timerStart: 0, totalTime: 0 },
@@ -58,8 +83,17 @@ function preload() {
 
   headerImage = loadImage("media/VitalsBoardLogo.png");
   timerImage = loadImage("media/ClockLogo.png");
+
+  //load sound
+  connectSound = loadSound("media/audio/portConnect.mp3");
+
 }
 
+function playConnectSound() {
+  if (connectSound && connectSound.isLoaded()) {
+    connectSound.play();
+  }
+}
 
 //Feed in the name of the task for newTask or banish to get that task back on screen or banish it as if its complete
 let banish = "";
@@ -80,6 +114,27 @@ let heartConnected = false;
 let heartLast = 0;
 //Function to fill in tube location based on portData sudo-returning the locations
 function tubeFinder() {
+
+  //sounds for port connection
+  for (const station in portData) {
+
+    //red port
+    if (portData[station].red !== "0" &&
+      previousPortState[station].red === "0") {
+      playConnectSound();
+    }
+
+    //blue port
+    if (portData[station].blue !== "0" &&
+      previousPortState[station].blue === "0") {
+      playConnectSound();
+    }
+
+    // Update previous state
+    previousPortState[station].red = portData[station].red;
+    previousPortState[station].blue = portData[station].blue;
+  }
+
   //reset the json before going
   tubeLocation.red = [];
   tubeLocation.blue = [];
@@ -422,6 +477,8 @@ function draw() {
 
           const points = scoring(st.totalTime);
           console.log(`${key} scored:`, points);
+          updateScoreJSON(st.name, points);
+
 
           // remove from visibleTasks
           const index = visibleTasks.indexOf(key);
@@ -458,6 +515,8 @@ function draw() {
         // Calculate score now
         const points = scoring(st.totalTime);
         console.log(`${st.name} scored:`, points);
+        updateScoreJSON(st.name, points);
+
 
         if (useGameLoop) {
           gameIndex++;
@@ -614,6 +673,9 @@ function ledProgress(charge, th = thresholds) {
   }
 }
 
+//----STORE JSON DATA----
+localStorage.setItem("sessionScore", JSON.stringify(scoreData));
+
 // ----- INTERACTION -----
 
 // Fallback: if the browser still blocks it, a click will start playback
@@ -622,6 +684,11 @@ function mousePressed() {
     taskVideo.elt.muted = true; // ensure still muted
     taskVideo.play();
   }
+  //make sure audio works
+  if (getAudioContext().state !== 'running') {
+    getAudioContext().resume();
+  }
+
 }
 
 //import from helper
