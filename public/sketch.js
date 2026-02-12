@@ -32,6 +32,10 @@ let gameDuration = 120 * 1000;
 let gameTimeStart = 0;
 let gameOver = false;
 
+//json Information
+let currentSession;
+let sessionsData;
+
 //score calculation
 let scoreData = {
   "000": {
@@ -82,10 +86,16 @@ function preload() {
   stations.brainTummy.img = daisyBrainBar;
 
   headerImage = loadImage("media/VitalsBoardLogo.png");
-  timerImage = loadImage("media/ClockLogo.png");
+  timerImage = loadImage("media/ClockLogos.png");
 
   //load sound
   connectSound = loadSound("media/audio/portConnect.mp3");
+
+  //json data
+  sessionsData = loadJSON("/score",
+  (data) => console.log("sessions loaded", data),
+  (err) => console.error("sessions failed", err)
+);
 
 }
 
@@ -519,6 +529,7 @@ function draw() {
 
 
         if (useGameLoop) {
+
           gameIndex++;
           if (currentLoop === 1) { gameLoop1(); };
           if (currentLoop === 2) { gameLoop2(); };
