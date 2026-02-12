@@ -45,6 +45,18 @@ let scoreData = {
   }
 };
 
+//sounds
+let connectSound;
+
+//track port states
+let previousPortState = {
+  brain: { red: "0", blue: "0" },
+  eyeball: { red: "0", blue: "0" },
+  bleeding: { red: "0", blue: "0" },
+  heart: { red: "0", blue: "0" },
+  tummy: { red: "0", blue: "0" }
+};
+
 // stations and their states AKA the Hell JSON
 let stations = {
   brain: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "brain", inputDelay: false, timerStart: 0, totalTime: 0 },
@@ -71,8 +83,17 @@ function preload() {
 
   headerImage = loadImage("media/VitalsBoardLogo.png");
   timerImage = loadImage("media/ClockLogo.png");
+
+  //load sound
+  connectSound = loadSound("media/audio/portConnect.mp3");
+
 }
 
+function playConnectSound() {
+  if (connectSound && connectSound.isLoaded()) {
+    connectSound.play();
+  }
+}
 
 //Feed in the name of the task for newTask or banish to get that task back on screen or banish it as if its complete
 let banish = "";
@@ -93,6 +114,27 @@ let heartConnected = false;
 let heartLast = 0;
 //Function to fill in tube location based on portData sudo-returning the locations
 function tubeFinder() {
+
+  //sounds for port connection
+  for (const station in portData) {
+
+    //red port
+    if (portData[station].red !== "0" &&
+      previousPortState[station].red === "0") {
+      playConnectSound();
+    }
+
+    //blue port
+    if (portData[station].blue !== "0" &&
+      previousPortState[station].blue === "0") {
+      playConnectSound();
+    }
+
+    // Update previous state
+    previousPortState[station].red = portData[station].red;
+    previousPortState[station].blue = portData[station].blue;
+  }
+
   //reset the json before going
   tubeLocation.red = [];
   tubeLocation.blue = [];
@@ -642,6 +684,11 @@ function mousePressed() {
     taskVideo.elt.muted = true; // ensure still muted
     taskVideo.play();
   }
+  //make sure audio works
+  if (getAudioContext().state !== 'running') {
+    getAudioContext().resume();
+  }
+
 }
 
 //import from helper
