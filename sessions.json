@@ -1,11 +1,11 @@
 {
-    "000": {
-        "monsterType": 0,
-        "headScore": 250,
-        "eyeScore": 400,
-        "bleedingScore": 100,
-        "stomachScore": 200,
-        "daisy1Score": 0,
-        "daisy2Score": 0
-    }
+  "000": {
+    "monsterType": 0,
+    "headScore": 322,
+    "eyeScore": 343,
+    "bleedingScore": 100,
+    "stomachScore": 282,
+    "daisy1Score": 300,
+    "daisy2Score": 0
+  }
 }
