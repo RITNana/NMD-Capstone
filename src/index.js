@@ -13,6 +13,7 @@ let port;
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
+app.use(express.json());
 
 let serial_port = null;
 
@@ -43,7 +44,12 @@ app.get("/Background.mp4", (req, res) => {
   readStream.pipe(res);
 });
 
-const theGet = ( station, req, res, next) => {
+//json setup
+const scoreRoute = require("./routes/score");
+app.use("/score", scoreRoute);
+
+
+const theGet = (station, req, res, next) => {
   console.log(`Received request for /${station} from ${req.ip}`);
   console.log("Headers:", req.headers);
   // console.log("Query params:", req.query);
@@ -59,7 +65,7 @@ const theGet = ( station, req, res, next) => {
   // }
 
   // if(latestStationData[station]);
-    // sendKey(host, port, "k");
+  // sendKey(host, port, "k");
   // next();
 }
 
@@ -68,23 +74,23 @@ const theGet = ( station, req, res, next) => {
 //app.get("/stationname", (req,res,next) => {theGet('stationname',req,res,next)});
 
 // Input for brain station
-app.get("/brain", (req, res, next) => {theGet('brain',req,res,next);});
+app.get("/brain", (req, res, next) => { theGet('brain', req, res, next); });
 
 
 
 // input for bleeding station
-app.get("/eyeball", (req, res, next) => {theGet('eyeball',req,res,next)});
+app.get("/eyeball", (req, res, next) => { theGet('eyeball', req, res, next) });
 
 
- 
+
 // input for bleeding station
-app.get("/bleeding", (req,res,next) => {theGet('bleeding',req,res,next);});  // pass control to the static file handler
+app.get("/bleeding", (req, res, next) => { theGet('bleeding', req, res, next); });  // pass control to the static file handler
 
 //input for heart station
-app.get("/heart",(req,res,next) => {theGet('heart',req,res,next)});
+app.get("/heart", (req, res, next) => { theGet('heart', req, res, next) });
 
 // input for tummy station
-app.get("/tummy",(req,res,next) => {theGet('tummy',req,res,next)});
+app.get("/tummy", (req, res, next) => { theGet('tummy', req, res, next) });
 
 //Leave this here for the sake of backup
 // app.get("/bleeding", (req, res, next) => {
@@ -92,7 +98,7 @@ app.get("/tummy",(req,res,next) => {theGet('tummy',req,res,next)});
 //   console.log("Headers:", req.headers);
 //   console.log("Query params:", req.query);
 
-  
+
 //   io.emit("bleeding-data", req.headers.data);
 
 
@@ -101,9 +107,6 @@ app.get("/tummy",(req,res,next) => {theGet('tummy',req,res,next)});
 
 
 // Serve static files (including index.html)
-app.use(express.static(path.join(__dirname, "..", "public")));
-
-
 app.use(express.static(path.join(__dirname, "..", "public"))); // serve index.html
 
 const connect_to_serial = async () => {
