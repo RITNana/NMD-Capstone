@@ -43,13 +43,6 @@ let stations = {
   brainTummy: { useDaisy: 0, parts: ["brain", "tummy"], progress: 0, partProgress: { brain: 0, tummy: 0 }, name: "brainTummy", inputDelay: false, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, timerStart: 0, totalTime: 0, img: null },
 };
 
-// daisy chain stations
-// let daisyTasks = {
-//   bleedEye: { useDaisy: 0, parts: ["bleeding", "eyeball"], progress: 0, partProgress: { bleeding: 0, eyeball: 0 }, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, timerStart: 0, totalTime: 0, img: null },
-//   brainTummy: { useDaisy: 0, parts: ["brain", "tummy"], progress: 0, partProgress: { brain: 0, tummy: 0 }, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, timerStart: 0, totalTime: 0, img: null },
-// };
-
-
 function preload() {
   bleedingBar = loadImage("media/Bleeding.png");
   brainBar = loadImage("media/Brain.png");
@@ -401,18 +394,11 @@ function draw() {
       if (!st.visible) continue;
       if (st.name == "bleedEye" || st.name == "brainTummy") {
         // if (st.parts.includes(st.name)) {
-        // st.progress = st.partProgress[st.name];
 
-        // //combine parts
-        // let minProg = 1;
-        // for (const part of st.parts) {
-        //   minProg = Math.min(minProg, st.partProgress[part]);
-        // }
-        // st.progress = minProg;
-
-        if (st.progress >= 0.995) {
+        if (st.partProgress.bleeding >= 0.995 && st.partProgress.eyeball >= 0.995) {
           st.dismissing = true;
-          st.dismissStart = millis();
+          //console.log(st.dismissing);
+          //st.dismissStart = millis();
         }
         // }
       }
@@ -529,27 +515,17 @@ function draw() {
 
       //draw two bars
       const parts = st.parts;
-  
+
       if (parts[0]) {
         noStroke();
         fill(228, 44, 46);
-        rect(barX - 10, barY - 10, barW * parts.progress, barH - 10);
+        rect(barX - 10, barY - 10, barW * stations.bleedEye.partProgress.bleeding, barH - 10);
       }
       if (parts[1]) {
         noStroke();
         fill(228, 44, 46);
-        rect(barX - 10, barY - 10 + 20, barW * parts.progress, barH - 10);
+        rect(barX - 10, barY + 44, barW * stations.bleedEye.partProgress.eyeball, barH - 10);
       };
-
-      // for (let i = 0; i < parts.length; i++) {
-      //   const part = parts[i];
-      //   const progress = st.partProgress[part];
-      //   noStroke();
-      //   fill(228, 44, 46);
-      //   rect(barX - 10, barY - 10 + partSpace, barW * progress, barH - 10);
-      //   //rect(barX - 10, barY - 10+ i*partSpace, barW * 1, barH - 10);
-      // }
-
 
       //draw image
       tint(255, 255 * st.fade);
