@@ -381,19 +381,19 @@ function draw() {
           (redDaisy && redHeart)) // Red tube heart to Daisy 
       ) {
         //for the heart -> daisy
-        if (st.name == stations.bleedEye.parts[0]) { 
-          st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1); 
+        if (st.name == stations.bleedEye.parts[0]) {
+          st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
           stations.bleedEye.partProgress.bleeding = st.progress;
-            console.log("heart -> daisy " + stations.bleedEye.partProgress.bleeding) 
+          console.log("heart -> daisy " + stations.bleedEye.partProgress.bleeding)
         }
         //for the daisy -> end
         if (st.name == stations.bleedEye.parts[1]) {
           if (((blueEnd && blueDaisy) || //blue at end and daisy 
             (redEnd && redDaisy)) //red at end and daisy
-          ) { 
-            st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1); 
-            stations.bleedEye.partProgress.eyeball = st.progress; 
-            console.log("daisy -> end " + stations.bleedEye.partProgress.eyeball) 
+          ) {
+            st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
+            stations.bleedEye.partProgress.eyeball = st.progress;
+            console.log("daisy -> end " + stations.bleedEye.partProgress.eyeball)
           }
         };
       }
@@ -401,19 +401,19 @@ function draw() {
       if (!st.visible) continue;
       if (st.name == "bleedEye" || st.name == "brainTummy") {
         // if (st.parts.includes(st.name)) {
-          // st.progress = st.partProgress[st.name];
+        // st.progress = st.partProgress[st.name];
 
-          // //combine parts
-          // let minProg = 1;
-          // for (const part of st.parts) {
-          //   minProg = Math.min(minProg, st.partProgress[part]);
-          // }
-          // st.progress = minProg;
+        // //combine parts
+        // let minProg = 1;
+        // for (const part of st.parts) {
+        //   minProg = Math.min(minProg, st.partProgress[part]);
+        // }
+        // st.progress = minProg;
 
-          if (st.progress >= 0.995) {
-            st.dismissing = true;
-            st.dismissStart = millis();
-          }
+        if (st.progress >= 0.995) {
+          st.dismissing = true;
+          st.dismissStart = millis();
+        }
         // }
       }
       // dismiss like normal stations
@@ -512,63 +512,6 @@ function draw() {
       if (st.name === otherNewTask) otherNewTask = "";
     }
 
-    //     if (st.name == "heart") {
-    //       if (st.num == "1" || st.num == "2" || st.num == "3" || heartLast == "1" || heartLast == "2" || heartLast == "3") { heartConnected = true; }
-    //       else { heartConnected = false; }
-    //       heartLast = st.num;
-    //     }
-
-    // //update daisy chain tasks
-    // for (const key in statio) {
-    //   const ds = daisyTasks[key];
-
-    // if (!ds.visible) continue;
-
-    // if (ds.parts.includes(st.name)) {
-    //   ds.partProgress[st.name] = st.progress;
-
-    //   //combine parts
-    //   let minProg = 1;
-    //   for (const part of ds.parts) {
-    //     minProg = Math.min(minProg, ds.partProgress[part]);
-    //   }
-    //   ds.progress = minProg;
-
-    //   if (ds.progress >= 0.995) {
-    //     ds.dismissing = true;
-    //     ds.dismissStart = millis();
-    //   }
-    // }
-    // // dismiss like normal stations
-    // if (ds.dismissing || key === banish) {
-    //   const t = constrain((millis() - ds.dismissStart) / DISMISS_DURATION, 0, 1);
-    //   const e = 1 - pow(1 - t, 3);
-    //   ds.offsetX = e * (width + 48);
-    //   ds.fade = 1 - e;
-
-    //   if (t >= 1) {
-    //     ds.dismissing = false;
-    //     ds.visible = false;
-    //     ds.fade = 0;
-
-    //     // stop timer
-    //     ds.totalTime = (millis() - ds.timerStart) / 1000;
-    //     ds.timerStart = 0;
-
-    //     console.log(`${key} time:`, ds.totalTime);
-
-    //     const points = scoring(ds.totalTime);
-    //     console.log(`${key} scored:`, points);
-
-    //     // remove from visibleTasks
-    //     const index = visibleTasks.indexOf(key);
-    //     if (index > -1) visibleTasks.splice(index, 1);
-    //   }
-
-    //   if (key === banish) banish = "";
-    // }
-    // }
-
   }
 
   // --- STACK STATIONS ---
@@ -579,28 +522,38 @@ function draw() {
 
     //--- DAISY STATIONS ---
     if (key === "bleedEye" || key === "brainTummy") {
-      const ds = stations[key];
+      const st = stations[key];
 
       push();
-      translate(ds.offsetX, posY);
+      translate(st.offsetX, posY);
 
       //draw two bars
-      const parts = ds.parts;
-      const partSpace = 54;
-
-      for (let i = 0; i < parts.length; i++) {
-        const part = parts[i];
-        const progress = ds.partProgress[part];
+      const parts = st.parts;
+  
+      if (parts[0]) {
         noStroke();
         fill(228, 44, 46);
-        rect(barX - 10, barY - 10, barW * progress, barH - 10);
-        //rect(barX - 10, barY - 10+ i*partSpace, barW * 1, barH - 10);
+        rect(barX - 10, barY - 10, barW * parts.progress, barH - 10);
       }
+      if (parts[1]) {
+        noStroke();
+        fill(228, 44, 46);
+        rect(barX - 10, barY - 10 + 20, barW * parts.progress, barH - 10);
+      };
+
+      // for (let i = 0; i < parts.length; i++) {
+      //   const part = parts[i];
+      //   const progress = st.partProgress[part];
+      //   noStroke();
+      //   fill(228, 44, 46);
+      //   rect(barX - 10, barY - 10 + partSpace, barW * progress, barH - 10);
+      //   //rect(barX - 10, barY - 10+ i*partSpace, barW * 1, barH - 10);
+      // }
 
 
       //draw image
-      tint(255, 255 * ds.fade);
-      image(ds.img, centeredX, 0, barWidth, barHeight * daisyMult);
+      tint(255, 255 * st.fade);
+      image(st.img, centeredX, 0, barWidth, barHeight * daisyMult);
       noTint();
 
       pop();
