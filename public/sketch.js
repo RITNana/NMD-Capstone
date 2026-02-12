@@ -45,6 +45,11 @@ let scoreData = {
   }
 };
 
+//json Vars
+let currentSession;
+let sessionsData;
+let monsterType;
+
 //sounds
 let connectSound;
 
@@ -87,6 +92,11 @@ function preload() {
   //load sound
   connectSound = loadSound("media/audio/portConnect.mp3");
 
+
+  sessionsData = loadJSON("/score", 
+    (data) => console.log("sessions loaded", data),
+    (err) => console.error("sessions failed", err)
+  );
 }
 
 function playConnectSound() {
@@ -231,6 +241,16 @@ function setup() {
   // same-origin socket.io
   socket = io();
   SocketListeners();
+
+  const sessionCount = Object.keys(sessionsData).length;
+
+  currentSession = (sessionCount - 1).toString();
+  console.log(currentSession);
+  monsterType = Math.floor(Math.random(0,6));
+  console.log(monsterType)
+
+  //push an empty template to json
+
 
   //Some event listeners for manual control of the game
   addEventListener("keydown", (e) => {
