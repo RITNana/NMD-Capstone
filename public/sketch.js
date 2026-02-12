@@ -69,20 +69,20 @@ let stations = {
 };
 
 function preload() {
-  bleedingBar = loadImage("media/Bleeding.png");
-  brainBar = loadImage("media/Brain.png");
-  tummyBar = loadImage("media/Stomach.png");
-  eyeBar = loadImage("media/Eye.png");
+  bleedingBar = loadImage("media/images/Bleeding.png");
+  brainBar = loadImage("media/images/Brain.png");
+  tummyBar = loadImage("media/images/Stomach.png");
+  eyeBar = loadImage("media/images/Eye.png");
 
-  daisyBleedBar = loadImage("media/DaisyBleed.png");
-  daisyBrainBar = loadImage("media/DaisyBrain.png");
+  daisyBleedBar = loadImage("media/images/DaisyBleed.png");
+  daisyBrainBar = loadImage("media/images/DaisyBrain.png");
 
   //set image
   stations.bleedEye.img = daisyBleedBar;
   stations.brainTummy.img = daisyBrainBar;
 
-  headerImage = loadImage("media/VitalsBoardLogo.png");
-  timerImage = loadImage("media/ClockLogo.png");
+  headerImage = loadImage("media/images/VitalsBoardLogo.png");
+  timerImage = loadImage("media/images/ClockLogo.png");
 
   //load sound
   connectSound = loadSound("media/audio/portConnect.mp3");
