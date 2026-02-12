@@ -57,7 +57,8 @@ let monsterVids = [
 
 function preload() {
     // Load JSON data
-    //sessionData = loadJSON("sessions.json");
+    sessionData = JSON.parse(localStorage.getItem("sessionScore"));
+
 
     // choose monster BEFORE setup
     chosenMonster = random(monsterTypes);
@@ -100,6 +101,9 @@ function draw() {
     totalTaskTime = startTime
 
     globalCountdown = timeLimit - startTime
+
+    //calculate score
+    totalScore = calculateFinalScore();
 
     if (complete) {
 
@@ -162,6 +166,20 @@ function draw() {
 
 
 // ----- SCORING -----
+function calculateFinalScore() {
+    if (!sessionData) return 0;
+
+    let s = sessionData[stringSesh];
+
+    let final =
+        s.headScore +
+        s.eyeScore +
+        s.bleedingScore +
+        s.stomachScore;
+
+    return final;
+}
+
 
 // function scoring() {
 //   if (totalTaskTime > 0 && totalTaskTime <= 5) {

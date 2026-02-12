@@ -32,6 +32,19 @@ let gameDuration = 120 * 1000;
 let gameTimeStart = 0;
 let gameOver = false;
 
+//score calculation
+let scoreData = {
+  "000": {
+    monsterType: 0,
+    headScore: 0,
+    eyeScore: 0,
+    bleedingScore: 0,
+    stomachScore: 0,
+    bleedEye: 0,
+    brainTummy: 0,
+  }
+};
+
 // stations and their states AKA the Hell JSON
 let stations = {
   brain: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "brain", inputDelay: false, timerStart: 0, totalTime: 0 },
@@ -422,6 +435,8 @@ function draw() {
 
           const points = scoring(st.totalTime);
           console.log(`${key} scored:`, points);
+          updateScoreJSON(st.name, points);
+
 
           // remove from visibleTasks
           const index = visibleTasks.indexOf(key);
@@ -458,6 +473,8 @@ function draw() {
         // Calculate score now
         const points = scoring(st.totalTime);
         console.log(`${st.name} scored:`, points);
+        updateScoreJSON(st.name, points);
+
 
         if (useGameLoop) {
           gameIndex++;
@@ -613,6 +630,9 @@ function ledProgress(charge, th = thresholds) {
     return Math.min(2 / 3 + (1 / 3) * seg, 1);
   }
 }
+
+//----STORE JSON DATA----
+localStorage.setItem("sessionScore", JSON.stringify(scoreData));
 
 // ----- INTERACTION -----
 
