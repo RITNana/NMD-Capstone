@@ -1,32 +1,24 @@
 window.updateScoreJSON = function (stationName, points) {
-    const scoreMap = {
-        brain: "headScore",
-        eyeball: "eyeScore",
-        bleeding: "bleedingScore",
-        tummy: "stomachScore",
-        bleedEye: "daisy1Score",
-        brainTummy: "daisy2Score",
-    };
-
-    const key = scoreMap[stationName];
-
-    if (key) {
-        scoreData["000"][key] = points;
-
-        // Send updated score to server
-        fetch("/score", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                sessionId: "000",
-                key: key,
-                value: points
-            })
-        });
+    if (!currentSession) {
+        console.error("No active session!");
+        return;
     }
 
+    console.log("Current session is:", currentSession);
 
-    console.log("Updated Score JSON:", scoreData);
+
+    let key;
+
+    if (stationName === "brain") key = "headScore";
+    if (stationName === "eyeball") key = "eyeScore";
+    if (stationName === "bleeding") key = "bleedingScore";
+    if (stationName === "tummy") key = "stomachScore";
+    if (stationName === "bleedEye") key = "bleedEye";
+    if (stationName === "brainTummy") key = "brainTummy";
+
+    if (!key) return;
+
+    console.log("Updating:", currentSession, key, points);
+
+    postScore(currentSession, key, points);
 }

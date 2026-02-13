@@ -105,30 +105,40 @@ function setup() {
   //need to grab the session string from the current sessoin and make that what needs to be reffered to 
 
   const keys = Object.keys(sessionData || {});
-    console.log("available sessions:", keys);
+  console.log("available sessions:", keys);
 
-    if (keys.length === 0) {
+  if (keys.length === 0) {
     console.error("No sessions found in /score");
     noLoop();
     return;
-    }
+  }
 
-    // If your session ids are numeric strings like "0","1","2"... use this safer sort:
-    const latestKey = keys.sort((a, b) => Number(a) - Number(b)).at(-1);
+  // If your session ids are numeric strings like "0","1","2"... use this safer sort:
+  const latestKey = keys.sort((a, b) => Number(a) - Number(b)).at(-1);
 
-    // If they’re NOT numeric, use this instead:
-    // const latestKey = keys.at(-1);
+  // If they’re NOT numeric, use this instead:
+  // const latestKey = keys.at(-1);
 
-    stringSesh = latestKey;
-    sessionSet = sessionData[stringSesh];
+  stringSesh = latestKey;
+  sessionSet = sessionData[stringSesh];
 
-    if (!sessionSet) {
+  scores = {
+    head: sessionSet.headScore || 0,
+    eyes: sessionSet.eyeScore || 0,
+    stomach: sessionSet.stomachScore || 0,
+    bleeding: sessionSet.bleedingScore || 0
+  };
+
+  console.log("Loaded scores:", scores);
+
+
+  if (!sessionSet) {
     console.error("Session not found:", stringSesh);
     noLoop();
     return;
-    }
+  }
 
-    console.log("using session:", stringSesh, sessionSet);
+  console.log("using session:", stringSesh, sessionSet);
 
 
   //monsterType = "wolf";
@@ -203,7 +213,7 @@ function loadMonsterPart(part) {
 //INSTEAD OF THE BUTTON
 //have this trigger as a result of the game ending
 function createMonster() {
-  if (complete) return; 
+  if (complete) return;
   complete = true;
 
   transitionPlaying = true;
@@ -267,25 +277,25 @@ function draw() {
 
   if (complete) {
 
-    
+
 
     if (finalBgImg) {
       image(finalBgImg, 0, 0, width, height);
     } else {
       image(bgImg, 0, 0, width, height);
     }
-    
-  
-    if(monsterType == "wolf" || monsterType == "spider"){
+
+
+    if (monsterType == "wolf" || monsterType == "spider") {
       const scale = 0.65;
-    drawMonster(200, 300, width * scale, height * scale);
+      drawMonster(200, 300, width * scale, height * scale);
     }
     else {
       const scale = 0.58;
       drawMonster(250, 370, width * scale, height * scale);
     }
-    
-    totalScore = sessionSet.headScore + sessionSet.eyeScore + sessionSet.stomachScore + sessionSet.bleedingScore;
+
+    totalScore = scores.head + scores.eyes + scores.stomach + scores.bleeding;
 
     textAlign(LEFT)
 
@@ -310,13 +320,13 @@ function draw() {
         mainAlpha: 200
       }
     );
-    
+
 
     textFont(dogicaFont);
 
     textSize(29);
     drawGlowingText(
-      `Head Score: ${sessionSet.headScore}`,
+      `Head Score: ${scores.head}`,
       320,
       1560,
       {
@@ -331,7 +341,7 @@ function draw() {
     );
     //text(`Head Score: ${sessionSet.headScore}`, 310, 1560)
     drawGlowingText(
-      `Eye Score: ${sessionSet.eyeScore}`,
+      `Eye Score: ${scores.eyes}`,
       305,
       1610,
       {
@@ -346,7 +356,7 @@ function draw() {
     );
     //text(`Eye Score: ${sessionSet.eyeScore}`, 295, 1610)
     drawGlowingText(
-      `Stomach Score: ${sessionSet.stomachScore}`,
+      `Stomach Score: ${scores.stomach}`,
       365,
       1660,
       {
@@ -361,7 +371,7 @@ function draw() {
     );
     //text(`Stomach Score: ${sessionSet.stomachScore}`, 355, 1660)
     drawGlowingText(
-      `Bleeding Score: ${sessionSet.bleedingScore}`,
+      `Bleeding Score: ${scores.bleeding}`,
       380,
       1710,
       {
@@ -377,7 +387,7 @@ function draw() {
     //text(`Bleeding Score: ${sessionSet.bleedingScore}`, 370, 1710)
 
     textFont("sans-serif");
-  
+
     if (finalBgLoading) {
       fill(255);
       textSize(14);
@@ -391,16 +401,16 @@ function draw() {
     //play TransitionOverlays png sequence here
     //transitionSequence.play();
     if (transitionPlaying) {
-        transitionSequence.draw(0, 0, width, height);
+      transitionSequence.draw(0, 0, width, height);
 
-        if (millis() - transitionStartMs >= TRANSITION_MS) {
-            transitionPlaying = false; // stop drawing after one run
-        }
+      if (millis() - transitionStartMs >= TRANSITION_MS) {
+        transitionPlaying = false; // stop drawing after one run
+      }
     }
 
-  
+
   }
-   else {
+  else {
     background(0);
     if (taskVideo) image(taskVideo, 0, 0, width, height);
   }
