@@ -95,13 +95,23 @@ function tubeFinder() {
 let currentIndex = 0;
 let currentLoop = 0;
 let gameIndex = 0;
-let loop1 = ["bleeding", "brain", "eyeball", "tummy"];
-let loop2 = ["brain", "bleeding", "tummy", "eyeball"];
+let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "brain", "bleeding",];
+let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball","bleeding", "brain", "bleedEye"];
+let currentTasks = [];
+let daisyPartProgress;
+let endPartProgress;
 //Gameloop 1 for Prototype 2
 function gameLoop1() {
   if (loop1[gameIndex]) {
     newTask = loop1[gameIndex];
+    console.log(newTask);
     currentIndex = gameIndex;
+    console.log(currentTasks);
+    console.log(daisy.useDaisy);
+    // if(gameIndex > 4 && currentTasks.length < 2){
+    //   gameIndex++;
+    //   gameLoop1();
+    // }
   }
   else {
     // index = 0;
@@ -367,26 +377,25 @@ function draw() {
     }
 
     if (daisy.useDaisy) {
-      console.log(st.inputDelay, st.name == stations.bleedEye.parts[0], blueDaisy, blueHeart, redDaisy, redHeart);
       //minimum the hear to the daisy is needed 
       if (
         ((blueDaisy && blueHeart) || //Blue tube Heart to Daisy
           (redDaisy && redHeart)) // Red tube heart to Daisy 
       ) {
         //for the heart -> daisy
-        if (st.name == stations.bleedEye.parts[0]) {
+        if (st.name == stations.bleedEye.parts[0] || st.name == stations.brainTummy.parts[0] ) {
           st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
-          stations.bleedEye.partProgress.bleeding = st.progress;
-          console.log("heart -> daisy " + stations.bleedEye.partProgress.bleeding)
+          daisyPartProgress = st.progress;
+          // console.log("heart -> daisy " + stations.bleedEye.partProgress.bleeding)
         }
         //for the daisy -> end
-        if (st.name == stations.bleedEye.parts[1]) {
+        if (st.name == stations.bleedEye.parts[1] || st.name == stations.brainTummy.parts[1]) {
           if (((blueEnd && blueDaisy) || //blue at end and daisy 
             (redEnd && redDaisy)) //red at end and daisy
           ) {
             st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
-            stations.bleedEye.partProgress.eyeball = st.progress;
-            console.log("daisy -> end " + stations.bleedEye.partProgress.eyeball)
+            endPartProgress = st.progress;
+            // console.log("daisy -> end " + stations.bleedEye.partProgress.eyeball)
           }
         };
       }
@@ -395,8 +404,9 @@ function draw() {
       if (st.name == "bleedEye" || st.name == "brainTummy") {
         // if (st.parts.includes(st.name)) {
 
-        if (st.partProgress.bleeding >= 0.995 && st.partProgress.eyeball >= 0.995) {
+        if (daisyPartProgress >= 0.995 && endPartProgress >= 0.995) {
           st.dismissing = true;
+
           //console.log(st.dismissing);
           //st.dismissStart = millis();
         }
@@ -426,7 +436,18 @@ function draw() {
           // remove from visibleTasks
           const index = visibleTasks.indexOf(key);
           if (index > -1) visibleTasks.splice(index, 1);
+          if(st.name == "bleedEye" || st.name == "brainTummy"){
+            daisyPartProgress = "";
+            endPartProgress = "";
+            daisy.useDaisy = false;
+          }
+          if (useGameLoop) {
+          gameIndex++;
+            if (currentLoop === 1) { gameLoop1(); };
+            if (currentLoop === 2) { gameLoop2(); };
         }
+        }
+
 
         if (key === banish) banish = "";
       }
@@ -443,7 +464,6 @@ function draw() {
       const e = 1 - pow(1 - t, 3);
       st.offsetX = e * (width + 48);
       st.fade = 1 - e;
-
       if (t >= 1) {
         st.dismissing = false;
         st.visible = false;
@@ -468,7 +488,8 @@ function draw() {
         const index = visibleTasks.indexOf(st.name);
         if (index > -1) visibleTasks.splice(index, 1);
       }
-      banish = ""
+      banish = "";
+      currentTasks.splice(currentTasks.indexOf(st.name));
       // gameState++;
       // updateGameState = true;
       st.inputDelay = false; //Possible solution for the first input completion
@@ -485,10 +506,29 @@ function draw() {
       st.dismissStart = 0;
       //Reminder that input delay's logic is backwards so if its false it stops the input and true it lets input throu
       st.inputDelay = true;
-
+      currentTasks.push(st.name);
       //timer
       st.timerStart = millis();
       st.totalTime = 0;
+
+      if(st.name == "bleedEye"){
+        daisy.useDaisy = true;
+        daisy.daisyTask = "bleeding";
+        daisy.endTask = "eyeball";
+        stations.bleedEye.inputDelay = true;
+        daisyPartProgress = stations.bleedEye.partProgress.bleeding;
+        endPartProgress = stations.bleedEye.partProgress.eyeball;
+        console.log("daisy bleedEye started");
+      }
+      if(st.name == "brainTummy"){
+        daisy.useDaisy = true;
+        daisy.daisyTask = "brain";
+        daisy.endTask = "tummy";
+        stations.brainTummy.inputDelay = true;
+        daisyPartProgress = stations.brainTummy.partProgress.brain;
+        endPartProgress = stations.brainTummy.partProgress.tummy;
+        console.log("daisy brainTummy started");
+      }
 
       socket.emit(`${st.name}`, "go");
 
@@ -519,12 +559,12 @@ function draw() {
       if (parts[0]) {
         noStroke();
         fill(228, 44, 46);
-        rect(barX - 10, barY - 10, barW * stations.bleedEye.partProgress.bleeding, barH - 10);
+        rect(barX - 10, barY - 10, barW * daisyPartProgress, barH - 10);
       }
       if (parts[1]) {
         noStroke();
         fill(228, 44, 46);
-        rect(barX - 10, barY + 44, barW * stations.bleedEye.partProgress.eyeball, barH - 10);
+        rect(barX - 10, barY + 44, barW * endPartProgress, barH - 10);
       };
 
       //draw image
