@@ -93,10 +93,7 @@ function preload() {
   connectSound = loadSound("media/audio/portConnect.mp3");
 
 
-  sessionsData = loadJSON("/score", 
-    (data) => console.log("sessions loaded", data),
-    (err) => console.error("sessions failed", err)
-  );
+  sessionsData = loadJSON("/score");
 }
 
 function playConnectSound() {
@@ -162,6 +159,50 @@ let currentLoop = 0;
 let gameIndex = 0;
 let loop1 = ["bleeding", "brain", "eyeball", "tummy"];
 let loop2 = ["brain", "bleeding", "tummy", "eyeball"];
+
+async function initSessionOnServer(sessionId, monsterType) {
+  const template = {
+    monsterType,
+    headScore: 0,
+    eyeScore: 0,
+    bleedingScore: 0,
+    stomachScore: 0,
+    bleedEye: 0,
+    brainTummy: 0,
+  };
+
+  // write each key to sessions.json using your existing route
+  await Promise.all(
+    Object.entries(template).map(([key, value]) => postScore(sessionId, key, value))
+  );
+
+  console.log("session initialized on server:", sessionId, template);
+}
+
+
+function getNextSessionId() {
+  // safest version (handles gaps and non-numeric keys)
+  const keys = Object.keys(sessionsData || {});
+  const nums = keys.map(k => parseInt(k, 10)).filter(n => Number.isFinite(n));
+  const next = (nums.length ? Math.max(...nums) + 1 : 0);
+  return String(next);
+}
+
+function createNewSession() {
+  currentSession = getNextSessionId();
+  monsterType = Math.floor(Math.random() * 6);
+
+  // keep local copy in sync so the next press increments correctly
+  sessionsData[currentSession] = sessionsData[currentSession] || {};
+
+  // write template to sessions.json
+  initSessionOnServer(currentSession, monsterType)
+    .then(() => console.log("new session created:", currentSession, "monsterType:", monsterType))
+    .catch((e) => console.error("session create failed", e));
+}
+
+
+
 //Gameloop 1 for Prototype 2
 function gameLoop1() {
   if (loop1[gameIndex]) {
@@ -220,6 +261,19 @@ function gameLoop2(state) {
   // }
 }
 
+//for initializing the session data to the json
+function postScore(sessionId, key, value) {
+  return fetch("/score", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ sessionId, key, value }),
+  }).then((r) => r.json());
+}
+
+
+
+
+
 function setup() {
   createCanvas(720, 400);
   textFont("system-ui");
@@ -242,15 +296,15 @@ function setup() {
   socket = io();
   SocketListeners();
 
-  const sessionCount = Object.keys(sessionsData).length;
+  //const sessionCount = Object.keys(sessionsData).length;
 
-  currentSession = (sessionCount - 1).toString();
-  console.log(currentSession);
-  monsterType = Math.floor(Math.random(0,6));
-  console.log(monsterType)
-
-  //push an empty template to json
-
+  
+  //currentSession = Object.keys(sessionsData).length.toString();
+  //console.log(currentSession);
+  //monsterType = Math.floor(Math.random() * 6); // 0..5
+  //console.log(monsterType)
+//
+  //initSessionOnServer(currentSession, monsterType);
 
   //Some event listeners for manual control of the game
   addEventListener("keydown", (e) => {
@@ -320,6 +374,7 @@ function setup() {
       // gameloop = 1;
       // gameState = 1;
       // updateGameState = true;
+      createNewSession(); 
       currentLoop = 1;
       gameIndex = 0;
       useGameLoop = true;
@@ -328,6 +383,7 @@ function setup() {
     if (e.key == "2") { //For gameloop 2
       // gameloop = 2;
       // gameState = 1;
+      createNewSession(); 
       gameIndex = 0;
       useGameLoop = true;
       gameLoop2();
