@@ -185,14 +185,14 @@ void task(){
   
   if (direction == "go")
   { //For some unknown reason the lights are backwards on this
-    digitalWrite(stationPin1, LOW);
-    digitalWrite(stationPin2, LOW);
+    digitalWrite(stationPin1, HIGH);
+    digitalWrite(stationPin2, HIGH);
     direction = "_";
   }
   if(direction == "stop"){
     //TURN OFF THE LIGHTS
-    digitalWrite(stationPin1, HIGH);
-    digitalWrite(stationPin2, HIGH);
+    digitalWrite(stationPin1, LOW);
+    digitalWrite(stationPin2, LOW);
     direction = "_";
   }
   if(direction == "reset"){
