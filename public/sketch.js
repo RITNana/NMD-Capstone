@@ -45,6 +45,11 @@ let scoreData = {
   }
 };
 
+//json Vars
+let currentSession;
+let sessionsData;
+let monsterType;
+
 //sounds
 let connectSound;
 
@@ -69,24 +74,26 @@ let stations = {
 };
 
 function preload() {
-  bleedingBar = loadImage("media/Bleeding.png");
-  brainBar = loadImage("media/Brain.png");
-  tummyBar = loadImage("media/Stomach.png");
-  eyeBar = loadImage("media/Eye.png");
+  bleedingBar = loadImage("media/images/Bleeding.png");
+  brainBar = loadImage("media/images/Brain.png");
+  tummyBar = loadImage("media/images/Stomach.png");
+  eyeBar = loadImage("media/images/Eye.png");
 
-  daisyBleedBar = loadImage("media/DaisyBleed.png");
-  daisyBrainBar = loadImage("media/DaisyBrain.png");
+  daisyBleedBar = loadImage("media/images/DaisyBleed.png");
+  daisyBrainBar = loadImage("media/images/DaisyBrain.png");
 
   //set image
   stations.bleedEye.img = daisyBleedBar;
   stations.brainTummy.img = daisyBrainBar;
 
-  headerImage = loadImage("media/VitalsBoardLogo.png");
-  timerImage = loadImage("media/ClockLogo.png");
+  headerImage = loadImage("media/images/VitalsBoardLogo.png");
+  timerImage = loadImage("media/images/ClockLogo.png");
 
   //load sound
   connectSound = loadSound("media/audio/portConnect.mp3");
 
+
+  sessionsData = loadJSON("/score");
 }
 
 function playConnectSound() {
@@ -150,6 +157,50 @@ function tubeFinder() {
 let currentIndex = 0;
 let currentLoop = 0;
 let gameIndex = 0;
+
+async function initSessionOnServer(sessionId, monsterType) {
+  const template = {
+    monsterType,
+    headScore: 0,
+    eyeScore: 0,
+    bleedingScore: 0,
+    stomachScore: 0,
+    bleedEye: 0,
+    brainTummy: 0,
+  };
+
+  // write each key to sessions.json using your existing route
+  await Promise.all(
+    Object.entries(template).map(([key, value]) => postScore(sessionId, key, value))
+  );
+
+  console.log("session initialized on server:", sessionId, template);
+}
+
+
+function getNextSessionId() {
+  // safest version (handles gaps and non-numeric keys)
+  const keys = Object.keys(sessionsData || {});
+  const nums = keys.map(k => parseInt(k, 10)).filter(n => Number.isFinite(n));
+  const next = (nums.length ? Math.max(...nums) + 1 : 0);
+  return String(next);
+}
+
+function createNewSession() {
+  currentSession = getNextSessionId();
+  monsterType = Math.floor(Math.random() * 6);
+
+  // keep local copy in sync so the next press increments correctly
+  sessionsData[currentSession] = sessionsData[currentSession] || {};
+
+  // write template to sessions.json
+  initSessionOnServer(currentSession, monsterType)
+    .then(() => console.log("new session created:", currentSession, "monsterType:", monsterType))
+    .catch((e) => console.error("session create failed", e));
+}
+
+
+
 let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "tummy", "brain", "bleeding", "brainTummy"];
 let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball","bleeding", "brain", "bleedEye"];
 let currentTasks = [];
@@ -224,6 +275,19 @@ function gameLoop2() {
   // }
 }
 
+//for initializing the session data to the json
+function postScore(sessionId, key, value) {
+  return fetch("/score", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ sessionId, key, value }),
+  }).then((r) => r.json());
+}
+
+
+
+
+
 function setup() {
   createCanvas(720, 400);
   textFont("system-ui");
@@ -245,6 +309,16 @@ function setup() {
   // same-origin socket.io
   socket = io();
   SocketListeners();
+
+  //const sessionCount = Object.keys(sessionsData).length;
+
+  
+  //currentSession = Object.keys(sessionsData).length.toString();
+  //console.log(currentSession);
+  //monsterType = Math.floor(Math.random() * 6); // 0..5
+  //console.log(monsterType)
+//
+  //initSessionOnServer(currentSession, monsterType);
 
   //Some event listeners for manual control of the game
   addEventListener("keydown", (e) => {
@@ -301,6 +375,7 @@ function setup() {
       // gameloop = 1;
       // gameState = 1;
       // updateGameState = true;
+      createNewSession(); 
       currentLoop = 1;
       gameIndex = 0;
       useGameLoop = true;
@@ -309,6 +384,7 @@ function setup() {
     if (e.key == "2") { //For gameloop 2
       // gameloop = 2;
       // gameState = 1;
+      createNewSession(); 
       currentLoop = 2;
       gameIndex = 0;
       useGameLoop = true;

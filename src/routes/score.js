@@ -4,6 +4,22 @@ const path = require("path");
 
 const router = express.Router();
 
+router.get("/", (req, res) => {
+  const filePath = path.join(__dirname, "..", "..", "sessions.json");
+
+  try {
+    if (!fs.existsSync(filePath)) {
+      return res.json({}); // or 404 if you prefer
+    }
+    const raw = fs.readFileSync(filePath, "utf8");
+    const data = JSON.parse(raw);
+    res.json(data);
+  } catch (e) {
+    console.error("Error reading sessions.json:", e);
+    res.status(500).json({ error: "Failed to read sessions.json" });
+  }
+});
+
 router.post("/", (req, res) => {
   const { sessionId, key, value } = req.body;
 
