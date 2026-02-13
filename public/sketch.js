@@ -95,7 +95,7 @@ function tubeFinder() {
 let currentIndex = 0;
 let currentLoop = 0;
 let gameIndex = 0;
-let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "brain", "bleeding",];
+let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "tummy", "bleeding",];
 let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball","bleeding", "brain", "bleedEye"];
 let currentTasks = [];
 let daisyPartProgress;
@@ -104,10 +104,7 @@ let endPartProgress;
 function gameLoop1() {
   if (loop1[gameIndex]) {
     newTask = loop1[gameIndex];
-    console.log(newTask);
     currentIndex = gameIndex;
-    console.log(currentTasks);
-    console.log(daisy.useDaisy);
     // if(gameIndex > 4 && currentTasks.length < 2){
     //   gameIndex++;
     //   gameLoop1();
@@ -141,9 +138,10 @@ function gameLoop1() {
   // }
 }
 // Gameloop 2 for Prototype 2
-function gameLoop2(state) {
+function gameLoop2() {
   if (loop2[gameIndex]) {
     newTask = loop2[gameIndex];
+    console.log(newTask);
     currentIndex = gameIndex;
   }
   // if (state == 1) {
@@ -263,6 +261,7 @@ function setup() {
     if (e.key == "2") { //For gameloop 2
       // gameloop = 2;
       // gameState = 1;
+      currentLoop = 2;
       gameIndex = 0;
       useGameLoop = true;
       gameLoop2();
@@ -605,9 +604,9 @@ function draw() {
       gameIndex = 0;
       gameLoop1();
     }
-    // if (gameloop == 2) {
-    //   gameLoop2(gameState);
-    // }
+    if (gameloop == 2) {
+      gameLoop2();
+    }
     // updateGameState = false;
   }
 
