@@ -36,5 +36,14 @@
     "stomachScore": 0,
     "bleedEye": 0,
     "brainTummy": 0
+  },
+  "4": {
+    "monsterType": 2,
+    "headScore": 300,
+    "eyeScore": 294,
+    "bleedingScore": 294,
+    "stomachScore": 300,
+    "bleedEye": 30,
+    "brainTummy": 0
   }
 }
