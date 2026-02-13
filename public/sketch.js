@@ -150,13 +150,21 @@ function tubeFinder() {
 let currentIndex = 0;
 let currentLoop = 0;
 let gameIndex = 0;
-let loop1 = ["bleeding", "brain", "eyeball", "tummy"];
-let loop2 = ["brain", "bleeding", "tummy", "eyeball"];
+let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "tummy", "brain", "bleeding", "brainTummy"];
+let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball","bleeding", "brain", "bleedEye"];
+let currentTasks = [];
+let daisyPartProgress;
+let endPartProgress;
 //Gameloop 1 for Prototype 2
 function gameLoop1() {
   if (loop1[gameIndex]) {
     newTask = loop1[gameIndex];
     currentIndex = gameIndex;
+    if(gameIndex > 4 && currentTasks.length < 2){
+      gameIndex++;
+      otherNewTask = loop1[gameIndex];
+      currentIndex = gameIndex;
+    }
   }
   else {
     // index = 0;
@@ -186,10 +194,16 @@ function gameLoop1() {
   // }
 }
 // Gameloop 2 for Prototype 2
-function gameLoop2(state) {
+function gameLoop2() {
   if (loop2[gameIndex]) {
     newTask = loop2[gameIndex];
+    // console.log(newTask);
     currentIndex = gameIndex;
+    if(gameIndex > 4 && currentTasks.length < 2){
+      gameIndex++;
+      otherNewTask = loop2[gameIndex];
+      currentIndex = gameIndex;
+    }
   }
   // if (state == 1) {
   //   newTask = "brain"
@@ -239,29 +253,16 @@ function setup() {
     if (e.key == "e") { newTask = "eyeball"; }
     if (e.key == "q") { newTask = "bleeding"; }
     if (e.key == "r") { newTask = "tummy"; }
-    if (e.key == "t") {
-      const ct = stations.bleedEye;
-      ct.visible = true;
-      ct.progress = 0;
-      ct.fade = 1;
-      ct.offsetX = 0;
-      ct.dismissing = false;
-      ct.timerStart = millis();
-
-      if (!visibleTasks.includes("bleedEye")) {
-        visibleTasks.push("bleedEye");
-      }
-    }
+    if (e.key == "t") { newTask = "bleedEye";}
+    if(e.key == "4"){newTask = "brainTummy";}
+    if(e.key == "5"){banish = "brainTummy";}
 
     //these atomize task from the list
     if (e.key == "s") { banish = "brain"; }
     if (e.key == "d") { banish = "eyeball"; }
     if (e.key == "a") { banish = "bleeding"; }
     if (e.key == "f") { banish = "tummy"; }
-    if (e.key == "g") {
-      stations.bleedEye.dismissing = true;
-      stations.bleedEye.dismissStart = millis();
-    }
+    if (e.key == "g") {banish = "bleedEye";}
     //reset all pins on a given station
     //these get sent to index.js
     if (e.key == "x") { socket.emit("brain", "reset"); }
@@ -271,29 +272,29 @@ function setup() {
     if (e.key == "b") { socket.emit("heart", "reset"); }
 
     //increment LEFT light threshold
-    if (e.key == "7") { socket.emit("brain", "leftIncre"); }
-    if (e.key == "8") { socket.emit("eyeball", "leftIncre"); }
-    if (e.key == "6") { socket.emit("bleeding", "leftIncre"); }
-    if (e.key == "9") { socket.emit("tummy", "leftIncre"); }
-    if (e.key == "0") { socket.emit("heart", "leftIncre"); }
+    if (e.key == "7") { socket.emit("brain", "leftInc"); }
+    if (e.key == "8") { socket.emit("eyeball", "leftInc"); }
+    if (e.key == "6") { socket.emit("bleeding", "leftInc"); }
+    if (e.key == "9") { socket.emit("tummy", "leftInc"); }
+    if (e.key == "0") { socket.emit("heart", "leftInc"); }
     //decrement LEFT light threshold
-    if (e.key == "u") { socket.emit("brain", "leftDecre"); }
-    if (e.key == "i") { socket.emit("eyeball", "leftDecre"); }
-    if (e.key == "y") { socket.emit("bleeding", "leftDecre"); }
-    if (e.key == "o") { socket.emit("tummy", "leftDecre"); }
-    if (e.key == "p") { socket.emit("heart", "leftDecre"); }
+    if (e.key == "u") { socket.emit("brain", "leftDec"); }
+    if (e.key == "i") { socket.emit("eyeball", "leftDec"); }
+    if (e.key == "y") { socket.emit("bleeding", "leftDec"); }
+    if (e.key == "o") { socket.emit("tummy", "leftDec"); }
+    if (e.key == "p") { socket.emit("heart", "leftDec"); }
     //increment RIGHT light threshold
-    if (e.key == "j") { socket.emit("brain", "rightIncre"); }
-    if (e.key == "k") { socket.emit("eyeball", "rightIncre"); }
-    if (e.key == "h") { socket.emit("bleeding", "rightIncre"); }
-    if (e.key == "l") { socket.emit("tummy", "rightIncre"); }
-    if (e.key == ";") { socket.emit("heart", "rightIncre"); }
+    if (e.key == "j") { socket.emit("brain", "rightInc"); }
+    if (e.key == "k") { socket.emit("eyeball", "rightInc"); }
+    if (e.key == "h") { socket.emit("bleeding", "rightInc"); }
+    if (e.key == "l") { socket.emit("tummy", "rightInc"); }
+    if (e.key == ";") { socket.emit("heart", "rightInc"); }
     //decrement RIGHT light threshold
-    if (e.key == "m") { socket.emit("brain", "rightDecre"); }
-    if (e.key == ",") { socket.emit("eyeball", "rightDecre"); }
-    if (e.key == "n") { socket.emit("bleeding", "rightDecre"); }
-    if (e.key == ".") { socket.emit("tummy", "rightDecre"); }
-    if (e.key == "/") { socket.emit("heart", "rightDecre"); }
+    if (e.key == "m") { socket.emit("brain", "rightDec"); }
+    if (e.key == ",") { socket.emit("eyeball", "rightDec"); }
+    if (e.key == "n") { socket.emit("bleeding", "rightDec"); }
+    if (e.key == ".") { socket.emit("tummy", "rightDec"); }
+    if (e.key == "/") { socket.emit("heart", "rightDec"); }
 
 
     if (e.key == "1") { //For gameloop 1
@@ -308,6 +309,7 @@ function setup() {
     if (e.key == "2") { //For gameloop 2
       // gameloop = 2;
       // gameState = 1;
+      currentLoop = 2;
       gameIndex = 0;
       useGameLoop = true;
       gameLoop2();
@@ -315,18 +317,18 @@ function setup() {
     if (e.key == "3") { //For manual control
       // gameloop = 0;
       // gameState = 1;
-      // currentLoop = 2;
+      currentLoop = 0;
       gameIndex = 0;
       useGameLoop = false;
     }
-    if (e.key == "4") { //manual daisy task
-      daisy.useDaisy = true;
-      // console.log(daisy.useDaisy);
-      daisy.daisyTask = "bleeding";
-      // console.log(daisy.daisyTask);
-      daisy.endTask = "eyeball";
-      stations.bleedEye.inputDelay = true;
-    }
+    // if (e.key == "4") { //manual daisy task
+    //   daisy.useDaisy = true;
+    //   // console.log(daisy.useDaisy);
+    //   daisy.daisyTask = "bleeding";
+    //   // console.log(daisy.daisyTask);
+    //   daisy.endTask = "eyeball";
+    //   stations.bleedEye.inputDelay = true;
+    // }
   })
 }
 
@@ -393,12 +395,12 @@ function draw() {
     brainTummy: { img: daisyBrainBar, x: centeredX, y: 0, w: barWidth, h: barHeight }
   };
 
-  //test
-  // stations.brain.num = 5;
-  // stations.eyeball.num = 29;
-  // stations.bleeding.num = 12;
-  // stations.tummy.num = 8;
-  // stations.heart.num = 1;
+  // //test
+  // stations.brain.num = 500;
+  // stations.eyeball.num = 2900;
+  // stations.bleeding.num = 1200;
+  // stations.tummy.num = 800;
+  // stations.heart.num = 1000;
 
   //Trigger the tube finder to be updated
   tubeFinder();
@@ -422,26 +424,25 @@ function draw() {
     }
 
     if (daisy.useDaisy) {
-      console.log(st.inputDelay, st.name == stations.bleedEye.parts[0], blueDaisy, blueHeart, redDaisy, redHeart);
       //minimum the hear to the daisy is needed 
       if (
         ((blueDaisy && blueHeart) || //Blue tube Heart to Daisy
           (redDaisy && redHeart)) // Red tube heart to Daisy 
       ) {
         //for the heart -> daisy
-        if (st.name == stations.bleedEye.parts[0]) {
+        if (st.name == stations.bleedEye.parts[0] || st.name == stations.brainTummy.parts[0] ) {
           st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
-          stations.bleedEye.partProgress.bleeding = st.progress;
-          console.log("heart -> daisy " + stations.bleedEye.partProgress.bleeding)
+          daisyPartProgress = st.progress;
+          // console.log("heart -> daisy " + stations.bleedEye.partProgress.bleeding)
         }
         //for the daisy -> end
-        if (st.name == stations.bleedEye.parts[1]) {
+        if (st.name == stations.bleedEye.parts[1] || st.name == stations.brainTummy.parts[1]) {
           if (((blueEnd && blueDaisy) || //blue at end and daisy 
             (redEnd && redDaisy)) //red at end and daisy
           ) {
             st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
-            stations.bleedEye.partProgress.eyeball = st.progress;
-            console.log("daisy -> end " + stations.bleedEye.partProgress.eyeball)
+            endPartProgress = st.progress;
+            // console.log("daisy -> end " + stations.bleedEye.partProgress.eyeball)
           }
         };
       }
@@ -450,8 +451,9 @@ function draw() {
       if (st.name == "bleedEye" || st.name == "brainTummy") {
         // if (st.parts.includes(st.name)) {
 
-        if (st.partProgress.bleeding >= 0.995 && st.partProgress.eyeball >= 0.995) {
+        if (daisyPartProgress >= 0.995 && endPartProgress >= 0.995) {
           st.dismissing = true;
+
           //console.log(st.dismissing);
           //st.dismissStart = millis();
         }
@@ -483,7 +485,26 @@ function draw() {
           // remove from visibleTasks
           const index = visibleTasks.indexOf(key);
           if (index > -1) visibleTasks.splice(index, 1);
+          if(st.name == "bleedEye" || st.name == "brainTummy"){
+            daisyPartProgress = "";
+            endPartProgress = "";
+            daisy.useDaisy = false;
+          }
+          if(st.name == "brainTummy"){
+            socket.emit("brain", "stop");
+            socket.emit("tummy", "stop");
+          }
+          if(st.name == "bleedEye"){
+            socket.emit("bleed", "stop");
+            socket.emit("eyeball", "stop");
+          }
+          if (useGameLoop) {
+            gameIndex++;
+            if (currentLoop === 1) { gameLoop1(); };
+            if (currentLoop === 2) { gameLoop2(); };
+          }
         }
+
 
         if (key === banish) banish = "";
       }
@@ -500,7 +521,6 @@ function draw() {
       const e = 1 - pow(1 - t, 3);
       st.offsetX = e * (width + 48);
       st.fade = 1 - e;
-
       if (t >= 1) {
         st.dismissing = false;
         st.visible = false;
@@ -527,7 +547,8 @@ function draw() {
         const index = visibleTasks.indexOf(st.name);
         if (index > -1) visibleTasks.splice(index, 1);
       }
-      banish = ""
+      banish = "";
+      currentTasks.splice(currentTasks.indexOf(st.name));
       // gameState++;
       // updateGameState = true;
       st.inputDelay = false; //Possible solution for the first input completion
@@ -544,10 +565,33 @@ function draw() {
       st.dismissStart = 0;
       //Reminder that input delay's logic is backwards so if its false it stops the input and true it lets input throu
       st.inputDelay = true;
-
+      currentTasks.push(st.name);
       //timer
       st.timerStart = millis();
       st.totalTime = 0;
+
+      if(st.name == "bleedEye"){
+        socket.emit("bleed", "go");
+        socket.emit("eyeball", "go");
+        daisy.useDaisy = true;
+        daisy.daisyTask = "bleeding";
+        daisy.endTask = "eyeball";
+        stations.bleedEye.inputDelay = true;
+        daisyPartProgress = stations.bleedEye.partProgress.bleeding;
+        endPartProgress = stations.bleedEye.partProgress.eyeball;
+        console.log("daisy bleedEye started");
+      }
+      if(st.name == "brainTummy"){
+        socket.emit("brain", "go");
+        socket.emit("tummy", "go");
+        daisy.useDaisy = true;
+        daisy.daisyTask = "brain";
+        daisy.endTask = "tummy";
+        stations.brainTummy.inputDelay = true;
+        daisyPartProgress = stations.brainTummy.partProgress.brain;
+        endPartProgress = stations.brainTummy.partProgress.tummy;
+        console.log("daisy brainTummy started");
+      }
 
       socket.emit(`${st.name}`, "go");
 
@@ -578,12 +622,12 @@ function draw() {
       if (parts[0]) {
         noStroke();
         fill(228, 44, 46);
-        rect(barX - 10, barY - 10, barW * stations.bleedEye.partProgress.bleeding, barH - 10);
+        rect(barX - 10, barY - 10, barW * daisyPartProgress, barH - 10);
       }
       if (parts[1]) {
         noStroke();
         fill(228, 44, 46);
-        rect(barX - 10, barY + 44, barW * stations.bleedEye.partProgress.eyeball, barH - 10);
+        rect(barX - 10, barY + 44, barW * endPartProgress, barH - 10);
       };
 
       //draw image
@@ -624,9 +668,10 @@ function draw() {
       gameIndex = 0;
       gameLoop1();
     }
-    // if (gameloop == 2) {
-    //   gameLoop2(gameState);
-    // }
+    if (gameloop == 2) {
+      gameIndex = 0;
+      gameLoop2();
+    }
     // updateGameState = false;
   }
 
