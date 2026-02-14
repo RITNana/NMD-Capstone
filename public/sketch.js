@@ -202,7 +202,7 @@ function createNewSession() {
 
 
 let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "tummy", "brain", "bleeding", "brainTummy"];
-let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball","bleeding", "brain", "bleedEye"];
+let loop2 = ["brain", "bleeding", "tummy", "brainTummy", "bleeding", "brain", ];
 let currentTasks = [];
 let daisyPartProgress;
 let endPartProgress;
@@ -379,6 +379,7 @@ function setup() {
       currentLoop = 1;
       gameIndex = 0;
       useGameLoop = true;
+      gameTimeStart = millis();
       gameLoop1();
     }
     if (e.key == "2") { //For gameloop 2
@@ -388,6 +389,7 @@ function setup() {
       currentLoop = 2;
       gameIndex = 0;
       useGameLoop = true;
+      gameTimeStart = millis();
       gameLoop2();
     }
     if (e.key == "3") { //For manual control
@@ -506,13 +508,13 @@ function draw() {
           (redDaisy && redHeart)) // Red tube heart to Daisy 
       ) {
         //for the heart -> daisy
-        if (st.name == stations.bleedEye.parts[0] || st.name == stations.brainTummy.parts[0] ) {
+        if ((st.name == stations.bleedEye.parts[0]) && daisy.daisyTask == "bleeding" || (st.name == stations.brainTummy.parts[0]) && daisy.daisyTask == "brain" ) {
           st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
           daisyPartProgress = st.progress;
           // console.log("heart -> daisy " + stations.bleedEye.partProgress.bleeding)
         }
         //for the daisy -> end
-        if (st.name == stations.bleedEye.parts[1] || st.name == stations.brainTummy.parts[1]) {
+        if ((st.name == stations.bleedEye.parts[1]) && daisy.endTask == "eyeball" || (st.name == stations.brainTummy.parts[1]) && daisy.endTask == "tummy") {
           if (((blueEnd && blueDaisy) || //blue at end and daisy 
             (redEnd && redDaisy)) //red at end and daisy
           ) {
@@ -592,7 +594,7 @@ function draw() {
     }
 
     // handle dismissal animation
-    if (st.dismissing || st.name === banish) {
+    if ((st.dismissing || st.name === banish) && !daisy.useDaisy) {
       const t = constrain((millis() - st.dismissStart) / DISMISS_DURATION, 0, 1);
       const e = 1 - pow(1 - t, 3);
       st.offsetX = e * (width + 48);
@@ -630,7 +632,7 @@ function draw() {
       st.inputDelay = false; //Possible solution for the first input completion
       socket.emit(`${st.name}`, "stop"); //Trigger stop
     }
-
+    st.inputDelay = true;
     //return a task from completion / reset all values 
     if (st.name === newTask || st.name === otherNewTask) {
       st.offsetX = 0;
@@ -640,7 +642,7 @@ function draw() {
       st.progress = 0;
       st.dismissStart = 0;
       //Reminder that input delay's logic is backwards so if its false it stops the input and true it lets input throu
-      st.inputDelay = true;
+      st.inputDelay = false;
       currentTasks.push(st.name);
       //timer
       st.timerStart = millis();
