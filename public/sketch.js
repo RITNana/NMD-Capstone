@@ -32,6 +32,36 @@ let gameDuration = 120 * 1000;
 let gameTimeStart = 0;
 let gameOver = false;
 
+//score calculation
+let scoreData = {
+  "000": {
+    monsterType: 0,
+    headScore: 0,
+    eyeScore: 0,
+    bleedingScore: 0,
+    stomachScore: 0,
+    bleedEye: 0,
+    brainTummy: 0,
+  }
+};
+
+//json Vars
+let currentSession;
+let sessionsData;
+let monsterType;
+
+//sounds
+let connectSound;
+
+//track port states
+let previousPortState = {
+  brain: { red: "0", blue: "0" },
+  eyeball: { red: "0", blue: "0" },
+  bleeding: { red: "0", blue: "0" },
+  heart: { red: "0", blue: "0" },
+  tummy: { red: "0", blue: "0" }
+};
+
 // stations and their states AKA the Hell JSON
 let stations = {
   brain: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "brain", inputDelay: false, timerStart: 0, totalTime: 0 },
@@ -44,22 +74,33 @@ let stations = {
 };
 
 function preload() {
-  bleedingBar = loadImage("media/Bleeding.png");
-  brainBar = loadImage("media/Brain.png");
-  tummyBar = loadImage("media/Stomach.png");
-  eyeBar = loadImage("media/Eye.png");
+  bleedingBar = loadImage("media/images/Bleeding.png");
+  brainBar = loadImage("media/images/Brain.png");
+  tummyBar = loadImage("media/images/Stomach.png");
+  eyeBar = loadImage("media/images/Eye.png");
 
-  daisyBleedBar = loadImage("media/DaisyBleed.png");
-  daisyBrainBar = loadImage("media/DaisyBrain.png");
+  daisyBleedBar = loadImage("media/images/DaisyBleed.png");
+  daisyBrainBar = loadImage("media/images/DaisyBrain.png");
 
   //set image
   stations.bleedEye.img = daisyBleedBar;
   stations.brainTummy.img = daisyBrainBar;
 
-  headerImage = loadImage("media/VitalsBoardLogo.png");
-  timerImage = loadImage("media/ClockLogo.png");
+  headerImage = loadImage("media/images/VitalsBoardLogo.png");
+  timerImage = loadImage("media/images/ClockLogo.png");
+
+  //load sound
+  connectSound = loadSound("media/audio/portConnect.mp3");
+
+
+  sessionsData = loadJSON("/score");
 }
 
+function playConnectSound() {
+  if (connectSound && connectSound.isLoaded()) {
+    connectSound.play();
+  }
+}
 
 //Feed in the name of the task for newTask or banish to get that task back on screen or banish it as if its complete
 let banish = "";
@@ -80,6 +121,27 @@ let heartConnected = false;
 let heartLast = 0;
 //Function to fill in tube location based on portData sudo-returning the locations
 function tubeFinder() {
+
+  //sounds for port connection
+  for (const station in portData) {
+
+    //red port
+    if (portData[station].red !== "0" &&
+      previousPortState[station].red === "0") {
+      playConnectSound();
+    }
+
+    //blue port
+    if (portData[station].blue !== "0" &&
+      previousPortState[station].blue === "0") {
+      playConnectSound();
+    }
+
+    // Update previous state
+    previousPortState[station].red = portData[station].red;
+    previousPortState[station].blue = portData[station].blue;
+  }
+
   //reset the json before going
   tubeLocation.red = [];
   tubeLocation.blue = [];
@@ -92,82 +154,98 @@ function tubeFinder() {
     }
   }
 }
-let currentIndex = 0;
 let currentLoop = 0;
 let gameIndex = 0;
-let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "tummy", "brain", "bleeding", "brainTummy"];
-let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball","bleeding", "brain", "bleedEye"];
+
+async function initSessionOnServer(sessionId, monsterType) {
+  const template = {
+    monsterType,
+    headScore: 0,
+    eyeScore: 0,
+    bleedingScore: 0,
+    stomachScore: 0,
+    bleedEye: 0,
+    brainTummy: 0,
+  };
+
+  // write each key to sessions.json using your existing route
+  await Promise.all(
+    Object.entries(template).map(([key, value]) => postScore(sessionId, key, value))
+  );
+
+  console.log("session initialized on server:", sessionId, template);
+}
+
+
+function getNextSessionId() {
+  // safest version (handles gaps and non-numeric keys)
+  const keys = Object.keys(sessionsData || {});
+  const nums = keys.map(k => parseInt(k, 10)).filter(n => Number.isFinite(n));
+  const next = (nums.length ? Math.max(...nums) + 1 : 0);
+  return String(next);
+}
+
+function createNewSession() {
+  currentSession = getNextSessionId();
+  monsterType = Math.floor(Math.random() * 6);
+
+  // keep local copy in sync so the next press increments correctly
+  sessionsData[currentSession] = sessionsData[currentSession] || {};
+
+  // write template to sessions.json
+  initSessionOnServer(currentSession, monsterType)
+    .then(() => console.log("new session created:", currentSession, "monsterType:", monsterType))
+    .catch((e) => console.error("session create failed", e));
+}
+
+
+
+let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "bleeding","bleedEye", "brainTummy"];
+let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball", "tummy", "bleed", "brain", "bleedEye", "brainTummy" ];
 let currentTasks = [];
 let daisyPartProgress;
 let endPartProgress;
-//Gameloop 1 for Prototype 2
-function gameLoop1() {
-  if (loop1[gameIndex]) {
-    newTask = loop1[gameIndex];
-    currentIndex = gameIndex;
-    if(gameIndex > 4 && currentTasks.length < 2){
-      gameIndex++;
-      otherNewTask = loop1[gameIndex];
-      currentIndex = gameIndex;
-    }
-  }
-  else {
-    // index = 0;
-  }
+//Gameloop 1
+function gameLoop1(activeTaskCount) {
+  if (!loop1[gameIndex]) return;
 
-  // if (state == 1) {
-  //   newTask = "bleeding";
-  // }
-  // else if (state == 2) {
-  //   newTask = "brain";
-  // }
-  // else if (state == 3) {
-  //   newTask = "bleeding";
-  //   otherNewTask = "brain";
+  newTask = loop1[gameIndex];
+  otherNewTask = "";
 
-  //   // Daisy in theory
-  //   daisy.useDaisy = true;
-  //   daisy.daisyTask = "bleeding";
-  //   daisy.endTask = "brain";
-  // }
-  // else if (state == 4) {
-  //   newTask = "eyeball";
-  // }
-  // else if (state == 5) {
-  //   newTask = "tummy";
-  //   useGameLoop = false;
-  // }
-}
-// Gameloop 2 for Prototype 2
-function gameLoop2() {
-  if (loop2[gameIndex]) {
-    newTask = loop2[gameIndex];
-    // console.log(newTask);
-    currentIndex = gameIndex;
-    if(gameIndex > 4 && currentTasks.length < 2){
-      gameIndex++;
-      otherNewTask = loop2[gameIndex];
-      currentIndex = gameIndex;
-    }
+  // ONLY use snapshot, never currentTasks.length
+  if (gameIndex > 4 && activeTaskCount === 1) {
+    gameIndex++;
+    otherNewTask = loop1[gameIndex];
   }
-  // if (state == 1) {
-  //   newTask = "brain"
-  // }
-  // if (state == 2) {
-  //   newTask = "bleeding"
-  // }
-  // if (state == 3) {
-  //   newTask = "brain"
-  //   otherNewTask = "bleeding"
-  // }
-  // if (state == 4) {
-  //   newTask = "tummy"
-  // }
-  // if (state == 5) {
-  //   newTask = "eyeball"
-  //   useGameLoop = false;
-  // }
 }
+
+// Gameloop 2 
+function gameLoop2(activeTaskCount) {
+  if (!loop2[gameIndex]) return;
+
+  newTask = loop2[gameIndex];
+  otherNewTask = "";
+
+  // ONLY use snapshot, never currentTasks.length
+  if (gameIndex > 4 && activeTaskCount === 1) {
+    gameIndex++;
+    otherNewTask = loop2[gameIndex];
+  }
+}
+
+
+//for initializing the session data to the json
+function postScore(sessionId, key, value) {
+  return fetch("/score", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ sessionId, key, value }),
+  }).then((r) => r.json());
+}
+
+
+
+
 
 function setup() {
   createCanvas(720, 400);
@@ -190,6 +268,16 @@ function setup() {
   // same-origin socket.io
   socket = io();
   SocketListeners();
+
+  //const sessionCount = Object.keys(sessionsData).length;
+
+  
+  //currentSession = Object.keys(sessionsData).length.toString();
+  //console.log(currentSession);
+  //monsterType = Math.floor(Math.random() * 6); // 0..5
+  //console.log(monsterType)
+//
+  //initSessionOnServer(currentSession, monsterType);
 
   //Some event listeners for manual control of the game
   addEventListener("keydown", (e) => {
@@ -246,17 +334,21 @@ function setup() {
       // gameloop = 1;
       // gameState = 1;
       // updateGameState = true;
+      createNewSession(); 
       currentLoop = 1;
       gameIndex = 0;
       useGameLoop = true;
+      gameTimeStart = millis();
       gameLoop1();
     }
     if (e.key == "2") { //For gameloop 2
       // gameloop = 2;
       // gameState = 1;
+      createNewSession(); 
       currentLoop = 2;
       gameIndex = 0;
       useGameLoop = true;
+      gameTimeStart = millis();
       gameLoop2();
     }
     if (e.key == "3") { //For manual control
@@ -302,6 +394,7 @@ function SocketListeners() {
 
 // ---- DRAW STATIONS ----
 function draw() {
+  const activeTaskCount = currentTasks.length;
   background(0);
 
   let headScale = 0.3;
@@ -375,13 +468,13 @@ function draw() {
           (redDaisy && redHeart)) // Red tube heart to Daisy 
       ) {
         //for the heart -> daisy
-        if (st.name == stations.bleedEye.parts[0] || st.name == stations.brainTummy.parts[0] ) {
+        if ((st.name == stations.bleedEye.parts[0]) && daisy.daisyTask == "bleeding" || (st.name == stations.brainTummy.parts[0]) && daisy.daisyTask == "brain" ) {
           st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
           daisyPartProgress = st.progress;
           // console.log("heart -> daisy " + stations.bleedEye.partProgress.bleeding)
         }
         //for the daisy -> end
-        if (st.name == stations.bleedEye.parts[1] || st.name == stations.brainTummy.parts[1]) {
+        if ((st.name == stations.bleedEye.parts[1]) && daisy.endTask == "eyeball" || (st.name == stations.brainTummy.parts[1]) && daisy.endTask == "tummy") {
           if (((blueEnd && blueDaisy) || //blue at end and daisy 
             (redEnd && redDaisy)) //red at end and daisy
           ) {
@@ -424,6 +517,8 @@ function draw() {
 
           const points = scoring(st.totalTime);
           console.log(`${key} scored:`, points);
+          updateScoreJSON(st.name, points);
+
 
           // remove from visibleTasks
           const index = visibleTasks.indexOf(key);
@@ -441,13 +536,10 @@ function draw() {
             socket.emit("bleed", "stop");
             socket.emit("eyeball", "stop");
           }
-          if (useGameLoop) {
-            gameIndex++;
-            if (currentLoop === 1) { gameLoop1(); };
-            if (currentLoop === 2) { gameLoop2(); };
-          }
+          updateGameState = true;
         }
-
+        const index = currentTasks.indexOf(st.name);
+        if (index > -1) currentTasks.splice(index, 1);
 
         if (key === banish) banish = "";
       }
@@ -459,7 +551,7 @@ function draw() {
     }
 
     // handle dismissal animation
-    if (st.dismissing || st.name === banish) {
+    if ((st.dismissing || st.name === banish)) {
       const t = constrain((millis() - st.dismissStart) / DISMISS_DURATION, 0, 1);
       const e = 1 - pow(1 - t, 3);
       st.offsetX = e * (width + 48);
@@ -478,24 +570,20 @@ function draw() {
         // Calculate score now
         const points = scoring(st.totalTime);
         console.log(`${st.name} scored:`, points);
-
-        if (useGameLoop) {
-          gameIndex++;
-          if (currentLoop === 1) { gameLoop1(); };
-          if (currentLoop === 2) { gameLoop2(); };
-        }
+        updateScoreJSON(st.name, points);
         //remove from visibleTasks
-        const index = visibleTasks.indexOf(st.name);
-        if (index > -1) visibleTasks.splice(index, 1);
+        const index = currentTasks.indexOf(st.name);
+        if (index > -1) currentTasks.splice(index, 1);
       }
       banish = "";
-      currentTasks.splice(currentTasks.indexOf(st.name));
+      const index = visibleTasks.indexOf(st.name);
+       if (index > -1) visibleTasks.splice(index, 1);
       // gameState++;
-      // updateGameState = true;
+      updateGameState = true;
       st.inputDelay = false; //Possible solution for the first input completion
       socket.emit(`${st.name}`, "stop"); //Trigger stop
     }
-
+    st.inputDelay = true;
     //return a task from completion / reset all values 
     if (st.name === newTask || st.name === otherNewTask) {
       st.offsetX = 0;
@@ -505,7 +593,7 @@ function draw() {
       st.progress = 0;
       st.dismissStart = 0;
       //Reminder that input delay's logic is backwards so if its false it stops the input and true it lets input throu
-      st.inputDelay = true;
+      st.inputDelay = false;
       currentTasks.push(st.name);
       //timer
       st.timerStart = millis();
@@ -604,17 +692,17 @@ function draw() {
       pop();
     }
   }
-  if (updateGameState) {
-    if (gameloop == 1) {
-      gameIndex = 0;
-      gameLoop1();
-    }
-    if (gameloop == 2) {
-      gameIndex = 0;
-      gameLoop2();
-    }
-    // updateGameState = false;
-  }
+  // if (updateGameState) {
+  //   if (gameloop == 1) {
+  //     gameIndex = 0;
+  //     gameLoop1();
+  //   }
+  //   if (gameloop == 2) {
+  //     gameIndex = 0;
+  //     gameLoop2();
+  //   }
+  //   // updateGameState = false;
+  // }
 
   // ----GAME TIMER----
   //added game over thing just in case we want to do it for imagine
@@ -633,6 +721,12 @@ function draw() {
     text(Ttext, width - 25, 41);
 
   }
+  if(updateGameState && useGameLoop){
+      gameIndex++;
+      if (currentLoop === 1) { gameLoop1(activeTaskCount); };
+      if (currentLoop === 2) { gameLoop2(activeTaskCount); };
+      updateGameState = false;
+    }
 }
 
 
@@ -659,6 +753,9 @@ function ledProgress(charge, th = thresholds) {
   }
 }
 
+//----STORE JSON DATA----
+localStorage.setItem("sessionScore", JSON.stringify(scoreData));
+
 // ----- INTERACTION -----
 
 // Fallback: if the browser still blocks it, a click will start playback
@@ -667,6 +764,11 @@ function mousePressed() {
     taskVideo.elt.muted = true; // ensure still muted
     taskVideo.play();
   }
+  //make sure audio works
+  if (getAudioContext().state !== 'running') {
+    getAudioContext().resume();
+  }
+
 }
 
 //import from helper

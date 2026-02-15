@@ -120,3 +120,19 @@ Cartoon Wet Hit by Universfield - https://pixabay.com/sound-effects/cartoon-wet-
 - `.` – Tummy / Intestines
 - `/` – Heart 
 
+
+---
+### PINS
+
+**Light resistor pins**
+- `A0` – Left Red Pin 
+- `A1` – Left Blue Pin
+- `A2` – Right Red Pin
+- `A3` – Right Blue Pin
+
+
+**LED PINS**
+- `10` – Left Port
+- `11` – Right Port
+- `12` – Station pin
+- `13` – Station pin
