@@ -22,7 +22,6 @@ const int stationPin2 = 13;
 
 int output;
 
-int count = 0;
 
 int leftLightThreshold = 15;
 int rightLightThreshold = 15;
@@ -100,6 +99,7 @@ bool eyesBright(int L, int R)
          (R > (averageLightRight + eyeHyst));
 }
 String direction = "_";
+bool allowScoring = false;
 void task(){
 
   if (Serial.available() > 0)
@@ -116,14 +116,13 @@ void task(){
     eyeballLeftServo.write(180);
     eyeballRightServo.write(0);
     // delay(500);
-
+    allowScoring = true;
     eyeCondition = 0;
 
     // Serial.println("Command: Turn servo to 180°");
     // eyeballServo.write(90);
     // delay(500);
-    count = 0;
-    output = 0;
+
     //calibrate(leftEyePin);
     //calibrate(rightEyePin);
     digitalWrite(stationPin1, HIGH);
@@ -133,6 +132,8 @@ void task(){
   if(direction == "stop"){
     digitalWrite(stationPin1, LOW);
     digitalWrite(stationPin2, LOW);
+    output = 0;
+    allowScoring = false;
     direction = "_";
   }
   if(direction == "reset"){
@@ -252,7 +253,7 @@ int eyeballLoop()
   //     return 0; //This is to prevent the 2 from triggering completion
   //   }
   // }
-  if(anyLightOn && covered){output += 2;}
+  if(anyLightOn && covered && allowScoring && output < 110){output += 2;}
   else if( output > 0){output -= 2;}
   // delay(200);
   //Serial.print(" | eyeCondition=");

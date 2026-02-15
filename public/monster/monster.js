@@ -83,6 +83,7 @@ const SCORE_FOR_PART = {
 };
 
 
+
 // Draw order (back -> front)
 const LAYERS = ["leftArm", "rightArm", "leftLeg", "rightLeg", "torso", "head"];
 
@@ -91,10 +92,10 @@ let scores;
 
 function preload() {
   sessionData = loadJSON("/score");
-  bgImg = loadImage("/media/background.png"); //fallback
-  pixelFont = loadFont("/media/fonts/MatrixtypeDisplayBold-6R4e6.ttf");
-  dogicaFont = loadFont("/media/fonts/dogica.ttf")
-  transitionSequence = new pngAnimation("/media/TransitionOverlays", 70, 36)
+  bgImg = loadImage("../media/background.png"); //fallback
+  pixelFont = loadFont("../media/fonts/MatrixtypeDisplayBold-6R4e6.ttf");
+  dogicaFont = loadFont("../media/fonts/dogica.ttf")
+  transitionSequence = new pngAnimation("../media/TransitionOverlays", 70, 36)
 }
 
 function setup() {
@@ -115,6 +116,11 @@ function setup() {
 
   // If your session ids are numeric strings like "0","1","2"... use this safer sort:
   const latestKey = keys.sort((a, b) => Number(a) - Number(b)).at(-1);
+
+  addEventListener("keydown", (e) => {
+    //These bring in new tasks
+    if (e.key == "|") { complete = true;}});
+
 
   // If they’re NOT numeric, use this instead:
   // const latestKey = keys.at(-1);

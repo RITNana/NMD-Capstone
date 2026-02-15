@@ -154,7 +154,6 @@ function tubeFinder() {
     }
   }
 }
-let currentIndex = 0;
 let currentLoop = 0;
 let gameIndex = 0;
 
@@ -201,79 +200,39 @@ function createNewSession() {
 
 
 
-let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "tummy", "brain", "bleeding", "brainTummy"];
-let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball","bleeding", "brain", "bleedEye"];
+let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "bleeding","bleedEye", "brainTummy"];
+let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball", "tummy", "bleed", "brain", "bleedEye", "brainTummy" ];
 let currentTasks = [];
 let daisyPartProgress;
 let endPartProgress;
-//Gameloop 1 for Prototype 2
-function gameLoop1() {
-  if (loop1[gameIndex]) {
-    newTask = loop1[gameIndex];
-    currentIndex = gameIndex;
-    if(gameIndex > 4 && currentTasks.length < 2){
-      gameIndex++;
-      otherNewTask = loop1[gameIndex];
-      currentIndex = gameIndex;
-    }
-  }
-  else {
-    // index = 0;
-  }
+//Gameloop 1
+function gameLoop1(activeTaskCount) {
+  if (!loop1[gameIndex]) return;
 
-  // if (state == 1) {
-  //   newTask = "bleeding";
-  // }
-  // else if (state == 2) {
-  //   newTask = "brain";
-  // }
-  // else if (state == 3) {
-  //   newTask = "bleeding";
-  //   otherNewTask = "brain";
+  newTask = loop1[gameIndex];
+  otherNewTask = "";
 
-  //   // Daisy in theory
-  //   daisy.useDaisy = true;
-  //   daisy.daisyTask = "bleeding";
-  //   daisy.endTask = "brain";
-  // }
-  // else if (state == 4) {
-  //   newTask = "eyeball";
-  // }
-  // else if (state == 5) {
-  //   newTask = "tummy";
-  //   useGameLoop = false;
-  // }
-}
-// Gameloop 2 for Prototype 2
-function gameLoop2() {
-  if (loop2[gameIndex]) {
-    newTask = loop2[gameIndex];
-    // console.log(newTask);
-    currentIndex = gameIndex;
-    if(gameIndex > 4 && currentTasks.length < 2){
-      gameIndex++;
-      otherNewTask = loop2[gameIndex];
-      currentIndex = gameIndex;
-    }
+  // ONLY use snapshot, never currentTasks.length
+  if (gameIndex > 4 && activeTaskCount === 1) {
+    gameIndex++;
+    otherNewTask = loop1[gameIndex];
   }
-  // if (state == 1) {
-  //   newTask = "brain"
-  // }
-  // if (state == 2) {
-  //   newTask = "bleeding"
-  // }
-  // if (state == 3) {
-  //   newTask = "brain"
-  //   otherNewTask = "bleeding"
-  // }
-  // if (state == 4) {
-  //   newTask = "tummy"
-  // }
-  // if (state == 5) {
-  //   newTask = "eyeball"
-  //   useGameLoop = false;
-  // }
 }
+
+// Gameloop 2 
+function gameLoop2(activeTaskCount) {
+  if (!loop2[gameIndex]) return;
+
+  newTask = loop2[gameIndex];
+  otherNewTask = "";
+
+  // ONLY use snapshot, never currentTasks.length
+  if (gameIndex > 4 && activeTaskCount === 1) {
+    gameIndex++;
+    otherNewTask = loop2[gameIndex];
+  }
+}
+
 
 //for initializing the session data to the json
 function postScore(sessionId, key, value) {
@@ -379,6 +338,7 @@ function setup() {
       currentLoop = 1;
       gameIndex = 0;
       useGameLoop = true;
+      gameTimeStart = millis();
       gameLoop1();
     }
     if (e.key == "2") { //For gameloop 2
@@ -388,6 +348,7 @@ function setup() {
       currentLoop = 2;
       gameIndex = 0;
       useGameLoop = true;
+      gameTimeStart = millis();
       gameLoop2();
     }
     if (e.key == "3") { //For manual control
@@ -433,6 +394,7 @@ function SocketListeners() {
 
 // ---- DRAW STATIONS ----
 function draw() {
+  const activeTaskCount = currentTasks.length;
   background(0);
 
   let headScale = 0.3;
@@ -506,13 +468,13 @@ function draw() {
           (redDaisy && redHeart)) // Red tube heart to Daisy 
       ) {
         //for the heart -> daisy
-        if (st.name == stations.bleedEye.parts[0] || st.name == stations.brainTummy.parts[0] ) {
+        if ((st.name == stations.bleedEye.parts[0]) && daisy.daisyTask == "bleeding" || (st.name == stations.brainTummy.parts[0]) && daisy.daisyTask == "brain" ) {
           st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
           daisyPartProgress = st.progress;
           // console.log("heart -> daisy " + stations.bleedEye.partProgress.bleeding)
         }
         //for the daisy -> end
-        if (st.name == stations.bleedEye.parts[1] || st.name == stations.brainTummy.parts[1]) {
+        if ((st.name == stations.bleedEye.parts[1]) && daisy.endTask == "eyeball" || (st.name == stations.brainTummy.parts[1]) && daisy.endTask == "tummy") {
           if (((blueEnd && blueDaisy) || //blue at end and daisy 
             (redEnd && redDaisy)) //red at end and daisy
           ) {
@@ -574,13 +536,10 @@ function draw() {
             socket.emit("bleed", "stop");
             socket.emit("eyeball", "stop");
           }
-          if (useGameLoop) {
-            gameIndex++;
-            if (currentLoop === 1) { gameLoop1(); };
-            if (currentLoop === 2) { gameLoop2(); };
-          }
+          updateGameState = true;
         }
-
+        const index = currentTasks.indexOf(st.name);
+        if (index > -1) currentTasks.splice(index, 1);
 
         if (key === banish) banish = "";
       }
@@ -592,7 +551,7 @@ function draw() {
     }
 
     // handle dismissal animation
-    if (st.dismissing || st.name === banish) {
+    if ((st.dismissing || st.name === banish)) {
       const t = constrain((millis() - st.dismissStart) / DISMISS_DURATION, 0, 1);
       const e = 1 - pow(1 - t, 3);
       st.offsetX = e * (width + 48);
@@ -612,25 +571,19 @@ function draw() {
         const points = scoring(st.totalTime);
         console.log(`${st.name} scored:`, points);
         updateScoreJSON(st.name, points);
-
-
-        if (useGameLoop) {
-          gameIndex++;
-          if (currentLoop === 1) { gameLoop1(); };
-          if (currentLoop === 2) { gameLoop2(); };
-        }
         //remove from visibleTasks
-        const index = visibleTasks.indexOf(st.name);
-        if (index > -1) visibleTasks.splice(index, 1);
+        const index = currentTasks.indexOf(st.name);
+        if (index > -1) currentTasks.splice(index, 1);
       }
       banish = "";
-      currentTasks.splice(currentTasks.indexOf(st.name));
+      const index = visibleTasks.indexOf(st.name);
+       if (index > -1) visibleTasks.splice(index, 1);
       // gameState++;
-      // updateGameState = true;
+      updateGameState = true;
       st.inputDelay = false; //Possible solution for the first input completion
       socket.emit(`${st.name}`, "stop"); //Trigger stop
     }
-
+    st.inputDelay = true;
     //return a task from completion / reset all values 
     if (st.name === newTask || st.name === otherNewTask) {
       st.offsetX = 0;
@@ -640,7 +593,7 @@ function draw() {
       st.progress = 0;
       st.dismissStart = 0;
       //Reminder that input delay's logic is backwards so if its false it stops the input and true it lets input throu
-      st.inputDelay = true;
+      st.inputDelay = false;
       currentTasks.push(st.name);
       //timer
       st.timerStart = millis();
@@ -739,17 +692,17 @@ function draw() {
       pop();
     }
   }
-  if (updateGameState) {
-    if (gameloop == 1) {
-      gameIndex = 0;
-      gameLoop1();
-    }
-    if (gameloop == 2) {
-      gameIndex = 0;
-      gameLoop2();
-    }
-    // updateGameState = false;
-  }
+  // if (updateGameState) {
+  //   if (gameloop == 1) {
+  //     gameIndex = 0;
+  //     gameLoop1();
+  //   }
+  //   if (gameloop == 2) {
+  //     gameIndex = 0;
+  //     gameLoop2();
+  //   }
+  //   // updateGameState = false;
+  // }
 
   // ----GAME TIMER----
   //added game over thing just in case we want to do it for imagine
@@ -768,6 +721,12 @@ function draw() {
     text(Ttext, width - 25, 41);
 
   }
+  if(updateGameState && useGameLoop){
+      gameIndex++;
+      if (currentLoop === 1) { gameLoop1(activeTaskCount); };
+      if (currentLoop === 2) { gameLoop2(activeTaskCount); };
+      updateGameState = false;
+    }
 }
 
 
