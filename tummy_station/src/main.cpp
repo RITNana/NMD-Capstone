@@ -21,7 +21,7 @@ const int stationPin1 = 12;
 const int stationPin2 = 13;
 
 // angles for recalibration
-int angleL = 90;
+int angleL = 105;
 int angleR = 180;
 
 int leftLightThreshold = 15;
@@ -93,6 +93,7 @@ void close(){
 
 
 String direction = "_";
+bool allowScoring = false;
 void task(){
 
   if (Serial.available() > 0)
@@ -102,6 +103,7 @@ void task(){
   
   if (direction == "go")
   {
+    // output = 0;
     digitalWrite(stationPin1,HIGH);
     digitalWrite(stationPin2,HIGH);
     Serial.println("opening");
@@ -109,13 +111,15 @@ void task(){
     servoL.write(180);
     delay(500);
 
-    output = 0; // open
     direction = "_";
+    allowScoring = true;
     close();
   }
   if(direction == "stop"){
     digitalWrite(stationPin1,LOW);
     digitalWrite(stationPin2,LOW);
+    allowScoring = false;
+    output = 0;
     direction = "_";
   }
   if(direction == "reset"){
@@ -190,7 +194,7 @@ int tummyLoop()
   
   bool pressed = (digitalRead(buttonPin) == LOW);
 
-  Serial.println(pressed);
+  // Serial.println(pressed);
 
   if (Serial.available() > 0)
   {
@@ -201,7 +205,7 @@ int tummyLoop()
     {
       Serial.println("opening");
       servoR.write(0);
-      servoL.write(190);
+      servoL.write(210);
       delay(500);
 
       output = 0; // open
@@ -216,9 +220,11 @@ int tummyLoop()
       output = 2; // closed
     }
   }
-
+  Serial.print(pressed);
+  Serial.print(output < 110);
+  Serial.println(allowScoring);
   //Where it closes
-  if (anyLightOn && pressed)
+  if (anyLightOn && pressed && output < 110 && allowScoring)
     {output += 2;}
   else if( output > 0){output -= 2;}
 
