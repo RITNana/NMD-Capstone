@@ -4,7 +4,7 @@
 
 // public/sketch.js
 let socket;
-
+//import { createMonster } from "./monster/monster.js";
 // mirrors Arduino thresholds
 const thresholds = [10, 20, 30];
 
@@ -207,30 +207,39 @@ let daisyPartProgress;
 let endPartProgress;
 //Gameloop 1
 function gameLoop1(activeTaskCount) {
-  if (!loop1[gameIndex]) return;
-
+  console.log(activeTaskCount + " | " + currentTasks + " | " + gameIndex)
   newTask = loop1[gameIndex];
   otherNewTask = "";
 
   // ONLY use snapshot, never currentTasks.length
-  if (gameIndex > 4 && activeTaskCount === 1) {
+  if (gameIndex > 4 && activeTaskCount < 1) {
     gameIndex++;
     otherNewTask = loop1[gameIndex];
   }
+  if (!loop1[gameIndex] && activeTaskCount === 0) {
+    socket.emit("complete");
+    console.log('done-done')
+    return;
+  }
+  if (!loop1[gameIndex]) return;
 }
 
 // Gameloop 2 
 function gameLoop2(activeTaskCount) {
-  if (!loop2[gameIndex]) return;
-
   newTask = loop2[gameIndex];
   otherNewTask = "";
 
   // ONLY use snapshot, never currentTasks.length
-  if (gameIndex > 4 && activeTaskCount === 1) {
+  if (gameIndex > 4 && activeTaskCount < 1) {
     gameIndex++;
     otherNewTask = loop2[gameIndex];
   }
+  if (!loop2[gameIndex] && activeTaskCount === 0) {
+    socket.emit("complete");
+    console.log('done-done')
+    return;
+  }
+  if (!loop2[gameIndex]) return;
 }
 
 
@@ -339,7 +348,11 @@ function setup() {
       gameIndex = 0;
       useGameLoop = true;
       gameTimeStart = millis();
-      gameLoop1();
+      currentTasks.length = 0;
+      activeTaskCount = 0;
+      newTask = "";
+      otherNewTask = "";
+      gameLoop1(activeTaskCount);
     }
     if (e.key == "2") { //For gameloop 2
       // gameloop = 2;
@@ -394,7 +407,6 @@ function SocketListeners() {
 
 // ---- DRAW STATIONS ----
 function draw() {
-  const activeTaskCount = currentTasks.length;
   background(0);
 
   let headScale = 0.3;
@@ -722,6 +734,7 @@ function draw() {
 
   }
   if(updateGameState && useGameLoop){
+      const activeTaskCount = currentTasks.length;
       gameIndex++;
       if (currentLoop === 1) { gameLoop1(activeTaskCount); };
       if (currentLoop === 2) { gameLoop2(activeTaskCount); };

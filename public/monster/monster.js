@@ -13,6 +13,7 @@ let taskSum = 0;
 let totalScore = 0;
 let multiplier;
 let scoringComplete = false;
+let socket;
 
 let scored_0_5 = false;
 let scored_5_10 = false;
@@ -97,6 +98,20 @@ function preload() {
   dogicaFont = loadFont("../media/fonts/dogica.ttf")
   transitionSequence = new pngAnimation("../media/TransitionOverlays", 70, 36)
 }
+function loopingVideo(){
+  // Create task video
+  monsterType = monsterTypes[sessionSet.monsterType];
+  taskVideo = createVideo(`../media/${monsterType}/${monsterType}.mp4`, () => {
+    taskVideo.volume(0);
+    taskVideo.elt.muted = true;
+    taskVideo.elt.setAttribute("muted", "");
+    taskVideo.elt.setAttribute("playsinline", "");
+    taskVideo.loop();
+    taskVideo.hide();
+  });
+  taskVideo.loop();
+  taskVideo.hide();
+}
 
 function setup() {
   //createCanvas(780, );
@@ -114,12 +129,23 @@ function setup() {
     return;
   }
 
+  socket = io();
+  function SocketListeners() {
+    socket.on("complete", () => {
+      createMonster();
+    });
+    socket.on("reset", () => {
+
+    })
+  }
+  
+  SocketListeners();
   // If your session ids are numeric strings like "0","1","2"... use this safer sort:
   const latestKey = keys.sort((a, b) => Number(a) - Number(b)).at(-1);
 
   addEventListener("keydown", (e) => {
     //These bring in new tasks
-    if (e.key == "|") { complete = true;}});
+    if (e.key == "|") { createMonster();}});
 
 
   // If they’re NOT numeric, use this instead:
@@ -173,17 +199,7 @@ function setup() {
   );
 
 
-  // Create task video
-  taskVideo = createVideo(`../media/${monsterType}/${monsterType}.mp4`, () => {
-    taskVideo.volume(0);
-    taskVideo.elt.muted = true;
-    taskVideo.elt.setAttribute("muted", "");
-    taskVideo.elt.setAttribute("playsinline", "");
-    taskVideo.loop();
-    taskVideo.hide();
-  });
-  taskVideo.loop();
-  taskVideo.hide();
+    loopingVideo();
 
   //scores = generateScores();
   //console.log("stomach score:", scores.stomachScore);
