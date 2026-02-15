@@ -1338,5 +1338,41 @@
     "stomachScore": 315,
     "bleedEye": 400,
     "brainTummy": 322
+  },
+  "150": {
+    "monsterType": 5,
+    "headScore": 0,
+    "eyeScore": 0,
+    "bleedingScore": 0,
+    "stomachScore": 0,
+    "bleedEye": 0,
+    "brainTummy": 0
+  },
+  "151": {
+    "monsterType": 0,
+    "brainTummy": 0,
+    "headScore": 0,
+    "eyeScore": 0,
+    "bleedingScore": 0,
+    "stomachScore": 0,
+    "bleedEye": 0
+  },
+  "152": {
+    "monsterType": 1,
+    "headScore": 623,
+    "eyeScore": 510,
+    "bleedingScore": 1113,
+    "stomachScore": 610,
+    "bleedEye": 1002,
+    "brainTummy": 0
+  },
+  "153": {
+    "monsterType": 2,
+    "headScore": 856,
+    "eyeScore": 865,
+    "bleedingScore": 1358,
+    "stomachScore": 1379,
+    "bleedEye": 1026,
+    "brainTummy": 0
   }
 }

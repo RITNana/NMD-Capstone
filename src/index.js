@@ -46,6 +46,7 @@ app.get("/Background.mp4", (req, res) => {
 
 //json setup
 const scoreRoute = require("./routes/score");
+console.log(scoreRoute);
 app.use("/score", scoreRoute);
 
 

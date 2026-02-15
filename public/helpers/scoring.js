@@ -4,21 +4,26 @@ window.scoring = function (totalTaskTime) {
     let multiplier;
 
 
+
+
     if (totalTaskTime > 0 && totalTaskTime <= 15) {
         randomAdd = int(random(0, 15));
+        score = 500;
         //multiplier = int(random(6.0, 8.1))
         taskSum = randomAdd + score;
         console.log("Excellent! " + taskSum);
         return taskSum;
     }
     else if (totalTaskTime > 15 && totalTaskTime <= 20) {
-        randomAdd = int(random(0, 15))
+        randomAdd = int(random(0, 15));
+        score = 350;
         //multiplier = int(random(3.0, 5.1))
         taskSum = randomAdd + score;
         console.log("Not too shabby " + taskSum);
         return taskSum;
     } else if (totalTaskTime > 20 && totalTaskTime <= 24) {
         randomAdd = int(random(0, 15))
+        score = 215;
         //multiplier = int(random(1.5, 3.1))
         taskSum = randomAdd + score;
         console.log("You can do better " + taskSum);
@@ -31,4 +36,3 @@ window.scoring = function (totalTaskTime) {
         return taskSum;
     }
 }
-
