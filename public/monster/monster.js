@@ -181,7 +181,7 @@ function setup() {
   finalBgError = false;
   finalBgImg = null;
 
-  const finalBgPath = `../media/${monsterType}/${monsterType}-finalcard.png`;
+  const finalBgPath = `/media/monsters/${monsterType}/${monsterType}-finalcard.png`;
   console.log("loading final bg:", finalBgPath);
 
   loadImage(
@@ -209,7 +209,7 @@ function setup() {
 function loadMonsterPart(part) {
   const limbScore = SCORE_FOR_PART[part](sessionSet);
   const q = limbQuality(limbScore);
-  const path = `../media/${monsterType}/${q}/${q}-${part}.png`;
+  const path = `/media/monsters/${monsterType}/${q}/${q}-${part}.png`;
 
   console.log(`loading ${part}:`, path);
 
