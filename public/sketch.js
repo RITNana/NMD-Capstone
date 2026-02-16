@@ -328,7 +328,7 @@ function setup() {
     if (e.key == "f") { banish = "tummy"; }
     if (e.key == "g") {banish = "bleedEye";}
     if (e.key == "5") {banish = "brainTummy";}
-    //these fill out the bar of a given task
+    // these fill out the bar of a given task
     // if (e.key == "s") { stations.brain.progress += .1 }
     // if (e.key == "d") { stations.eyeball.progress += .1 }
     // if (e.key == "a") { stations.bleeding.progress += .1 }
