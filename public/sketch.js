@@ -201,7 +201,7 @@ function createNewSession() {
 
 
 let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "bleeding","eyeball", "brainTummy"];
-let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball", "tummy", "bleed", "brain", "bleedEye", "brainTummy" ];
+let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball", "tummy", "bleed", "brain", "filler", "filler", "bleedEye", "brainTummy" ];
 let loop3 = ["bleeding", "brain", "tummy", "eyeball", "brain", "tummy", "bleeding", "eyeball", "brain", "tummy"]
 let currentTasks = [];
 let daisyPartProgress;
@@ -669,6 +669,8 @@ function draw() {
         if (index > -1) visibleTasks.splice(index, 1);
        index = currentTasks.indexOf(st.name);
         if (index > -1) currentTasks.splice(index, 1);
+       index = currentTasks.indexOf("filler");
+        if(index > -1) {currentTasks.splice(index, 1); console.log('filler killed')}
       // gameState++;
       updateGameState = true;
       st.inputDelay = false; //Possible solution for the first input completion
@@ -721,7 +723,10 @@ function draw() {
       if (st.name === newTask) newTask = "";
       if (st.name === otherNewTask) otherNewTask = "";
     }
-
+    if(newTask == "filler"){
+      currentTasks.push("filler");
+      console.log('filler added');
+    }
   }
 
   // --- STACK STATIONS ---

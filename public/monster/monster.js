@@ -451,8 +451,8 @@ function draw() {
 }
 
 function limbQuality(limbScore) {
-  if (limbScore <= 200) return "bad";
-  if (limbScore <= 399) return "medium";
+  if (limbScore < 200) return "bad";
+  if (limbScore < 350) return "medium";
   return "good";
 }
 
