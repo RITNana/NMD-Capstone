@@ -21,7 +21,7 @@ const int stationPin1 = 12;
 const int stationPin2 = 13;
 
 // angles for recalibration
-int angleL = 90;
+int angleL = 105;
 int angleR = 180;
 
 int leftLightThreshold = 15;
@@ -205,7 +205,7 @@ int tummyLoop()
     {
       Serial.println("opening");
       servoR.write(0);
-      servoL.write(190);
+      servoL.write(210);
       delay(500);
 
       output = 0; // open
