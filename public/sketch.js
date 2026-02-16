@@ -64,7 +64,7 @@ let previousPortState = {
 
 // stations and their states AKA the Hell JSON
 let stations = {
-  brain: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "brain", inputDelay: false, timerStart: 0, totalTime: 0 },
+  brain: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "brain", inputDelay: false, timerStart: 0, totalTime: 0},
   eyeball: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "eyeball", inputDelay: false, timerStart: 0, totalTime: 0 },
   bleeding: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "bleeding", inputDelay: false, timerStart: 0, totalTime: 0 },
   heart: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "heart", inputDelay: false, timerStart: 0, totalTime: 0 },
@@ -200,17 +200,19 @@ function createNewSession() {
 
 
 
-let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "bleeding","bleedEye", "brainTummy"];
+let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "bleeding","eyeball", "brainTummy"];
 let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball", "tummy", "bleed", "brain", "bleedEye", "brainTummy" ];
+let loop3 = ["bleeding", "brain", "tummy", "eyeball", "brain", "tummy", "bleeding", "eyeball", "brain", "tummy"]
 let currentTasks = [];
 let daisyPartProgress;
 let endPartProgress;
 //Gameloop 1
 function gameLoop1(activeTaskCount) {
-  console.log(activeTaskCount + " | " + currentTasks + " | " + gameIndex)
+  // console.log(activeTaskCount + " | " + currentTasks + " | " + gameIndex)s
+  // if(activeTaskCount < 1){
   newTask = loop1[gameIndex];
   otherNewTask = "";
-
+  // }
   // ONLY use snapshot, never currentTasks.length
   if (gameIndex > 4 && activeTaskCount < 1) {
     gameIndex++;
@@ -218,7 +220,7 @@ function gameLoop1(activeTaskCount) {
   }
   if (!loop1[gameIndex] && activeTaskCount === 0) {
     socket.emit("complete");
-    console.log('done-done')
+    // console.log('done-done')
     return;
   }
   if (!loop1[gameIndex]) return;
@@ -236,10 +238,27 @@ function gameLoop2(activeTaskCount) {
   }
   if (!loop2[gameIndex] && activeTaskCount === 0) {
     socket.emit("complete");
-    console.log('done-done')
+    // console.log('done-done')
     return;
   }
   if (!loop2[gameIndex]) return;
+}
+//gameloop 3
+function gameLoop3(activeTaskCount) {
+  newTask = loop3[gameIndex];
+  otherNewTask = "";
+
+  // ONLY use snapshot, never currentTasks.length
+  if (gameIndex > 4 && activeTaskCount < 1) {
+    gameIndex++;
+    otherNewTask = loop2[gameIndex];
+  }
+  if (!loop3[gameIndex] && activeTaskCount === 0) {
+    socket.emit("complete");
+    // console.log('done-done')
+    return;
+  }
+  if (!loop3[gameIndex]) return;
 }
 
 
@@ -255,8 +274,12 @@ function postScore(sessionId, key, value) {
 
 
 
-
+let newTaskTimer;
+let lastNewTaskTimer;
+let allowNewTask = true;
 function setup() {
+  newTaskTimer = millis();
+  lastNewTaskTimer = millis();
   createCanvas(720, 400);
   textFont("system-ui");
 
@@ -297,7 +320,6 @@ function setup() {
     if (e.key == "r") { newTask = "tummy"; }
     if (e.key == "t") { newTask = "bleedEye";}
     if(e.key == "4"){newTask = "brainTummy";}
-    if(e.key == "5"){banish = "brainTummy";}
 
     //these atomize task from the list
     if (e.key == "s") { banish = "brain"; }
@@ -305,6 +327,14 @@ function setup() {
     if (e.key == "a") { banish = "bleeding"; }
     if (e.key == "f") { banish = "tummy"; }
     if (e.key == "g") {banish = "bleedEye";}
+    if (e.key == "5") {banish = "brainTummy";}
+    // these fill out the bar of a given task
+    // if (e.key == "s") { stations.brain.progress += .1 }
+    // if (e.key == "d") { stations.eyeball.progress += .1 }
+    // if (e.key == "a") { stations.bleeding.progress += .1 }
+    // if (e.key == "f") { stations.tummy.progress += .1 }
+    // if (e.key == "g") {stations.bleedEye.partProgress.bleeding += .1; stations.bleedEye.partProgress.eyeball += 1;}
+    // if (e.key == "5") {stations.brainTummy.partProgress.brain += .1; stations.brainTummy.partProgress.tummy += .1}
     //reset all pins on a given station
     //these get sent to index.js
     if (e.key == "x") { socket.emit("brain", "reset"); }
@@ -362,7 +392,25 @@ function setup() {
       gameIndex = 0;
       useGameLoop = true;
       gameTimeStart = millis();
-      gameLoop2();
+      currentTasks.length = 0;
+      activeTaskCount = 0;
+      newTask = "";
+      otherNewTask = "";
+      gameLoop2(activeTaskCount);
+    }
+    if (e.key == "`") { //For gameloop 2
+      // gameloop = 2;
+      // gameState = 1;
+      createNewSession(); 
+      currentLoop = 3;
+      gameIndex = 0;
+      useGameLoop = true;
+      gameTimeStart = millis();
+      currentTasks.length = 0;
+      activeTaskCount = 0;
+      newTask = "";
+      otherNewTask = "";
+      gameLoop3(activeTaskCount);
     }
     if (e.key == "3") { //For manual control
       // gameloop = 0;
@@ -407,6 +455,18 @@ function SocketListeners() {
 
 // ---- DRAW STATIONS ----
 function draw() {
+  newTaskTimer = millis();
+  if(newTaskTimer - lastNewTaskTimer > 2000 ) {allowNewTask = true;}
+    if(updateGameState && useGameLoop && allowNewTask){
+      const activeTaskCount = currentTasks.length;
+      updateGameState = false;
+      gameIndex++;
+      if (currentLoop === 1) { gameLoop1(activeTaskCount); };
+      if (currentLoop === 2) { gameLoop2(activeTaskCount); };
+      if (currentLoop === 3) { gameLoop3(activeTaskCount); };
+      lastNewTaskTimer = millis();
+      allowNewTask = false;
+    }
   background(0);
 
   let headScale = 0.3;
@@ -503,58 +563,59 @@ function draw() {
 
         if (daisyPartProgress >= 0.995 && endPartProgress >= 0.995) {
           st.dismissing = true;
-
+          // banish = st.name;
+          // st.completed = true;
           //console.log(st.dismissing);
-          //st.dismissStart = millis();
+          st.dismissStart = millis();
         }
         // }
       }
       // dismiss like normal stations
-      if (st.dismissing || key === banish) {
-        const t = constrain((millis() - st.dismissStart) / DISMISS_DURATION, 0, 1);
-        const e = 1 - pow(1 - t, 3);
-        st.offsetX = e * (width + 48);
-        st.fade = 1 - e;
+      // if (st.dismissing || key === banish) {
+      //   const t = constrain((millis() - st.dismissStart) / DISMISS_DURATION, 0, 1);
+      //   const e = 1 - pow(1 - t, 3);
+      //   st.offsetX = e * (width + 48);
+      //   st.fade = 1 - e;
 
-        if (t >= 1) {
-          st.dismissing = false;
-          st.visible = false;
-          st.fade = 0;
+      //   if (t >= 1) {
+      //     st.dismissing = false;
+      //     st.visible = false;
+      //     st.fade = 0;
 
-          // stop timer
-          st.totalTime = (millis() - st.timerStart) / 1000;
-          st.timerStart = 0;
+      //     // stop timer
+      //     st.totalTime = (millis() - st.timerStart) / 1000;
+      //     st.timerStart = 0;
 
-          console.log(`${key} time:`, st.totalTime);
+      //     console.log(`${key} time:`, st.totalTime);
 
-          const points = scoring(st.totalTime);
-          console.log(`${key} scored:`, points);
-          updateScoreJSON(st.name, points);
+      //     const points = scoring(st.totalTime);
+      //     console.log(`${key} scored:`, points);
+      //     updateScoreJSON(st.name, points);
 
 
-          // remove from visibleTasks
-          const index = visibleTasks.indexOf(key);
-          if (index > -1) visibleTasks.splice(index, 1);
-          if(st.name == "bleedEye" || st.name == "brainTummy"){
-            daisyPartProgress = "";
-            endPartProgress = "";
-            daisy.useDaisy = false;
-          }
-          if(st.name == "brainTummy"){
-            socket.emit("brain", "stop");
-            socket.emit("tummy", "stop");
-          }
-          if(st.name == "bleedEye"){
-            socket.emit("bleed", "stop");
-            socket.emit("eyeball", "stop");
-          }
-          updateGameState = true;
-        }
-        const index = currentTasks.indexOf(st.name);
-        if (index > -1) currentTasks.splice(index, 1);
+      //     // remove from visibleTasks
+      //     const index = visibleTasks.indexOf(key);
+      //     if (index > -1) visibleTasks.splice(index, 1);
+      //     if(st.name == "bleedEye" || st.name == "brainTummy"){
+      //       daisyPartProgress = "";
+      //       endPartProgress = "";
+      //       daisy.useDaisy = false;
+      //     }
+      //     if(st.name == "brainTummy"){
+      //       socket.emit("brain", "stop");
+      //       socket.emit("tummy", "stop");
+      //     }
+      //     if(st.name == "bleedEye"){
+      //       socket.emit("bleed", "stop");
+      //       socket.emit("eyeball", "stop");
+      //     }
+      //     updateGameState = true;
+      //   }
+      //   const index = currentTasks.indexOf(st.name);
+      //   if (index > -1) currentTasks.splice(index, 1);
 
-        if (key === banish) banish = "";
-      }
+      //   if (key === banish) banish = "";
+      // }
     }
     // detect completion
     if (!st.dismissing && st.visible && st.progress >= 0.995) {
@@ -568,7 +629,7 @@ function draw() {
       const e = 1 - pow(1 - t, 3);
       st.offsetX = e * (width + 48);
       st.fade = 1 - e;
-      if (t >= 1) {
+      if (t >= 1 || st.name == banish) {
         st.dismissing = false;
         st.visible = false;
         st.fade = 0;
@@ -583,18 +644,37 @@ function draw() {
         const points = scoring(st.totalTime);
         console.log(`${st.name} scored:`, points);
         updateScoreJSON(st.name, points);
-        //remove from visibleTasks
-        const index = currentTasks.indexOf(st.name);
-        if (index > -1) currentTasks.splice(index, 1);
+        //remove from visibleTasks and currentTasks
+        let index = currentTasks.indexOf(st.name);
+          if (index > -1) currentTasks.splice(index, 1);
+        index = visibleTasks.indexOf(st.name);
+          if (index > -1) visibleTasks.splice(index, 1);
+        if(st.name == "bleedEye" || st.name == "brainTummy"){
+          daisyPartProgress = "";
+          endPartProgress = "";
+          daisy.useDaisy = false;
+        }
+        if(st.name == "brainTummy"){
+          socket.emit("brain", "stop");
+          socket.emit("tummy", "stop");
+        }
+        if(st.name == "bleedEye"){
+          socket.emit("bleed", "stop");
+          socket.emit("eyeball", "stop");
+        }
       }
       banish = "";
-      const index = visibleTasks.indexOf(st.name);
-       if (index > -1) visibleTasks.splice(index, 1);
+      //THIS COULD BE BREAKING THINGS CHECK, IT SHOULDNT BUT CHECK
+      let index = visibleTasks.indexOf(st.name);
+        if (index > -1) visibleTasks.splice(index, 1);
+       index = currentTasks.indexOf(st.name);
+        if (index > -1) currentTasks.splice(index, 1);
       // gameState++;
       updateGameState = true;
       st.inputDelay = false; //Possible solution for the first input completion
       socket.emit(`${st.name}`, "stop"); //Trigger stop
     }
+
     st.inputDelay = true;
     //return a task from completion / reset all values 
     if (st.name === newTask || st.name === otherNewTask) {
@@ -733,13 +813,6 @@ function draw() {
     text(Ttext, width - 25, 41);
 
   }
-  if(updateGameState && useGameLoop){
-      const activeTaskCount = currentTasks.length;
-      gameIndex++;
-      if (currentLoop === 1) { gameLoop1(activeTaskCount); };
-      if (currentLoop === 2) { gameLoop2(activeTaskCount); };
-      updateGameState = false;
-    }
 }
 
 
