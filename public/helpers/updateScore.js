@@ -26,7 +26,15 @@ window.updateScoreJSON = function (stationName, points) {
         .then(res => res.json())
         .then(data => {
             let currentValue = data[currentSession]?.[key] || 0;
-            let newTotal = currentValue + points;
+            let newTotal;
+
+            //average the scores
+            if (currentValue > 0) {
+                newTotal = (currentValue + points) / 2;
+                newTotal = Math.floor(newTotal);
+            } else {
+                newTotal = points;
+            }
 
             //send updated value
             return fetch("/score", {

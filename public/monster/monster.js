@@ -101,7 +101,7 @@ function preload() {
 function loopingVideo(){
   // Create task video
   monsterType = monsterTypes[sessionSet.monsterType];
-  taskVideo = createVideo(`../media/${monsterType}/${monsterType}.mp4`, () => {
+  taskVideo = createVideo(`../media/monsters/${monsterType}/${monsterType}.mp4`, () => {
     taskVideo.volume(0);
     taskVideo.elt.muted = true;
     taskVideo.elt.setAttribute("muted", "");
