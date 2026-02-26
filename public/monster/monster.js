@@ -134,7 +134,7 @@ function setup() {
     socket.on("complete", () => {
       createMonster();
     });
-    socket.on("reset", () => {
+    socket.on("refresh", () => {
 
     })
   }
