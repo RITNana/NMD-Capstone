@@ -413,7 +413,7 @@ function setup() {
       newTask = "";
       otherNewTask = "";
       gameLoop1(activeTaskCount);
-      socket.emit("refresh");
+      socket.emit("refresh", currentSession);
     }
     if (e.key == "2") { //For gameloop 2
       // gameloop = 2;
@@ -428,7 +428,7 @@ function setup() {
       newTask = "";
       otherNewTask = "";
       gameLoop2(activeTaskCount);
-      socket.emit("refresh");
+      socket.emit("refresh", currentSession);
     }
     if (e.key == "`") { //For gameloop 2
       // gameloop = 2;
@@ -443,7 +443,7 @@ function setup() {
       newTask = "";
       otherNewTask = "";
       gameLoop3(activeTaskCount);
-      socket.emit("refresh");
+      socket.emit("refresh", currentSession);
     }
     if (e.key == "3") { //For manual control
       // gameloop = 0;
@@ -597,58 +597,7 @@ function draw() {
         }
       }
       // dismiss like normal stations
-      if (st.dismissing || key === banish) {
-        const t = constrain((millis() - st.dismissStart) / DISMISS_DURATION, 0, 1);
-        const e = 1 - pow(1 - t, 3);
-        st.offsetX = e * (width + 48);
-        st.fade = 1 - e;
-
-        if (t >= 1) {
-          st.dismissing = false;
-          st.visible = false;
-          st.fade = 0;
-
-          // stop timer
-          st.totalTime = (millis() - st.timerStart) / 1000;
-          st.timerStart = 0;
-
-          console.log(`${key} time:`, st.totalTime);
-
-          const points = scoring(st.totalTime);
-          console.log(`${key} scored:`, points);
-          updateScoreJSON(st.name, points);
-
-
-          // remove from visibleTasks
-          let index = currentTasks.indexOf(st.name);
-          if (index > -1) currentTasks.splice(index, 1);
-        index = visibleTasks.indexOf(st.name);
-          if(index > -1) {visibleTasks.splice(index, 1);}
-        index = currentTasks.indexOf("filler");
-          if (index > -1) currentTasks.splice(index, 1);
-        index = visibleTasks.indexOf("filler");
-          if(index > -1) {visibleTasks.splice(index, 1);}
-
-          if(st.name == "bleedEye" || st.name == "brainTummy"){
-            daisyPartProgress = "";
-            endPartProgress = "";
-            daisy.useDaisy = false;
-          }
-          if(st.name == "brainTummy"){
-            socket.emit("brain", "stop");
-            socket.emit("tummy", "stop");
-          }
-          if(st.name == "bleedEye"){
-            socket.emit("bleed", "stop");
-            socket.emit("eyeball", "stop");
-          }
-          updateGameState = true;
-        }
-        const index = currentTasks.indexOf(st.name);
-        if (index > -1) currentTasks.splice(index, 1);
-
-        if (key === banish) banish = "";
-      }
+      
     }
     // detect completion
     if (!st.dismissing && st.visible && st.progress >= 0.995) {
@@ -679,7 +628,7 @@ function draw() {
         updateScoreJSON(st.name, points);
         //remove from visibleTasks and currentTasks
         let index = currentTasks.indexOf(st.name);
-        if (index > -1) currentTasks.splice(index, 1);
+          if (index > -1) currentTasks.splice(index, 1);
         index = visibleTasks.indexOf(st.name);
           if(index > -1) {visibleTasks.splice(index, 1);}
         index = currentTasks.indexOf("filler");
@@ -704,16 +653,8 @@ function draw() {
       updateGameState = true;
       }
       banish = "";
-      //THIS COULD BE BREAKING THINGS CHECK, IT SHOULDNT BUT CHECK
-      // let index = visibleTasks.indexOf(st.name);
-      //   if (index > -1) visibleTasks.splice(index, 1);
-      //  index = currentTasks.indexOf(st.name);
-      //   if (index > -1) currentTasks.splice(index, 1);
-      //  index = currentTasks.indexOf("filler");
-      //   if(index > -1) {currentTasks.splice(index, 1);}
-      //  index = visibleTasks.indexOf("filler");
-      //   if(index > -1) {visibleTasks.splice(index, 1);}
-      // gameState++;
+
+
       st.inputDelay = false; //Possible solution for the first input completion
       socket.emit(`${st.name}`, "stop"); //Trigger stop
     }

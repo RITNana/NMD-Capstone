@@ -134,8 +134,9 @@ function setup() {
     socket.on("complete", () => {
       createMonster();
     });
-    socket.on("refresh", () => {
-
+    socket.on("refresh", (sessionID) => {
+      //JACKSON CALL THE REFRESH HERE
+      console.log(sessionID);
     })
   }
   
