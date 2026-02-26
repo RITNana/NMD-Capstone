@@ -220,6 +220,7 @@ function gameLoop1(activeTaskCount) {
   }
   if (!loop1[gameIndex] && activeTaskCount === 0) {
     socket.emit("complete");
+    //updates session id
     // console.log('done-done')
     return;
   }
