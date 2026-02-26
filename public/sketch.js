@@ -210,7 +210,7 @@ function createNewSession() {
 //let loop1 = ["bleeding", "brain", "eyeball"];
 
 
-let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "bleeding","eyeball", "filler",  "brainTummy"];
+let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "bleeding","eyeball", "filler",  "brainTummy", "filler"];
 let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball", "tummy", "bleed", "brain", "filler", "filler",  "bleedEye", "brainTummy" ];
 let loop3 = ["bleeding", "brain", "tummy", "eyeball", "brain", "tummy", "bleeding", "eyeball", "brain", "tummy"]
 let currentTasks = [];
@@ -490,7 +490,7 @@ function SocketListeners() {
 // ---- DRAW STATIONS ----
 function draw() {
   newTaskTimer = millis();
-  if(newTaskTimer - lastNewTaskTimer > 5000 ) {allowNewTask = true;}
+  if(newTaskTimer - lastNewTaskTimer > 2000 ) {allowNewTask = true;}
     if(updateGameState && useGameLoop && allowNewTask){
       const activeTaskCount = currentTasks.length;
       updateGameState = false;
