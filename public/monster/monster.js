@@ -101,7 +101,7 @@ function preload() {
 function loopingVideo(){
   // Create task video
   monsterType = monsterTypes[sessionSet.monsterType];
-  taskVideo = createVideo(`../media/${monsterType}/${monsterType}.mp4`, () => {
+  taskVideo = createVideo(`../media/monsters/${monsterType}/${monsterType}.mp4`, () => {
     taskVideo.volume(0);
     taskVideo.elt.muted = true;
     taskVideo.elt.setAttribute("muted", "");
@@ -114,8 +114,8 @@ function loopingVideo(){
 }
 
 function setup() {
-  //createCanvas(780, );
-  createCanvas(1078, 1915);
+  const cnv = createCanvas(1078, 1915);
+  cnv.parent("canvasContainer");
   imageMode(CORNER);
 
   //need to grab the session string from the current sessoin and make that what needs to be reffered to 
@@ -232,6 +232,57 @@ function loadMonsterPart(part) {
   );
 }
 
+let qr; // keep reference so we can update/replace it
+
+function renderQR(url) {
+  const container = document.getElementById("qrOverlay");
+  if (!container) {
+    console.error("qrOverlay div missing in HTML");
+    return;
+  }
+
+  container.innerHTML = "";
+  container.style.display = "none";
+
+  qr = new QRCode(container, {
+    text: url,
+    width: 220,
+    height: 220,
+    correctLevel: QRCode.CorrectLevel.M,
+  });
+
+  setTimeout(() => {
+    container.style.display = "block";
+  }, 800);
+}
+
+
+function createMonsterLink() {
+  let link = document.createElement('a');
+
+  link.href =
+    `https://rssathe08311.github.io/monster_site/index.html` +
+    `?monsterType=${monsterType}` +
+    `&eyeScore=${sessionSet.eyeScore}` +
+    `&brainScore=${sessionSet.headScore}` +
+    `&bleedingScore=${sessionSet.bleedingScore}` +
+    `&stomachScore=${sessionSet.stomachScore}`;
+
+  link.textContent = "View / Share Monster";   // ⭐ THIS makes it visible
+  link.target = "_blank";                      // optional: open in new tab
+
+  document.body.appendChild(link);
+
+  let url = `https://rssathe08311.github.io/monster_site/index.html` +
+    `?monsterType=${monsterType}` +
+    `&eyeScore=${sessionSet.eyeScore}` +
+    `&brainScore=${sessionSet.headScore}` +
+    `&bleedingScore=${sessionSet.bleedingScore}` +
+    `&stomachScore=${sessionSet.stomachScore}`;
+
+  renderQR(url);
+}
+
 //INSTEAD OF THE BUTTON
 //have this trigger as a result of the game ending
 function createMonster() {
@@ -249,6 +300,8 @@ function createMonster() {
     monsterError[p] = "";
   }
   for (const p of PARTS) loadMonsterPart(p);
+
+  createMonsterLink();
 }
 
 function drawMonster(x = 0, y = 0, w = width, h = height) {
@@ -492,5 +545,5 @@ const toggleFullscreen = fullscreen();
 
 //make full screen
 function doubleClicked() {
-  toggleFullscreen(document.querySelector('canvas'));
+  toggleFullscreen(document.getElementById('canvasContainer'));
 }

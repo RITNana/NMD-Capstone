@@ -9,7 +9,7 @@ router.get("/", (req, res) => {
 
   try {
     if (!fs.existsSync(filePath)) {
-      return res.json({}); // or 404 if you prefer
+      return res.json({});
     }
     const raw = fs.readFileSync(filePath, "utf8");
     const data = JSON.parse(raw);
