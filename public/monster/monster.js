@@ -98,7 +98,7 @@ function preload() {
   dogicaFont = loadFont("../media/fonts/dogica.ttf")
   transitionSequence = new pngAnimation("../media/TransitionOverlays", 70, 36)
 }
-function loopingVideo(){
+function loopingVideo() {
   // Create task video
   monsterType = monsterTypes[sessionSet.monsterType];
   taskVideo = createVideo(`../media/monsters/${monsterType}/${monsterType}.mp4`, () => {
@@ -136,17 +136,19 @@ function setup() {
     });
     socket.on("refresh", (sessionID) => {
       //JACKSON CALL THE REFRESH HERE
-      console.log(sessionID);
+      window.location.reload();
+      console.log("Update session:" + sessionID);
     })
   }
-  
+
   SocketListeners();
   // If your session ids are numeric strings like "0","1","2"... use this safer sort:
   const latestKey = keys.sort((a, b) => Number(a) - Number(b)).at(-1);
 
   addEventListener("keydown", (e) => {
     //These bring in new tasks
-    if (e.key == "|") { createMonster();}});
+    if (e.key == "|") { createMonster(); }
+  });
 
 
   // If they’re NOT numeric, use this instead:
@@ -200,7 +202,7 @@ function setup() {
   );
 
 
-    loopingVideo();
+  loopingVideo();
 
   //scores = generateScores();
   //console.log("stomach score:", scores.stomachScore);
