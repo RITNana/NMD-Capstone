@@ -209,8 +209,9 @@ function createNewSession() {
 //test loop
 //let loop1 = ["bleeding", "brain", "eyeball"];
 
-let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "bleeding", "eyeball", "brainTummy"];
-let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball", "tummy", "bleed", "brain", "filler", "filler", "bleedEye", "brainTummy"];
+
+let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "bleeding","eyeball", "filler",  "brainTummy"];
+let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball", "tummy", "bleed", "brain", "filler", "filler",  "bleedEye", "brainTummy" ];
 let loop3 = ["bleeding", "brain", "tummy", "eyeball", "brain", "tummy", "bleeding", "eyeball", "brain", "tummy"]
 let currentTasks = [];
 let daisyPartProgress;
@@ -412,6 +413,7 @@ function setup() {
       newTask = "";
       otherNewTask = "";
       gameLoop1(activeTaskCount);
+      socket.emit("refresh");
     }
     if (e.key == "2") { //For gameloop 2
       // gameloop = 2;
@@ -426,6 +428,7 @@ function setup() {
       newTask = "";
       otherNewTask = "";
       gameLoop2(activeTaskCount);
+      socket.emit("refresh");
     }
     if (e.key == "`") { //For gameloop 2
       // gameloop = 2;
@@ -440,6 +443,7 @@ function setup() {
       newTask = "";
       otherNewTask = "";
       gameLoop3(activeTaskCount);
+      socket.emit("refresh");
     }
     if (e.key == "3") { //For manual control
       // gameloop = 0;
@@ -482,20 +486,21 @@ function SocketListeners() {
   socket.on("tummy-blue", (p) => portData.tummy.blue = (String(p).trim()));
 }
 
+
 // ---- DRAW STATIONS ----
 function draw() {
   newTaskTimer = millis();
-  if (newTaskTimer - lastNewTaskTimer > 2000) { allowNewTask = true; }
-  if (updateGameState && useGameLoop && allowNewTask) {
-    const activeTaskCount = currentTasks.length;
-    updateGameState = false;
-    gameIndex++;
-    if (currentLoop === 1) { gameLoop1(activeTaskCount); };
-    if (currentLoop === 2) { gameLoop2(activeTaskCount); };
-    if (currentLoop === 3) { gameLoop3(activeTaskCount); };
-    lastNewTaskTimer = millis();
-    allowNewTask = false;
-  }
+  if(newTaskTimer - lastNewTaskTimer > 5000 ) {allowNewTask = true;}
+    if(updateGameState && useGameLoop && allowNewTask){
+      const activeTaskCount = currentTasks.length;
+      updateGameState = false;
+      gameIndex++;
+      if (currentLoop === 1) { gameLoop1(activeTaskCount); };
+      if (currentLoop === 2) { gameLoop2(activeTaskCount); };
+      if (currentLoop === 3) { gameLoop3(activeTaskCount); };
+      lastNewTaskTimer = millis();
+      allowNewTask = false;
+    }
   background(0);
 
   let headScale = 0.3;
@@ -591,7 +596,59 @@ function draw() {
           st.dismissStart = millis();
         }
       }
+      // dismiss like normal stations
+      if (st.dismissing || key === banish) {
+        const t = constrain((millis() - st.dismissStart) / DISMISS_DURATION, 0, 1);
+        const e = 1 - pow(1 - t, 3);
+        st.offsetX = e * (width + 48);
+        st.fade = 1 - e;
 
+        if (t >= 1) {
+          st.dismissing = false;
+          st.visible = false;
+          st.fade = 0;
+
+          // stop timer
+          st.totalTime = (millis() - st.timerStart) / 1000;
+          st.timerStart = 0;
+
+          console.log(`${key} time:`, st.totalTime);
+
+          const points = scoring(st.totalTime);
+          console.log(`${key} scored:`, points);
+          updateScoreJSON(st.name, points);
+
+
+          // remove from visibleTasks
+          let index = currentTasks.indexOf(st.name);
+          if (index > -1) currentTasks.splice(index, 1);
+        index = visibleTasks.indexOf(st.name);
+          if(index > -1) {visibleTasks.splice(index, 1);}
+        index = currentTasks.indexOf("filler");
+          if (index > -1) currentTasks.splice(index, 1);
+        index = visibleTasks.indexOf("filler");
+          if(index > -1) {visibleTasks.splice(index, 1);}
+
+          if(st.name == "bleedEye" || st.name == "brainTummy"){
+            daisyPartProgress = "";
+            endPartProgress = "";
+            daisy.useDaisy = false;
+          }
+          if(st.name == "brainTummy"){
+            socket.emit("brain", "stop");
+            socket.emit("tummy", "stop");
+          }
+          if(st.name == "bleedEye"){
+            socket.emit("bleed", "stop");
+            socket.emit("eyeball", "stop");
+          }
+          updateGameState = true;
+        }
+        const index = currentTasks.indexOf(st.name);
+        if (index > -1) currentTasks.splice(index, 1);
+
+        if (key === banish) banish = "";
+      }
     }
     // detect completion
     if (!st.dismissing && st.visible && st.progress >= 0.995) {
@@ -600,7 +657,7 @@ function draw() {
     }
 
     // handle dismissal animation
-    if ((st.dismissing || st.name === banish)) {
+    if (st.dismissing || st.name === banish) {
       const t = constrain((millis() - st.dismissStart) / DISMISS_DURATION, 0, 1);
       const e = 1 - pow(1 - t, 3);
       st.offsetX = e * (width + 48);
@@ -624,8 +681,13 @@ function draw() {
         let index = currentTasks.indexOf(st.name);
         if (index > -1) currentTasks.splice(index, 1);
         index = visibleTasks.indexOf(st.name);
-        if (index > -1) visibleTasks.splice(index, 1);
-        if (st.name == "bleedEye" || st.name == "brainTummy") {
+          if(index > -1) {visibleTasks.splice(index, 1);}
+        index = currentTasks.indexOf("filler");
+          if (index > -1) currentTasks.splice(index, 1);
+        index = visibleTasks.indexOf("filler");
+          if(index > -1) {visibleTasks.splice(index, 1);}
+
+        if(st.name == "bleedEye" || st.name == "brainTummy"){
           daisyPartProgress = "";
           endPartProgress = "";
           daisy.useDaisy = false;
@@ -638,17 +700,20 @@ function draw() {
           socket.emit("bleed", "stop");
           socket.emit("eyeball", "stop");
         }
+        
+      updateGameState = true;
       }
       banish = "";
       //THIS COULD BE BREAKING THINGS CHECK, IT SHOULDNT BUT CHECK
-      let index = visibleTasks.indexOf(st.name);
-      if (index > -1) visibleTasks.splice(index, 1);
-      index = currentTasks.indexOf(st.name);
-      if (index > -1) currentTasks.splice(index, 1);
-      index = currentTasks.indexOf("filler");
-      if (index > -1) { currentTasks.splice(index, 1); console.log('filler killed') }
+      // let index = visibleTasks.indexOf(st.name);
+      //   if (index > -1) visibleTasks.splice(index, 1);
+      //  index = currentTasks.indexOf(st.name);
+      //   if (index > -1) currentTasks.splice(index, 1);
+      //  index = currentTasks.indexOf("filler");
+      //   if(index > -1) {currentTasks.splice(index, 1);}
+      //  index = visibleTasks.indexOf("filler");
+      //   if(index > -1) {visibleTasks.splice(index, 1);}
       // gameState++;
-      updateGameState = true;
       st.inputDelay = false; //Possible solution for the first input completion
       socket.emit(`${st.name}`, "stop"); //Trigger stop
     }
@@ -702,6 +767,7 @@ function draw() {
     if (newTask == "filler") {
       currentTasks.push("filler");
       console.log('filler added');
+      newTask = "";
     }
   }
 
