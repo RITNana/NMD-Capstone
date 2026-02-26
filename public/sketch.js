@@ -32,6 +32,11 @@ let gameDuration = 120 * 1000;
 let gameTimeStart = 0;
 let gameOver = false;
 
+//final task screen video
+let finalVid;
+let finalVidPlay = false;
+let finalVidOver = false;
+
 //score calculation
 let scoreData = {
   "000": {
@@ -64,7 +69,7 @@ let previousPortState = {
 
 // stations and their states AKA the Hell JSON
 let stations = {
-  brain: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "brain", inputDelay: false, timerStart: 0, totalTime: 0},
+  brain: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "brain", inputDelay: false, timerStart: 0, totalTime: 0 },
   eyeball: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "eyeball", inputDelay: false, timerStart: 0, totalTime: 0 },
   bleeding: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "bleeding", inputDelay: false, timerStart: 0, totalTime: 0 },
   heart: { num: 0, progress: 0, visible: true, dismissing: false, offsetX: 0, fade: 1, dismissStart: 0, name: "heart", inputDelay: false, timerStart: 0, totalTime: 0 },
@@ -91,6 +96,9 @@ function preload() {
 
   //load sound
   connectSound = loadSound("media/audio/portConnect.mp3");
+
+  //final video
+  finalVid = createVideo("media/video/EndScreen.mp4");
 
 
   sessionsData = loadJSON("/score");
@@ -198,6 +206,8 @@ function createNewSession() {
     .catch((e) => console.error("session create failed", e));
 }
 
+//test loop
+//let loop1 = ["bleeding", "brain", "eyeball"];
 
 
 let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "bleeding","eyeball", "filler",  "brainTummy"];
@@ -220,7 +230,8 @@ function gameLoop1(activeTaskCount) {
   }
   if (!loop1[gameIndex] && activeTaskCount === 0) {
     socket.emit("complete");
-    //updates session id
+    //play final video
+    playFinalVid();
     // console.log('done-done')
     return;
   }
@@ -239,6 +250,8 @@ function gameLoop2(activeTaskCount) {
   }
   if (!loop2[gameIndex] && activeTaskCount === 0) {
     socket.emit("complete");
+    //play final video
+    playFinalVid();
     // console.log('done-done')
     return;
   }
@@ -256,6 +269,8 @@ function gameLoop3(activeTaskCount) {
   }
   if (!loop3[gameIndex] && activeTaskCount === 0) {
     socket.emit("complete");
+    //play final video
+    playFinalVid();
     // console.log('done-done')
     return;
   }
@@ -287,29 +302,43 @@ function setup() {
   //start timer
   gameTimeStart = millis();
 
+  //background task video
   taskVideo = createVideo("media/video/Background.mp4", () => {
     // make it autoplay-safe
     taskVideo.volume(0); // p5 wrapper volume
-    taskVideo.elt.muted = true; // HTML video must be muted
+    taskVideo.elt.muted = true;
     taskVideo.elt.setAttribute("muted", "");
     taskVideo.elt.setAttribute("playsinline", ""); // iOS Safari inline playback
     taskVideo.loop(); // or .play()
-    taskVideo.hide(); // we’ll draw it to the canvas
+    taskVideo.hide();
   });
   taskVideo.loop();
   taskVideo.hide();
+
+  //final video
+  finalVid.volume(0);
+  finalVid.elt.muted = true;
+  finalVid.elt.setAttribute("muted", "");
+  finalVid.elt.setAttribute("playsinline", ""); // iOS Safari inline playback
+  finalVid.hide();
+  //does NOT loop
+  finalVid.elt.onended = () => {
+    finalVidOver = true;
+    finalVid.pause();
+  }
+
   // same-origin socket.io
   socket = io();
   SocketListeners();
 
   //const sessionCount = Object.keys(sessionsData).length;
 
-  
+
   //currentSession = Object.keys(sessionsData).length.toString();
   //console.log(currentSession);
   //monsterType = Math.floor(Math.random() * 6); // 0..5
   //console.log(monsterType)
-//
+  //
   //initSessionOnServer(currentSession, monsterType);
 
   //Some event listeners for manual control of the game
@@ -319,16 +348,16 @@ function setup() {
     if (e.key == "e") { newTask = "eyeball"; }
     if (e.key == "q") { newTask = "bleeding"; }
     if (e.key == "r") { newTask = "tummy"; }
-    if (e.key == "t") { newTask = "bleedEye";}
-    if(e.key == "4"){newTask = "brainTummy";}
+    if (e.key == "t") { newTask = "bleedEye"; }
+    if (e.key == "4") { newTask = "brainTummy"; }
 
     //these atomize task from the list
     if (e.key == "s") { banish = "brain"; }
     if (e.key == "d") { banish = "eyeball"; }
     if (e.key == "a") { banish = "bleeding"; }
     if (e.key == "f") { banish = "tummy"; }
-    if (e.key == "g") {banish = "bleedEye";}
-    if (e.key == "5") {banish = "brainTummy";}
+    if (e.key == "g") { banish = "bleedEye"; }
+    if (e.key == "5") { banish = "brainTummy"; }
     // these fill out the bar of a given task
     // if (e.key == "s") { stations.brain.progress += .1 }
     // if (e.key == "d") { stations.eyeball.progress += .1 }
@@ -374,7 +403,7 @@ function setup() {
       // gameloop = 1;
       // gameState = 1;
       // updateGameState = true;
-      createNewSession(); 
+      createNewSession();
       currentLoop = 1;
       gameIndex = 0;
       useGameLoop = true;
@@ -389,7 +418,7 @@ function setup() {
     if (e.key == "2") { //For gameloop 2
       // gameloop = 2;
       // gameState = 1;
-      createNewSession(); 
+      createNewSession();
       currentLoop = 2;
       gameIndex = 0;
       useGameLoop = true;
@@ -404,7 +433,7 @@ function setup() {
     if (e.key == "`") { //For gameloop 2
       // gameloop = 2;
       // gameState = 1;
-      createNewSession(); 
+      createNewSession();
       currentLoop = 3;
       gameIndex = 0;
       useGameLoop = true;
@@ -510,13 +539,6 @@ function draw() {
     brainTummy: { img: daisyBrainBar, x: centeredX, y: 0, w: barWidth, h: barHeight }
   };
 
-  // //test
-  // stations.brain.num = 500;
-  // stations.eyeball.num = 2900;
-  // stations.bleeding.num = 1200;
-  // stations.tummy.num = 800;
-  // stations.heart.num = 1000;
-
   //Trigger the tube finder to be updated
   tubeFinder();
   let blueDaisy = (tubeLocation.blue.includes(daisy.daisyTask)); //the task being chained (daisy-ed?) through is connected with blue
@@ -545,7 +567,7 @@ function draw() {
           (redDaisy && redHeart)) // Red tube heart to Daisy 
       ) {
         //for the heart -> daisy
-        if ((st.name == stations.bleedEye.parts[0]) && daisy.daisyTask == "bleeding" || (st.name == stations.brainTummy.parts[0]) && daisy.daisyTask == "brain" ) {
+        if ((st.name == stations.bleedEye.parts[0]) && daisy.daisyTask == "bleeding" || (st.name == stations.brainTummy.parts[0]) && daisy.daisyTask == "brain") {
           st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
           daisyPartProgress = st.progress;
           // console.log("heart -> daisy " + stations.bleedEye.partProgress.bleeding)
@@ -573,7 +595,6 @@ function draw() {
           //console.log(st.dismissing);
           st.dismissStart = millis();
         }
-        // }
       }
       // dismiss like normal stations
       if (st.dismissing || key === banish) {
@@ -658,7 +679,7 @@ function draw() {
         updateScoreJSON(st.name, points);
         //remove from visibleTasks and currentTasks
         let index = currentTasks.indexOf(st.name);
-          if (index > -1) currentTasks.splice(index, 1);
+        if (index > -1) currentTasks.splice(index, 1);
         index = visibleTasks.indexOf(st.name);
           if(index > -1) {visibleTasks.splice(index, 1);}
         index = currentTasks.indexOf("filler");
@@ -671,11 +692,11 @@ function draw() {
           endPartProgress = "";
           daisy.useDaisy = false;
         }
-        if(st.name == "brainTummy"){
+        if (st.name == "brainTummy") {
           socket.emit("brain", "stop");
           socket.emit("tummy", "stop");
         }
-        if(st.name == "bleedEye"){
+        if (st.name == "bleedEye") {
           socket.emit("bleed", "stop");
           socket.emit("eyeball", "stop");
         }
@@ -713,7 +734,7 @@ function draw() {
       st.timerStart = millis();
       st.totalTime = 0;
 
-      if(st.name == "bleedEye"){
+      if (st.name == "bleedEye") {
         socket.emit("bleed", "go");
         socket.emit("eyeball", "go");
         daisy.useDaisy = true;
@@ -724,7 +745,7 @@ function draw() {
         endPartProgress = stations.bleedEye.partProgress.eyeball;
         console.log("daisy bleedEye started");
       }
-      if(st.name == "brainTummy"){
+      if (st.name == "brainTummy") {
         socket.emit("brain", "go");
         socket.emit("tummy", "go");
         daisy.useDaisy = true;
@@ -743,7 +764,7 @@ function draw() {
       if (st.name === newTask) newTask = "";
       if (st.name === otherNewTask) otherNewTask = "";
     }
-    if(newTask == "filler"){
+    if (newTask == "filler") {
       currentTasks.push("filler");
       console.log('filler added');
       newTask = "";
@@ -810,17 +831,12 @@ function draw() {
       pop();
     }
   }
-  // if (updateGameState) {
-  //   if (gameloop == 1) {
-  //     gameIndex = 0;
-  //     gameLoop1();
-  //   }
-  //   if (gameloop == 2) {
-  //     gameIndex = 0;
-  //     gameLoop2();
-  //   }
-  //   // updateGameState = false;
-  // }
+
+  // ---- DRAW FINAL TASK SCREEN VIDEO ----
+  if (finalVidPlay) {
+    image(finalVid, 0, 0, width, height);
+    return;
+  }
 
   // ----GAME TIMER----
   //added game over thing just in case we want to do it for imagine
@@ -867,6 +883,20 @@ function ledProgress(charge, th = thresholds) {
 
 //----STORE JSON DATA----
 localStorage.setItem("sessionScore", JSON.stringify(scoreData));
+
+
+//final video play function
+function playFinalVid() {
+  useGameLoop = false;
+  gameOver = true;
+  finalVidPlay = true;
+  finalVidOver = false;
+
+  //rewind vid
+  finalVid.time(0);
+  finalVid.play();
+}
+
 
 // ----- INTERACTION -----
 
