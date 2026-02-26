@@ -231,7 +231,6 @@ function gameLoop1(activeTaskCount) {
     socket.emit("complete");
     //play final video
     playFinalVid();
-    //updates session id
     // console.log('done-done')
     return;
   }
