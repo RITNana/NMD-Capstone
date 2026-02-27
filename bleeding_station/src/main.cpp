@@ -107,7 +107,7 @@ int bleedingLoop()
   bool anyLightOn = leftRedOn || leftBlueOn || rightRedOn || rightBlueOn;
 
   //Port lights
-  if(leftBlueOn || leftRedOn){digitalWrite(rightPortPin, HIGH);}
+  if(leftBlueOn || leftRedOn){digitalWrite(leftPortPin, HIGH);}
   else{digitalWrite(leftPortPin, LOW);}
   if(rightBlueOn || rightRedOn){digitalWrite(rightPortPin, HIGH);}
   else{digitalWrite(rightPortPin, LOW);}
