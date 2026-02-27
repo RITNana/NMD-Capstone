@@ -193,6 +193,7 @@ void task(){
     //TURN OFF THE LIGHTS
     digitalWrite(stationPin1, LOW);
     digitalWrite(stationPin2, LOW);
+    chargeNum = 0;
     direction = "_";
   }
   if(direction == "reset"){

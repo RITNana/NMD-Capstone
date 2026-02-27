@@ -592,7 +592,7 @@ function draw() {
           st.dismissing = true;
           // banish = st.name;
           // st.completed = true;
-          //console.log(st.dismissing);
+          daisy.useDaisy = false;
           st.dismissStart = millis();
         }
       }

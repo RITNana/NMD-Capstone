@@ -30,7 +30,7 @@ int rightLightThreshold = 15;
 int averageLight;
 
 // output for wifi
-int output = 2;
+int output = 0;
 String remoteOpen = "false";
 
 // function to calibrate the photoresistor to the room light level

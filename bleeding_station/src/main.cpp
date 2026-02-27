@@ -205,6 +205,7 @@ void task(){
   if(direction == "stop"){
     digitalWrite(stationPin1, LOW);
     digitalWrite(stationPin2,LOW);
+    chargeNum = 0;
     direction = "_";
   }
   if(direction == "reset"){
