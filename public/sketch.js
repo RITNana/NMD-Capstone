@@ -56,7 +56,9 @@ let sessionsData;
 let monsterType;
 
 //sounds
-let connectSound;
+let sfx = {};
+let bgmList = [];
+let currentTrack = 0;
 
 //track port states
 let previousPortState = {
@@ -95,19 +97,22 @@ function preload() {
   timerImage = loadImage("media/images/ClockLogo.png");
 
   //load sound
-  connectSound = loadSound("media/audio/portConnect.mp3");
+  sfx.connect = loadSound("media/audio/portConnect.mp3");
+  sfx.taskOver = loadSound("media/audio/tasksOver.mp3");
+  sfx.tummy = loadSound("media/audio/stomach.mp3");
+  sfx.eyeball = loadSound("media/audio/eye.mp3");
+  sfx.bleeding = loadSound("media/audio/blood.mp3");
+  sfx.brain = loadSound("media/audio/brain.mp3");
+
+  sfx.bg1 = loadSound("media/audio/music/bgm1.mp3");
+  sfx.bg2 = loadSound("media/audio/music/bgm2.mp3");
+  sfx.bg3 = loadSound("media/audio/music/bgm3.mp3");
+  bgmList = [sfx.bg1, sfx.bg2, sfx.bg3];
 
   //final video
   finalVid = createVideo("media/video/EndScreen.mp4");
 
-
   sessionsData = loadJSON("/score");
-}
-
-function playConnectSound() {
-  if (connectSound && connectSound.isLoaded()) {
-    connectSound.play();
-  }
 }
 
 //Feed in the name of the task for newTask or banish to get that task back on screen or banish it as if its complete
@@ -136,13 +141,13 @@ function tubeFinder() {
     //red port
     if (portData[station].red !== "0" &&
       previousPortState[station].red === "0") {
-      playConnectSound();
+      playSound("connect");
     }
 
     //blue port
     if (portData[station].blue !== "0" &&
       previousPortState[station].blue === "0") {
-      playConnectSound();
+      playSound("connect");
     }
 
     // Update previous state
@@ -207,11 +212,10 @@ function createNewSession() {
 }
 
 //test loop
-let loop1 = ["bleeding", "brain", "eyeball"];
+//let loop1 = ["bleeding", "tummy", "eyeball"];
 
-
-//let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "bleeding","eyeball", "filler",  "brainTummy"];
-let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball", "tummy", "bleed", "brain", "filler", "filler",  "bleedEye", "brainTummy" ];
+let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "bleeding","eyeball", "filler",  "brainTummy"];
+let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball", "tummy", "bleed", "brain", "filler", "filler", "bleedEye", "brainTummy"];
 let loop3 = ["bleeding", "brain", "tummy", "eyeball", "brain", "tummy", "bleeding", "eyeball", "brain", "tummy"]
 let currentTasks = [];
 let daisyPartProgress;
@@ -232,6 +236,7 @@ function gameLoop1(activeTaskCount) {
     socket.emit("complete");
     //play final video
     playFinalVid();
+    playSound("taskOver");
     // console.log('done-done')
     return;
   }
@@ -301,6 +306,9 @@ function setup() {
 
   //start timer
   gameTimeStart = millis();
+
+  //play bgm
+  playBGM(currentTrack);
 
   //background task video
   taskVideo = createVideo("media/video/Background.mp4", () => {
@@ -490,17 +498,17 @@ function SocketListeners() {
 // ---- DRAW STATIONS ----
 function draw() {
   newTaskTimer = millis();
-  if(newTaskTimer - lastNewTaskTimer > 5000 ) {allowNewTask = true;}
-    if(updateGameState && useGameLoop && allowNewTask){
-      const activeTaskCount = currentTasks.length;
-      updateGameState = false;
-      gameIndex++;
-      if (currentLoop === 1) { gameLoop1(activeTaskCount); };
-      if (currentLoop === 2) { gameLoop2(activeTaskCount); };
-      if (currentLoop === 3) { gameLoop3(activeTaskCount); };
-      lastNewTaskTimer = millis();
-      allowNewTask = false;
-    }
+  if (newTaskTimer - lastNewTaskTimer > 5000) { allowNewTask = true; }
+  if (updateGameState && useGameLoop && allowNewTask) {
+    const activeTaskCount = currentTasks.length;
+    updateGameState = false;
+    gameIndex++;
+    if (currentLoop === 1) { gameLoop1(activeTaskCount); };
+    if (currentLoop === 2) { gameLoop2(activeTaskCount); };
+    if (currentLoop === 3) { gameLoop3(activeTaskCount); };
+    lastNewTaskTimer = millis();
+    allowNewTask = false;
+  }
   background(0);
 
   let headScale = 0.3;
@@ -597,7 +605,7 @@ function draw() {
         }
       }
       // dismiss like normal stations
-      
+
     }
     // detect completion
     if (!st.dismissing && st.visible && st.progress >= 0.995) {
@@ -628,15 +636,15 @@ function draw() {
         updateScoreJSON(st.name, points);
         //remove from visibleTasks and currentTasks
         let index = currentTasks.indexOf(st.name);
-          if (index > -1) currentTasks.splice(index, 1);
+        if (index > -1) currentTasks.splice(index, 1);
         index = visibleTasks.indexOf(st.name);
-          if(index > -1) {visibleTasks.splice(index, 1);}
+        if (index > -1) { visibleTasks.splice(index, 1); }
         index = currentTasks.indexOf("filler");
-          if (index > -1) currentTasks.splice(index, 1);
+        if (index > -1) currentTasks.splice(index, 1);
         index = visibleTasks.indexOf("filler");
-          if(index > -1) {visibleTasks.splice(index, 1);}
+        if (index > -1) { visibleTasks.splice(index, 1); }
 
-        if(st.name == "bleedEye" || st.name == "brainTummy"){
+        if (st.name == "bleedEye" || st.name == "brainTummy") {
           daisyPartProgress = "";
           endPartProgress = "";
           daisy.useDaisy = false;
@@ -649,8 +657,8 @@ function draw() {
           socket.emit("bleed", "stop");
           socket.emit("eyeball", "stop");
         }
-        
-      updateGameState = true;
+
+        updateGameState = true;
       }
       banish = "";
 
@@ -662,6 +670,22 @@ function draw() {
     st.inputDelay = true;
     //return a task from completion / reset all values 
     if (st.name === newTask || st.name === otherNewTask) {
+      //add sfx
+      if (st.name === "bleedEye") {
+        //play both
+        playSound('bleeding');
+        playSound('eyeball');
+
+      } else if (st.name === "brainTummy") {
+        //play both
+        playSound('brain');
+        playSound('tummy');
+
+      } else {
+        //single station
+        playSound(st.name);
+      }
+
       st.offsetX = 0;
       st.visible = true;
       st.dismissing = false;
