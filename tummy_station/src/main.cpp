@@ -30,7 +30,7 @@ int rightLightThreshold = 15;
 int averageLight;
 
 // output for wifi
-int output = 2;
+int output = 0;
 String remoteOpen = "false";
 
 // function to calibrate the photoresistor to the room light level
@@ -183,7 +183,7 @@ int tummyLoop()
   bool anyLightOn = leftRedOn || leftBlueOn || rightRedOn || rightBlueOn;
 
   //Port lights
-  if(leftBlueOn || leftRedOn){digitalWrite(rightPortPin, HIGH);}
+  if(leftBlueOn || leftRedOn){digitalWrite(leftPortPin, HIGH);}
   else{digitalWrite(leftPortPin, LOW);}
   if(rightBlueOn || rightRedOn){digitalWrite(rightPortPin, HIGH);}
   else{digitalWrite(rightPortPin, LOW);}
