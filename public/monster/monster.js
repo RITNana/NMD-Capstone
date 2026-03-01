@@ -114,7 +114,7 @@ function loopingVideo() {
 }
 
 function setup() {
-  const cnv = createCanvas(1078, 1915);
+  const cnv = createCanvas(539, 958);
   cnv.parent("canvasContainer");
   imageMode(CORNER);
 
@@ -354,9 +354,7 @@ function draw() {
   if (globalCountdown < 0) globalCountdown = 0;
 
   if (complete) {
-
-
-
+    
     if (finalBgImg) {
       image(finalBgImg, 0, 0, width, height);
     } else {
