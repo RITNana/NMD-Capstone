@@ -117,50 +117,5 @@
     "stomachScore": 0,
     "bleedEye": 0,
     "brainTummy": 0
-  },
-  "13": {
-    "monsterType": 4,
-    "headScore": 510,
-    "eyeScore": 508,
-    "bleedingScore": 514,
-    "stomachScore": 0,
-    "bleedEye": 0,
-    "brainTummy": 0
-  },
-  "14": {
-    "monsterType": 0,
-    "headScore": 504,
-    "eyeScore": 508,
-    "bleedingScore": 505,
-    "stomachScore": 0,
-    "bleedEye": 0,
-    "brainTummy": 0
-  },
-  "15": {
-    "monsterType": 4,
-    "headScore": 503,
-    "eyeScore": 508,
-    "bleedingScore": 509,
-    "stomachScore": 512,
-    "bleedEye": 508,
-    "brainTummy": 0
-  },
-  "16": {
-    "monsterType": 2,
-    "headScore": 501,
-    "eyeScore": 500,
-    "bleedingScore": 508,
-    "stomachScore": 501,
-    "bleedEye": 503,
-    "brainTummy": 510
-  },
-  "17": {
-    "monsterType": 3,
-    "headScore": 508,
-    "eyeScore": 501,
-    "bleedingScore": 506,
-    "stomachScore": 511,
-    "brainTummy": 509,
-    "bleedEye": 504
   }
 }
