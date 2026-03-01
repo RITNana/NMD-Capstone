@@ -126,12 +126,11 @@ function setScores(sessionID){
 }
 
 function setup() {
-  const cnv = createCanvas(539, 958);
+  const cnv = createCanvas(1078, 1915);
   cnv.parent("canvasContainer");
   imageMode(CORNER);
 
   //need to grab the session string from the current sessoin and make that what needs to be reffered to 
-
   const keys = Object.keys(sessionData || {});
   console.log("available sessions:", keys);
 
@@ -148,7 +147,6 @@ function setup() {
       createMonster();
     });
     socket.on("refresh", (sessionID) => {
-      //JACKSON CALL THE REFRESH HERE
       window.location.reload();
       console.log("Update session:" + sessionID);
     })
