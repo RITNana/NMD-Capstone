@@ -117,5 +117,32 @@
     "stomachScore": 0,
     "bleedEye": 0,
     "brainTummy": 0
+  },
+  "13": {
+    "monsterType": 1,
+    "headScore": 358,
+    "eyeScore": 437,
+    "bleedingScore": 504,
+    "stomachScore": 501,
+    "bleedEye": 0,
+    "brainTummy": 0
+  },
+  "14": {
+    "monsterType": 2,
+    "headScore": 0,
+    "eyeScore": 502,
+    "bleedingScore": 507,
+    "stomachScore": 500,
+    "bleedEye": 0,
+    "brainTummy": 0
+  },
+  "15": {
+    "monsterType": 4,
+    "brainTummy": 0,
+    "headScore": 510,
+    "eyeScore": 509,
+    "bleedingScore": 508,
+    "stomachScore": 504,
+    "bleedEye": 0
   }
 }

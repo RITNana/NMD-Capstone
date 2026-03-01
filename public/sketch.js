@@ -273,7 +273,7 @@ function gameLoop3(activeTaskCount) {
     otherNewTask = loop2[gameIndex];
   }
   if (!loop3[gameIndex] && activeTaskCount === 0) {
-    socket.emit("complete");
+    socket.emit("complete", currentSession);
     //play final video
     playFinalVid();
     // console.log('done-done')

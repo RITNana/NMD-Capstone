@@ -143,8 +143,29 @@ function setup() {
   socket = io();
   function SocketListeners() {
     socket.on("complete", (sessionID) => {
-      setScores(sessionID);
-      createMonster();
+      //reload the session data
+      loadJSON("/score", (newSessionData) => {
+        sessionData = newSessionData;
+
+        //confirm current session
+        const keys = Object.keys(sessionData || {});
+        if (keys.length === 0) {
+          console.error("No sessions found in /score");
+          return;
+        }
+
+        // stringSesh = keys.sort((a, b) => Number(a) - Number(b)).at(-1);
+        sessionSet = sessionData[sessionID];
+
+        scores = {
+          head: sessionSet.headScore || 0,
+          eyes: sessionSet.eyeScore || 0,
+          stomach: sessionSet.stomachScore || 0,
+          bleeding: sessionSet.bleedingScore || 0
+        };
+
+        createMonster();
+      });
     });
     socket.on("refresh", (sessionID) => {
       window.location.reload();
@@ -357,7 +378,7 @@ function draw() {
   if (globalCountdown < 0) globalCountdown = 0;
 
   if (complete) {
-    
+
     if (finalBgImg) {
       image(finalBgImg, 0, 0, width, height);
     } else {
