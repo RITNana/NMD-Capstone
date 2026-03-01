@@ -233,7 +233,7 @@ function gameLoop1(activeTaskCount) {
     otherNewTask = loop1[gameIndex];
   }
   if (!loop1[gameIndex] && activeTaskCount === 0) {
-    socket.emit("complete");
+    socket.emit("complete", currentSession);
     //play final video
     playFinalVid();
     playSound("taskOver");
@@ -254,7 +254,7 @@ function gameLoop2(activeTaskCount) {
     otherNewTask = loop2[gameIndex];
   }
   if (!loop2[gameIndex] && activeTaskCount === 0) {
-    socket.emit("complete");
+    socket.emit("complete", currentSession);
     //play final video
     playFinalVid();
     // console.log('done-done')
