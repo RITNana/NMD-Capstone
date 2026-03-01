@@ -3812,7 +3812,7 @@ END GROUP
                 0x20000000                . = ORIGIN (RAM)
  *(.fsp_dtc_vector_table)
 
-.data           0x20000000      0x254 load address 0x00011d54
+.data           0x20000000      0x250 load address 0x00011d54
                 0x20000000                __data_start__ = .
                 0x20000000                . = ALIGN (0x4)
                 0x20000000                __Code_In_RAM_Start = .
@@ -3827,265 +3827,264 @@ END GROUP
  .data.leftLightThreshold
                 0x20000008        0x4 .pio\build\uno_r4_wifi\src\main.cpp.o
                 0x20000008                leftLightThreshold
- .data.output   0x2000000c        0x4 .pio\build\uno_r4_wifi\src\main.cpp.o
-                0x2000000c                output
- .data.pass     0x20000010        0xb .pio\build\uno_r4_wifi\src\main.cpp.o
-                0x20000010                pass
- *fill*         0x2000001b        0x1 
+ .data.pass     0x2000000c        0xb .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x2000000c                pass
+ *fill*         0x20000017        0x1 
  .data.rightLightThreshold
-                0x2000001c        0x4 .pio\build\uno_r4_wifi\src\main.cpp.o
-                0x2000001c                rightLightThreshold
- .data.server   0x20000020        0xe .pio\build\uno_r4_wifi\src\main.cpp.o
-                0x20000020                server
- .data.ssid     0x2000002e        0x8 .pio\build\uno_r4_wifi\src\main.cpp.o
-                0x2000002e                ssid
+                0x20000018        0x4 .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x20000018                rightLightThreshold
+ .data.server   0x2000001c        0xe .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x2000001c                server
+ .data.ssid     0x2000002a        0x8 .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x2000002a                ssid
  .data._ZZ20servo_timer_callbackP22st_timer_callback_argsE20channel_pin_set_high
-                0x20000036        0x1 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+                0x20000032        0x1 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
  .data._ZZ20servo_timer_callbackP22st_timer_callback_argsE7channel
-                0x20000037        0x1 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+                0x20000033        0x1 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
  .data._ZL30_analogRequestedReadResolution
-                0x20000038        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
+                0x20000034        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
  .data._impure_ptr
-                0x2000003c        0x4 c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libc_nano.a(lib_a-impure.o)
-                0x2000003c                _impure_ptr
+                0x20000038        0x4 c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libc_nano.a(lib_a-impure.o)
+                0x20000038                _impure_ptr
  .data.impure_data
-                0x20000040       0x60 c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libc_nano.a(lib_a-impure.o)
+                0x2000003c       0x60 c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libc_nano.a(lib_a-impure.o)
  .data.__global_locale
-                0x200000a0      0x16c c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libc_nano.a(lib_a-locale.o)
-                0x200000a0                __global_locale
+                0x2000009c      0x16c c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libc_nano.a(lib_a-locale.o)
+                0x2000009c                __global_locale
  *(.data)
-                0x2000020c                . = ALIGN (0x4)
-                0x2000020c                PROVIDE (__preinit_array_start, .)
+                0x20000208                . = ALIGN (0x4)
+                0x20000208                PROVIDE (__preinit_array_start, .)
  *(.preinit_array)
-                0x2000020c                PROVIDE (__preinit_array_end, .)
-                0x2000020c                . = ALIGN (0x4)
-                0x2000020c                PROVIDE (__init_array_start, .)
+                0x20000208                PROVIDE (__preinit_array_end, .)
+                0x20000208                . = ALIGN (0x4)
+                0x20000208                PROVIDE (__init_array_start, .)
  *(SORT_BY_NAME(.init_array.*))
  *(.init_array)
- .init_array    0x2000020c        0x4 c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
- .init_array    0x20000210        0x4 .pio\build\uno_r4_wifi\src\main.cpp.o
- .init_array    0x20000214        0x4 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
- .init_array    0x20000218        0x4 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
- .init_array    0x2000021c        0x4 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
- .init_array    0x20000220        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(SerialObj1.cpp.o)
- .init_array    0x20000224        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(SerialObj3.cpp.o)
- .init_array    0x20000228        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
- .init_array    0x2000022c        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IPAddress.cpp.o)
- .init_array    0x20000230        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(dac.cpp.o)
- .init_array    0x20000234        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(time.cpp.o)
-                0x20000238                PROVIDE (__init_array_end, .)
-                0x20000238                . = ALIGN (0x4)
+ .init_array    0x20000208        0x4 c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
+ .init_array    0x2000020c        0x4 .pio\build\uno_r4_wifi\src\main.cpp.o
+ .init_array    0x20000210        0x4 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+ .init_array    0x20000214        0x4 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
+ .init_array    0x20000218        0x4 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
+ .init_array    0x2000021c        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(SerialObj1.cpp.o)
+ .init_array    0x20000220        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(SerialObj3.cpp.o)
+ .init_array    0x20000224        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
+ .init_array    0x20000228        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IPAddress.cpp.o)
+ .init_array    0x2000022c        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(dac.cpp.o)
+ .init_array    0x20000230        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(time.cpp.o)
+                0x20000234                PROVIDE (__init_array_end, .)
+                0x20000234                . = ALIGN (0x4)
                 [!provide]                PROVIDE (__fini_array_start, .)
  *(SORT_BY_NAME(.fini_array.*))
  *(.fini_array)
- .fini_array    0x20000238        0x4 c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
- .fini_array    0x2000023c        0x4 .pio\build\uno_r4_wifi\src\main.cpp.o
- .fini_array    0x20000240        0x4 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
- .fini_array    0x20000244        0x4 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
- .fini_array    0x20000248        0x4 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
- .fini_array    0x2000024c        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
- .fini_array    0x20000250        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(time.cpp.o)
+ .fini_array    0x20000234        0x4 c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
+ .fini_array    0x20000238        0x4 .pio\build\uno_r4_wifi\src\main.cpp.o
+ .fini_array    0x2000023c        0x4 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+ .fini_array    0x20000240        0x4 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
+ .fini_array    0x20000244        0x4 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
+ .fini_array    0x20000248        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
+ .fini_array    0x2000024c        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(time.cpp.o)
                 [!provide]                PROVIDE (__fini_array_end, .)
  *(.jcr*)
-                0x20000254                . = ALIGN (0x4)
-                0x20000254                __data_end__ = .
+                0x20000250                . = ALIGN (0x4)
+                0x20000250                __data_end__ = .
 
-.igot.plt       0x20000254        0x0 load address 0x00011fa8
- .igot.plt      0x20000254        0x0 c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
+.igot.plt       0x20000250        0x0 load address 0x00011fa4
+ .igot.plt      0x20000250        0x0 c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
 
-.noinit         0x20000254       0x1c load address 0x00011fa8
-                0x20000254                . = ALIGN (0x4)
-                0x20000254                __noinit_start = .
+.noinit         0x20000250       0x18 load address 0x00011fa4
+                0x20000250                . = ALIGN (0x4)
+                0x20000250                __noinit_start = .
  *(.noinit*)
- .noinit        0x20000254       0x18 C:\Users\83tuc\.platformio\packages\framework-arduinorenesas-uno\variants\UNOWIFIR4\libs\libfsp.a(bsp_clocks.o)
-                0x20000270                . = ALIGN (0x8)
- *fill*         0x2000026c        0x4 
+ .noinit        0x20000250       0x18 C:\Users\83tuc\.platformio\packages\framework-arduinorenesas-uno\variants\UNOWIFIR4\libs\libfsp.a(bsp_clocks.o)
+                0x20000268                . = ALIGN (0x8)
  *(.heap.*)
-                0x20000270                __noinit_end = .
+                0x20000268                __noinit_end = .
 
-.bss            0x20000270     0x12c8 load address 0x00011fa8
-                0x20000270                . = ALIGN (0x4)
-                0x20000270                __bss_start__ = .
+.bss            0x20000268     0x12cc load address 0x00011fa4
+                0x20000268                . = ALIGN (0x4)
+                0x20000268                __bss_start__ = .
  *(.bss*)
- .bss           0x20000270       0x1c c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
+ .bss           0x20000268       0x1c c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/thumb/v7e-m/fpv4-sp/hard/crtbegin.o
  .bss.allowScoring
-                0x2000028c        0x1 .pio\build\uno_r4_wifi\src\main.cpp.o
-                0x2000028c                allowScoring
- *fill*         0x2000028d        0x3 
+                0x20000284        0x1 .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x20000284                allowScoring
+ *fill*         0x20000285        0x3 
  .bss.averageLightLeftBlue
-                0x20000290        0x4 .pio\build\uno_r4_wifi\src\main.cpp.o
-                0x20000290                averageLightLeftBlue
+                0x20000288        0x4 .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x20000288                averageLightLeftBlue
  .bss.averageLightLeftRed
-                0x20000294        0x4 .pio\build\uno_r4_wifi\src\main.cpp.o
-                0x20000294                averageLightLeftRed
+                0x2000028c        0x4 .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x2000028c                averageLightLeftRed
  .bss.averageLightRightBlue
-                0x20000298        0x4 .pio\build\uno_r4_wifi\src\main.cpp.o
-                0x20000298                averageLightRightBlue
+                0x20000290        0x4 .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x20000290                averageLightRightBlue
  .bss.averageLightRightRed
-                0x2000029c        0x4 .pio\build\uno_r4_wifi\src\main.cpp.o
-                0x2000029c                averageLightRightRed
+                0x20000294        0x4 .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x20000294                averageLightRightRed
  .bss.blueConnected
-                0x200002a0        0x1 .pio\build\uno_r4_wifi\src\main.cpp.o
-                0x200002a0                blueConnected
- *fill*         0x200002a1        0x3 
- .bss.client    0x200002a4       0x20 .pio\build\uno_r4_wifi\src\main.cpp.o
-                0x200002a4                client
+                0x20000298        0x1 .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x20000298                blueConnected
+ *fill*         0x20000299        0x3 
+ .bss.client    0x2000029c       0x20 .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x2000029c                client
  .bss.direction
-                0x200002c4        0xc .pio\build\uno_r4_wifi\src\main.cpp.o
-                0x200002c4                direction
+                0x200002bc        0xc .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x200002bc                direction
  .bss.lastConnectionTime
-                0x200002d0        0x4 .pio\build\uno_r4_wifi\src\main.cpp.o
-                0x200002d0                lastConnectionTime
+                0x200002c8        0x4 .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x200002c8                lastConnectionTime
+ .bss.output    0x200002cc        0x4 .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x200002cc                output
  .bss.redConnected
-                0x200002d4        0x1 .pio\build\uno_r4_wifi\src\main.cpp.o
-                0x200002d4                redConnected
- *fill*         0x200002d5        0x3 
+                0x200002d0        0x1 .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x200002d0                redConnected
+ *fill*         0x200002d1        0x3 
  .bss.remoteOpen
-                0x200002d8        0xc .pio\build\uno_r4_wifi\src\main.cpp.o
-                0x200002d8                remoteOpen
- .bss.servoL    0x200002e4        0x3 .pio\build\uno_r4_wifi\src\main.cpp.o
-                0x200002e4                servoL
- .bss.servoR    0x200002e7        0x3 .pio\build\uno_r4_wifi\src\main.cpp.o
-                0x200002e7                servoR
- *fill*         0x200002ea        0x2 
+                0x200002d4        0xc .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x200002d4                remoteOpen
+ .bss.servoL    0x200002e0        0x3 .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x200002e0                servoL
+ .bss.servoR    0x200002e3        0x3 .pio\build\uno_r4_wifi\src\main.cpp.o
+                0x200002e3                servoR
+ *fill*         0x200002e6        0x2 
  .bss._ZL11servo_timer
-                0x200002ec       0x38 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+                0x200002e8       0x38 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
  .bss._ZL18active_servos_mask
-                0x20000324        0x4 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+                0x20000320        0x4 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
  .bss._ZL19min_servo_cycle_low
-                0x20000328        0x4 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+                0x20000324        0x4 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
  .bss._ZL19servo_timer_started
-                0x2000032c        0x1 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
- *fill*         0x2000032d        0x3 
+                0x20000328        0x1 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+ *fill*         0x20000329        0x3 
  .bss._ZL21servo_ticks_per_cycle
-                0x20000330        0x4 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+                0x2000032c        0x4 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
  .bss._ZL26active_servos_mask_refresh
-                0x20000334        0x4 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+                0x20000330        0x4 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
  .bss._ZL8n_servos
-                0x20000338        0x4 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+                0x20000334        0x4 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
  .bss._ZL9ra_servos
-                0x2000033c      0x120 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+                0x20000338      0x120 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
  .bss._ZZ20servo_timer_callbackP22st_timer_callback_argsE11ticks_accum
-                0x2000045c        0x4 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+                0x20000458        0x4 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
  .bss._ZZL18servo_timer_configmE10configured
-                0x20000460        0x1 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
- *fill*         0x20000461        0x3 
- .bss.WiFi      0x20000464      0x260 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
-                0x20000464                WiFi
+                0x2000045c        0x1 .pio\build\uno_r4_wifi\libb15\libServo.a(Servo.cpp.o)
+ *fill*         0x2000045d        0x3 
+ .bss.WiFi      0x20000460      0x260 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
+                0x20000460                WiFi
  .bss._ZL10fw_version
-                0x200006c4        0xc .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
- .bss.modem     0x200006d0       0x98 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
-                0x200006d0                modem
+                0x200006c0        0xc .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(WiFi.cpp.o)
+ .bss.modem     0x200006cc       0x98 .pio\build\uno_r4_wifi\lib0bc\libWiFiS3.a(Modem.cpp.o)
+                0x200006cc                modem
  .bss._ZN8FspTimer16agt_used_channelE
-                0x20000768        0x2 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
-                0x20000768                FspTimer::agt_used_channel
+                0x20000764        0x2 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
+                0x20000764                FspTimer::agt_used_channel
  .bss._ZN8FspTimer16gpt_used_channelE
-                0x2000076a        0x8 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
-                0x2000076a                FspTimer::gpt_used_channel
+                0x20000766        0x8 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
+                0x20000766                FspTimer::gpt_used_channel
  .bss._ZN8FspTimer18force_pwm_reservedE
-                0x20000772        0x1 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
-                0x20000772                FspTimer::force_pwm_reserved
- *fill*         0x20000773        0x1 
+                0x2000076e        0x1 .pio\build\uno_r4_wifi\libFrameworkArduino.a(FspTimer.cpp.o)
+                0x2000076e                FspTimer::force_pwm_reserved
+ *fill*         0x2000076f        0x1 
  .bss._ZGVZN10IRQManager11getInstanceEvE8instance
-                0x20000774        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+                0x20000770        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
  .bss._ZZN10IRQManager11getInstanceEvE8instance
-                0x20000778        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
+                0x20000774        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IRQManager.cpp.o)
  .bss._ZN4UART7g_uartsE
-                0x2000077c       0x28 .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
-                0x2000077c                UART::g_uarts
- .bss._UART1_   0x200007a4      0x4ac .pio\build\uno_r4_wifi\libFrameworkArduino.a(SerialObj1.cpp.o)
-                0x200007a4                _UART1_
- .bss._UART3_   0x20000c50      0x4ac .pio\build\uno_r4_wifi\libFrameworkArduino.a(SerialObj3.cpp.o)
-                0x20000c50                _UART3_
+                0x20000778       0x28 .pio\build\uno_r4_wifi\libFrameworkArduino.a(Serial.cpp.o)
+                0x20000778                UART::g_uarts
+ .bss._UART1_   0x200007a0      0x4ac .pio\build\uno_r4_wifi\libFrameworkArduino.a(SerialObj1.cpp.o)
+                0x200007a0                _UART1_
+ .bss._UART3_   0x20000c4c      0x4ac .pio\build\uno_r4_wifi\libFrameworkArduino.a(SerialObj3.cpp.o)
+                0x20000c4c                _UART3_
  .bss._ZL17scan_complete_cbk
-                0x200010fc        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
+                0x200010f8        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
  .bss._ZL20window_compare_a_cbk
-                0x20001100        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
+                0x200010fc        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
  .bss._ZL20window_compare_b_cbk
-                0x20001104        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
+                0x20001100        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
  .bss._ZL25analog_values_by_channels
-                0x20001108       0x3a .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
- *fill*         0x20001142        0x2 
- .bss._ZL3adc   0x20001144       0x5c .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
- .bss._ZL4adc1  0x200011a0       0x5c .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
- .bss._ZL4aref  0x200011fc        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
- .bss._ZL4pwms  0x20001200       0x68 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
+                0x20001104       0x3a .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
+ *fill*         0x2000113e        0x2 
+ .bss._ZL3adc   0x20001140       0x5c .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
+ .bss._ZL4adc1  0x2000119c       0x5c .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
+ .bss._ZL4aref  0x200011f8        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
+ .bss._ZL4pwms  0x200011fc       0x68 .pio\build\uno_r4_wifi\libFrameworkArduino.a(analog.cpp.o)
  .bss._ZN7arduino11IN6ADDR_ANYE
-                0x20001268       0x18 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IPAddress.cpp.o)
-                0x20001268                arduino::IN6ADDR_ANY
+                0x20001264       0x18 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IPAddress.cpp.o)
+                0x20001264                arduino::IN6ADDR_ANY
  .bss._ZN7arduino11INADDR_NONEE
-                0x20001280       0x18 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IPAddress.cpp.o)
-                0x20001280                arduino::INADDR_NONE
- .bss._dac12    0x20001298       0x3c .pio\build\uno_r4_wifi\libFrameworkArduino.a(dac.cpp.o)
-                0x20001298                _dac12
+                0x2000127c       0x18 .pio\build\uno_r4_wifi\libFrameworkArduino.a(IPAddress.cpp.o)
+                0x2000127c                arduino::INADDR_NONE
+ .bss._dac12    0x20001294       0x3c .pio\build\uno_r4_wifi\libFrameworkArduino.a(dac.cpp.o)
+                0x20001294                _dac12
  .bss.irq_vector_table
-                0x200012d4        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(main.cpp.o)
-                0x200012d4                irq_vector_table
+                0x200012d0        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(main.cpp.o)
+                0x200012d0                irq_vector_table
  .bss._ZL9agt_timer
-                0x200012d8       0x38 .pio\build\uno_r4_wifi\libFrameworkArduino.a(time.cpp.o)
+                0x200012d4       0x38 .pio\build\uno_r4_wifi\libFrameworkArduino.a(time.cpp.o)
  .bss.agt_time_ms
-                0x20001310        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(time.cpp.o)
-                0x20001310                agt_time_ms
+                0x2000130c        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(time.cpp.o)
+                0x2000130c                agt_time_ms
  .bss.call_stack_info
-                0x20001314       0x90 .pio\build\uno_r4_wifi\libFrameworkArduino.a(cm_backtrace.c.o)
+                0x20001310       0x90 .pio\build\uno_r4_wifi\libFrameworkArduino.a(cm_backtrace.c.o)
  .bss.code_size
-                0x200013a4        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(cm_backtrace.c.o)
+                0x200013a0        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(cm_backtrace.c.o)
  .bss.code_start_addr
-                0x200013a8        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(cm_backtrace.c.o)
- .bss.fw_name   0x200013ac        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(cm_backtrace.c.o)
- .bss.init_ok   0x200013b0        0x1 .pio\build\uno_r4_wifi\libFrameworkArduino.a(cm_backtrace.c.o)
- *fill*         0x200013b1        0x3 
+                0x200013a4        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(cm_backtrace.c.o)
+ .bss.fw_name   0x200013a8        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(cm_backtrace.c.o)
+ .bss.init_ok   0x200013ac        0x1 .pio\build\uno_r4_wifi\libFrameworkArduino.a(cm_backtrace.c.o)
+ *fill*         0x200013ad        0x3 
  .bss.main_stack_size
-                0x200013b4        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(cm_backtrace.c.o)
+                0x200013b0        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(cm_backtrace.c.o)
  .bss.main_stack_start_addr
-                0x200013b8        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(cm_backtrace.c.o)
- .bss.on_fault  0x200013bc        0x1 .pio\build\uno_r4_wifi\libFrameworkArduino.a(cm_backtrace.c.o)
- *fill*         0x200013bd        0x3 
- .bss.regs      0x200013c0       0x44 .pio\build\uno_r4_wifi\libFrameworkArduino.a(cm_backtrace.c.o)
+                0x200013b4        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(cm_backtrace.c.o)
+ .bss.on_fault  0x200013b8        0x1 .pio\build\uno_r4_wifi\libFrameworkArduino.a(cm_backtrace.c.o)
+ *fill*         0x200013b9        0x3 
+ .bss.regs      0x200013bc       0x44 .pio\build\uno_r4_wifi\libFrameworkArduino.a(cm_backtrace.c.o)
  .bss.stack_is_overflow
-                0x20001404        0x1 .pio\build\uno_r4_wifi\libFrameworkArduino.a(cm_backtrace.c.o)
- *fill*         0x20001405        0x3 
- .bss.sw_ver    0x20001408        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(cm_backtrace.c.o)
+                0x20001400        0x1 .pio\build\uno_r4_wifi\libFrameworkArduino.a(cm_backtrace.c.o)
+ *fill*         0x20001401        0x3 
+ .bss.sw_ver    0x20001404        0x4 .pio\build\uno_r4_wifi\libFrameworkArduino.a(cm_backtrace.c.o)
  .bss.gp_prv_agt_periods
-                0x2000140c        0x8 C:\Users\83tuc\.platformio\packages\framework-arduinorenesas-uno\variants\UNOWIFIR4\libs\libfsp.a(r_agt.o)
+                0x20001408        0x8 C:\Users\83tuc\.platformio\packages\framework-arduinorenesas-uno\variants\UNOWIFIR4\libs\libfsp.a(r_agt.o)
  .bss.g_bsp_group_irq_sources
-                0x20001414       0x40 C:\Users\83tuc\.platformio\packages\framework-arduinorenesas-uno\variants\UNOWIFIR4\libs\libfsp.a(bsp_group_irq.o)
-                0x20001414                g_bsp_group_irq_sources
+                0x20001410       0x40 C:\Users\83tuc\.platformio\packages\framework-arduinorenesas-uno\variants\UNOWIFIR4\libs\libfsp.a(bsp_group_irq.o)
+                0x20001410                g_bsp_group_irq_sources
  .bss.g_protect_pfswe_counter
-                0x20001454        0x4 C:\Users\83tuc\.platformio\packages\framework-arduinorenesas-uno\variants\UNOWIFIR4\libs\libfsp.a(bsp_io.o)
-                0x20001454                g_protect_pfswe_counter
+                0x20001450        0x4 C:\Users\83tuc\.platformio\packages\framework-arduinorenesas-uno\variants\UNOWIFIR4\libs\libfsp.a(bsp_io.o)
+                0x20001450                g_protect_pfswe_counter
  .bss.gp_renesas_isr_context
-                0x20001458       0x80 C:\Users\83tuc\.platformio\packages\framework-arduinorenesas-uno\variants\UNOWIFIR4\libs\libfsp.a(bsp_irq.o)
-                0x20001458                gp_renesas_isr_context
+                0x20001454       0x80 C:\Users\83tuc\.platformio\packages\framework-arduinorenesas-uno\variants\UNOWIFIR4\libs\libfsp.a(bsp_irq.o)
+                0x20001454                gp_renesas_isr_context
  .bss.g_protect_counters
-                0x200014d8        0x8 C:\Users\83tuc\.platformio\packages\framework-arduinorenesas-uno\variants\UNOWIFIR4\libs\libfsp.a(bsp_register_protection.o)
-                0x200014d8                g_protect_counters
+                0x200014d4        0x8 C:\Users\83tuc\.platformio\packages\framework-arduinorenesas-uno\variants\UNOWIFIR4\libs\libfsp.a(bsp_register_protection.o)
+                0x200014d4                g_protect_counters
  .bss.SystemCoreClock
-                0x200014e0        0x4 C:\Users\83tuc\.platformio\packages\framework-arduinorenesas-uno\variants\UNOWIFIR4\libs\libfsp.a(system.o)
-                0x200014e0                SystemCoreClock
+                0x200014dc        0x4 C:\Users\83tuc\.platformio\packages\framework-arduinorenesas-uno\variants\UNOWIFIR4\libs\libfsp.a(system.o)
+                0x200014dc                SystemCoreClock
  .bss._ZN12_GLOBAL__N_113__new_handlerE
-                0x200014e4        0x4 c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libstdc++_nano.a(new_handler.o)
+                0x200014e0        0x4 c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libstdc++_nano.a(new_handler.o)
  .bss.__malloc_free_list
-                0x200014e8        0x4 c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libc_nano.a(lib_a-nano-mallocr.o)
-                0x200014e8                __malloc_free_list
+                0x200014e4        0x4 c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libc_nano.a(lib_a-nano-mallocr.o)
+                0x200014e4                __malloc_free_list
  .bss.__malloc_sbrk_start
-                0x200014ec        0x4 c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libc_nano.a(lib_a-nano-mallocr.o)
-                0x200014ec                __malloc_sbrk_start
+                0x200014e8        0x4 c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libc_nano.a(lib_a-nano-mallocr.o)
+                0x200014e8                __malloc_sbrk_start
  .bss.heap_end.5377
-                0x200014f0        0x4 c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libnosys.a(sbrk.o)
+                0x200014ec        0x4 c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libnosys.a(sbrk.o)
  *(COMMON)
- COMMON         0x200014f4       0x40 .pio\build\uno_r4_wifi\libFrameworkArduinoVariant.a(common_data.c.o)
-                0x200014f4                g_ioport_ctrl
-                0x200014fc                g_cgc0_ctrl
-                0x2000150c                g_elc_ctrl
-                0x20001514                g_external_irq1_ctrl
-                0x20001524                g_external_irq0_ctrl
- COMMON         0x20001534        0x4 c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libc_nano.a(lib_a-reent.o)
-                0x20001534                errno
-                0x20001538                . = ALIGN (0x4)
-                0x20001538                __bss_end__ = .
+ COMMON         0x200014f0       0x40 .pio\build\uno_r4_wifi\libFrameworkArduinoVariant.a(common_data.c.o)
+                0x200014f0                g_ioport_ctrl
+                0x200014f8                g_cgc0_ctrl
+                0x20001508                g_elc_ctrl
+                0x20001510                g_external_irq1_ctrl
+                0x20001520                g_external_irq0_ctrl
+ COMMON         0x20001530        0x4 c:/users/83tuc/.platformio/packages/toolchain-gccarmnoneeabi/bin/../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m/fpv4-sp/hard\libc_nano.a(lib_a-reent.o)
+                0x20001530                errno
+                0x20001534                . = ALIGN (0x4)
+                0x20001534                __bss_end__ = .
 
-.heap           0x20001538     0x2000 load address 0x00011fa8
+.heap           0x20001538     0x2000 load address 0x00011fa4
                 0x20001538                . = ALIGN (0x8)
                 0x20001538                __HeapBase = .
                 0x20001538                end = .
