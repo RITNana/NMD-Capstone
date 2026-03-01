@@ -213,7 +213,7 @@ const startServer = () => {
     socket.on("bleeding", (data) => latestStationData.bleeding = data);
     socket.on("heart", (data) => latestStationData.heart = data);
     socket.on("tummy", (data) => latestStationData.tummy = data);
-    socket.on("complete", (data) => io.emit("complete")); //relay complete to the monster.js
+    socket.on("complete", (data) => io.emit("complete", data)); //relay complete to the monster.js
     socket.on("refresh", (data) => io.emit("refresh", data)); //relay complete to the monster.js
     socket.on("disconnect", () =>
       console.log("Web client disconnected:", socket.id)
