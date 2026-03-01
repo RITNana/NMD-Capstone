@@ -214,9 +214,9 @@ function createNewSession() {
 //test loop
 //let loop1 = ["bleeding", "tummy", "eyeball"];
 
-let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "bleeding","eyeball", "filler",  "brainTummy"];
-let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball", "tummy", "bleed", "brain", "filler", "filler", "bleedEye", "brainTummy"];
-let loop3 = ["bleeding", "brain", "tummy", "eyeball", "brain", "tummy", "bleeding", "eyeball", "brain", "tummy"]
+let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "bleeding","eyeball", "filler",  "brainTummy", "filler"];
+let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball", "tummy", "bleed", "brain", "filler", "filler",  "bleedEye", "brainTummy", "filler"];
+let loop3 = ["bleeding", "brain", "tummy", "eyeball", "brain", "tummy", "bleeding", "eyeball", "brain", "tummy", "filler"]
 let currentTasks = [];
 let daisyPartProgress;
 let endPartProgress;
@@ -498,17 +498,17 @@ function SocketListeners() {
 // ---- DRAW STATIONS ----
 function draw() {
   newTaskTimer = millis();
-  if (newTaskTimer - lastNewTaskTimer > 5000) { allowNewTask = true; }
-  if (updateGameState && useGameLoop && allowNewTask) {
-    const activeTaskCount = currentTasks.length;
-    updateGameState = false;
-    gameIndex++;
-    if (currentLoop === 1) { gameLoop1(activeTaskCount); };
-    if (currentLoop === 2) { gameLoop2(activeTaskCount); };
-    if (currentLoop === 3) { gameLoop3(activeTaskCount); };
-    lastNewTaskTimer = millis();
-    allowNewTask = false;
-  }
+  if(newTaskTimer - lastNewTaskTimer > 2000 ) {allowNewTask = true;}
+    if(updateGameState && useGameLoop && allowNewTask){
+      const activeTaskCount = currentTasks.length;
+      updateGameState = false;
+      gameIndex++;
+      if (currentLoop === 1) { gameLoop1(activeTaskCount); };
+      if (currentLoop === 2) { gameLoop2(activeTaskCount); };
+      if (currentLoop === 3) { gameLoop3(activeTaskCount); };
+      lastNewTaskTimer = millis();
+      allowNewTask = false;
+    }
   background(0);
 
   let headScale = 0.3;
@@ -600,7 +600,7 @@ function draw() {
           st.dismissing = true;
           // banish = st.name;
           // st.completed = true;
-          //console.log(st.dismissing);
+          daisy.useDaisy = false;
           st.dismissStart = millis();
         }
       }
