@@ -113,6 +113,18 @@ function loopingVideo() {
   taskVideo.hide();
 }
 
+function setScores(sessionID){
+  
+  sessionSet = sessionData[sessionID];
+
+  scores = {
+    head: sessionSet.headScore || 0,
+    eyes: sessionSet.eyeScore || 0,
+    stomach: sessionSet.stomachScore || 0,
+    bleeding: sessionSet.bleedingScore || 0
+  };
+}
+
 function setup() {
   const cnv = createCanvas(1078, 1915);
   cnv.parent("canvasContainer");
@@ -174,15 +186,7 @@ function setup() {
   // If they’re NOT numeric, use this instead:
   // const latestKey = keys.at(-1);
 
-  stringSesh = latestKey;
-  sessionSet = sessionData[stringSesh];
-
-  scores = {
-    head: sessionSet.headScore || 0,
-    eyes: sessionSet.eyeScore || 0,
-    stomach: sessionSet.stomachScore || 0,
-    bleeding: sessionSet.bleedingScore || 0
-  };
+  setScores(stringSesh);
 
   console.log("Loaded scores:", scores);
 
