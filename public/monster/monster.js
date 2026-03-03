@@ -112,7 +112,7 @@ function loopingVideo() {
   taskVideo.loop();
   taskVideo.hide();
 }
-
+let finalBgPath;
 function setup() {
   const cnv = createCanvas(1078, 1915);
   cnv.parent("canvasContainer");
@@ -127,7 +127,7 @@ function setup() {
     noLoop();
     return;
   }
-
+//more code to clean up yay
   socket = io();
   function SocketListeners() {
     socket.on("complete", (sessionID) => {
@@ -144,7 +144,8 @@ function setup() {
 
         // stringSesh = keys.sort((a, b) => Number(a) - Number(b)).at(-1);
         sessionSet = sessionData[sessionID];
-
+        
+        monsterType = monsterTypes[sessionSet.monsterType];
         scores = {
           head: sessionSet.headScore || 0,
           eyes: sessionSet.eyeScore || 0,
@@ -156,8 +157,51 @@ function setup() {
       });
     });
     socket.on("refresh", (sessionID) => {
-      window.location.reload();
-      console.log("Update session:" + sessionID);
+      loadJSON("/score", (newSessionData) => {
+        sessionData = newSessionData;
+
+        //confirm current session
+        const keys = Object.keys(sessionData || {});
+        if (keys.length === 0) {
+          console.error("No sessions found in /score");
+          return;
+        }
+
+        // stringSesh = keys.sort((a, b) => Number(a) - Number(b)).at(-1);
+        sessionSet = sessionData[sessionID];
+
+        monsterType = monsterTypes[sessionSet.monsterType];
+        scores = {
+          head: sessionSet.headScore || 0,
+          eyes: sessionSet.eyeScore || 0,
+          stomach: sessionSet.stomachScore || 0,
+          bleeding: sessionSet.bleedingScore || 0
+        };
+        
+          finalBgLoading = true;
+          finalBgError = false;
+          finalBgImg = null;
+
+          finalBgPath = `/media/monsters/${monsterType}/${monsterType}-finalcard.png`;
+          console.log("loading final bg:", finalBgPath);
+
+          loadImage(
+            finalBgPath,
+            (img) => {
+              finalBgImg = img;
+              finalBgLoading = false;
+              console.log("Loaded final bg OK:", finalBgPath);
+            },
+            (err) => {
+              finalBgLoading = false;
+              finalBgError = true;
+              console.error("Failed to load final bg:", finalBgPath, err);
+            }
+          );
+        loopingVideo();
+      });
+      // window.location.reload();
+      // console.log("Update session:" + sessionID);
     })
   }
 
@@ -165,7 +209,7 @@ function setup() {
   // If your session ids are numeric strings like "0","1","2"... use this safer sort:
   const latestKey = keys.sort((a, b) => Number(a) - Number(b)).at(-1);
 
-  addEventListener("keydown", (e) => {
+  addEventListener("keydown", async (e) => {
     //These bring in new tasks
     if (e.key == "|") { createMonster(); }
   });
@@ -204,7 +248,7 @@ function setup() {
   finalBgError = false;
   finalBgImg = null;
 
-  const finalBgPath = `/media/monsters/${monsterType}/${monsterType}-finalcard.png`;
+  finalBgPath = `/media/monsters/${monsterType}/${monsterType}-finalcard.png`;
   console.log("loading final bg:", finalBgPath);
 
   loadImage(
