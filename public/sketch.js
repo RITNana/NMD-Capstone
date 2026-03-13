@@ -141,13 +141,13 @@ function tubeFinder() {
     //red port
     if (portData[station].red !== "0" &&
       previousPortState[station].red === "0") {
-      playSound("connect");
+      // playSound("connect");
     }
 
     //blue port
     if (portData[station].blue !== "0" &&
       previousPortState[station].blue === "0") {
-      playSound("connect");
+      // playSound("connect");
     }
 
     // Update previous state
@@ -214,7 +214,7 @@ function createNewSession() {
 //test loop
 //let loop1 = ["bleeding", "tummy", "eyeball"];
 
-let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "bleeding","eyeball", "filler",  "brainTummy", "filler"];
+let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "tummy","eyeball", "filler",  "brainTummy", "filler"];
 let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball", "tummy", "bleed", "brain", "filler", "filler",  "bleedEye", "brainTummy", "filler"];
 let loop3 = ["bleeding", "brain", "tummy", "eyeball", "brain", "tummy", "bleeding", "eyeball", "brain", "tummy", "filler"]
 let currentTasks = [];
@@ -474,12 +474,12 @@ function setup() {
 
 // ---- Socket Listeners ----
 //They should be strings they come from index.js
-function SocketListeners() {
-  socket.on("brain-data", (p) => stations.brain.num = (String(p).trim()));
-  socket.on("eyeball-data", (p) => stations.eyeball.num = (String(p).trim()));
-  socket.on("bleeding-data", (p) => stations.bleeding.num = (String(p).trim()));
+function SocketListeners() { // nunmber comments are under usual GDC load values
+  socket.on("brain-data", (p) => stations.brain.num = (String(p).trim()) * 25);// 2
+  socket.on("eyeball-data", (p) => stations.eyeball.num = (String(p).trim()) * 25); //6
+  socket.on("bleeding-data", (p) => stations.bleeding.num = (String(p).trim()) * 25); //10
   socket.on("heart-data", (p) => stations.heart.num = (String(p).trim()));
-  socket.on("tummy-data", (p) => stations.tummy.num = (String(p).trim()));
+  socket.on("tummy-data", (p) => stations.tummy.num = (String(p).trim()) * 25); //6
 
   socket.on("brain-red", (p) => portData.brain.red = (String(p).trim()));
   socket.on("eyeball-red", (p) => portData.eyeball.red = (String(p).trim()));
