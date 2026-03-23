@@ -107,7 +107,7 @@ void task(){
     digitalWrite(stationPin1,HIGH);
     digitalWrite(stationPin2,HIGH);
     Serial.println("opening");
-    servoR.write(90);
+    servoR.write(75); //INCREASED ANGLE FOR GDC WAS 90
     servoL.write(180);
     delay(500);
 
