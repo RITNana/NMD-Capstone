@@ -29,6 +29,7 @@ const barH = 30;
 
 //game time
 let gameDuration = 120 * 1000;
+let gameTime = 120000;
 let gameTimeStart = 0;
 let gameOver = false;
 
@@ -214,8 +215,8 @@ function createNewSession() {
 //test loop
 //let loop1 = ["bleeding", "tummy", "eyeball"];
 
-let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "tummy","eyeball", "filler",  "brainTummy", "filler"];
-let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball", "tummy", "bleed", "brain", "filler", "filler",  "bleedEye", "brainTummy", "filler"];
+let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "tummy", "eyeball", "filler", "brainTummy", "filler"];
+let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball", "tummy", "bleed", "brain", "filler", "filler", "bleedEye", "brainTummy", "filler"];
 let loop3 = ["bleeding", "brain", "tummy", "eyeball", "brain", "tummy", "bleeding", "eyeball", "brain", "tummy", "filler"]
 let currentTasks = [];
 let daisyPartProgress;
@@ -304,8 +305,8 @@ function setup() {
   createCanvas(720, 400);
   textFont("system-ui");
 
-  //start timer
-  gameTimeStart = millis();
+  // //start timer
+  // gameTimeStart = millis();
 
   //play bgm
   playBGM(currentTrack);
@@ -415,7 +416,9 @@ function setup() {
       currentLoop = 1;
       gameIndex = 0;
       useGameLoop = true;
+      gameTime = 120000;
       gameTimeStart = millis();
+      gameOver = false;
       currentTasks.length = 0;
       activeTaskCount = 0;
       newTask = "";
@@ -430,7 +433,9 @@ function setup() {
       currentLoop = 2;
       gameIndex = 0;
       useGameLoop = true;
+      gameTime = 120000;
       gameTimeStart = millis();
+      gameOver = false;
       currentTasks.length = 0;
       activeTaskCount = 0;
       newTask = "";
@@ -445,7 +450,9 @@ function setup() {
       currentLoop = 3;
       gameIndex = 0;
       useGameLoop = true;
+      gameTime = 120000;
       gameTimeStart = millis();
+      gameOver = false;
       currentTasks.length = 0;
       activeTaskCount = 0;
       newTask = "";
@@ -498,17 +505,17 @@ function SocketListeners() { // nunmber comments are under usual GDC load values
 // ---- DRAW STATIONS ----
 function draw() {
   newTaskTimer = millis();
-  if(newTaskTimer - lastNewTaskTimer > 2000 ) {allowNewTask = true;}
-    if(updateGameState && useGameLoop && allowNewTask){
-      const activeTaskCount = currentTasks.length;
-      updateGameState = false;
-      gameIndex++;
-      if (currentLoop === 1) { gameLoop1(activeTaskCount); };
-      if (currentLoop === 2) { gameLoop2(activeTaskCount); };
-      if (currentLoop === 3) { gameLoop3(activeTaskCount); };
-      lastNewTaskTimer = millis();
-      allowNewTask = false;
-    }
+  if (newTaskTimer - lastNewTaskTimer > 2000) { allowNewTask = true; }
+  if (updateGameState && useGameLoop && allowNewTask) {
+    const activeTaskCount = currentTasks.length;
+    updateGameState = false;
+    gameIndex++;
+    if (currentLoop === 1) { gameLoop1(activeTaskCount); };
+    if (currentLoop === 2) { gameLoop2(activeTaskCount); };
+    if (currentLoop === 3) { gameLoop3(activeTaskCount); };
+    lastNewTaskTimer = millis();
+    allowNewTask = false;
+  }
   background(0);
 
   let headScale = 0.3;
@@ -662,7 +669,6 @@ function draw() {
       }
       banish = "";
 
-
       st.inputDelay = false; //Possible solution for the first input completion
       socket.emit(`${st.name}`, "stop"); //Trigger stop
     }
@@ -805,20 +811,40 @@ function draw() {
 
   // ----GAME TIMER----
   //added game over thing just in case we want to do it for imagine
-  if (!gameOver) {
-    let time = millis() - gameTimeStart;
+  if (!gameOver && useGameLoop) {
+    let elapsed = millis() - gameTimeStart;
+    let remainTime = max(0, gameTime - elapsed);
 
-    let minutes = floor(time / 60000);
-    let seconds = floor((time % 60000) / 1000);
+    let minutes = floor(remainTime / 60000);
+    let seconds = floor((remainTime % 60000) / 1000);
 
-    //format
-    let Ttext = nf(minutes, 2) + ':' + nf(seconds, 2);
+    //format to minutes:seconds
+    let timeText = nf(minutes, 2) + ':' + nf(seconds, 2);
 
+    //display
     textSize(20);
     textAlign(RIGHT, CENTER);
     fill(225);
-    text(Ttext, width - 25, 41);
+    text(timeText, width - 25, 41);
 
+    // for game over
+    if (remainTime <= 0 && !gameOver) {
+      gameOver = true;
+      useGameLoop = false;
+
+      //stop tasks
+      currentTasks.length = 0;
+      visibleTasks.length = 0;
+
+      //rell server GAME OVER
+      socket.emit("complete", currentSession);
+
+      //play final screen
+      playFinalVid();
+      playSound("taskOver");
+
+      console.log("Ran out of time!")
+    }
   }
 }
 
@@ -848,7 +874,6 @@ function ledProgress(charge, th = thresholds) {
 
 //----STORE JSON DATA----
 localStorage.setItem("sessionScore", JSON.stringify(scoreData));
-
 
 //final video play function
 function playFinalVid() {
