@@ -36,3 +36,7 @@ window.scoring = function (totalTaskTime) {
         return taskSum;
     }
 }
+
+function totalScore(bleeding, brain, eyes, stomach) {
+    return bleeding + brain + eyes + stomach;
+}
