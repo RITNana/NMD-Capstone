@@ -1,5 +1,63 @@
-// handle the keybinds
-window.setKeyBinds = function (socket, callbacks) {
+//handles game keybinds
+
+//game callbacks for the keybinds
+window.keyCallbacks = function (socket) {
+    return {
+        setNewTask: (task) => { newTask = task; },
+        banishTask: (task) => { banish = task; },
+        incrementTask: (taskName, amount = 0.1) => {
+            switch (taskName) {
+                case "brain": stations.brain.progress += amount; break;
+                case "eyeball": stations.eyeball.progress += amount; break;
+                case "bleeding": stations.bleeding.progress += amount; break;
+                case "tummy": stations.tummy.progress += amount; break;
+                case "bleedEye":
+                    stations.bleedEye.partProgress.bleeding += amount;
+                    stations.bleedEye.partProgress.eyeball += amount;
+                    break;
+                case "brainTummy":
+                    stations.brainTummy.partProgress.brain += amount;
+                    stations.brainTummy.partProgress.tummy += amount;
+                    break;
+            }
+        },
+        startLoop: (loopNumber) => { //For gameloops
+            createNewSession();
+            currentLoop = loopNumber;
+            gameIndex = 0;
+            useGameLoop = true;
+            gameOver = false;
+            currentTasks.length = 0;
+            activeTaskCount = 0;
+            newTask = "";
+            otherNewTask = "";
+            window.gameTimer.init(currentSession, socket, finalVid, playFinalVid, playSound);
+
+            if (loopNumber === 1) gameLoop1(activeTaskCount);
+            if (loopNumber === 2) gameLoop2(activeTaskCount);
+            if (loopNumber === 3) gameLoop3(activeTaskCount);
+
+            socket.emit("refresh", currentSession);
+        },
+        manualControl: () => { //For manual control
+            currentLoop = 0;
+            gameIndex = 0;
+            useGameLoop = false;
+        }
+        //   manualDaisyTask: () => {
+        //   daisy.useDaisy = true;
+        //   daisy.daisyTask = "bleeding";
+        //   daisy.endTask = "eyeball";
+        //   stations.bleedEye.inputDelay = true;
+        //   console.log("Daisy task activated!");
+        // }
+    }
+
+}
+
+//set keybinds
+window.setKeyBinds = function (socket) {
+    const callbacks = window.keyCallbacks(socket);
     addEventListener("keydown", (e) => {
 
         //These bring in new tasks
