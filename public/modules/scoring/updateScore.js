@@ -61,8 +61,8 @@ window.updateScoreJSON = function (stationName, points) {
     }
     if (stationName === "brainTummy") {
         let halfPoints = Math.floor(points / 2);
-        applyScore("brainScore", halfPoints, "add");
-        applyScore("tummyScore", halfPoints, "add");
+        applyScore("headScore", halfPoints, "add");
+        applyScore("stomachScore", halfPoints, "add");
         applyScore("brainTummy", points);
         return;
     }
