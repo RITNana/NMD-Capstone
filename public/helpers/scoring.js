@@ -3,9 +3,6 @@ window.scoring = function (totalTaskTime) {
     let taskSum = 0;
     let multiplier;
 
-
-
-
     if (totalTaskTime > 0 && totalTaskTime <= 15) {
         randomAdd = int(random(0, 15));
         score = 500;
