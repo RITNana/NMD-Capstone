@@ -329,7 +329,7 @@ function setup() {
   socket = io();
   SocketListeners();
 
-
+//----KEYBINDS-----
   window.setKeyBinds(socket, {
     setNewTask: (task) => { newTask = task; },
     banishTask: (task) => { banish = task; },
