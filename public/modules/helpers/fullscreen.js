@@ -10,7 +10,6 @@ window.fullscreen = function() {
         }
     }
 
-
     //event listener
     document.addEventListener("fullscreenchange", updateFullscreenBG);
     updateFullscreenBG()
