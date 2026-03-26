@@ -27,12 +27,6 @@ const barY = 27;
 const barW = 375;
 const barH = 30;
 
-//game time
-let gameDuration = 120 * 1000;
-let gameTime = 120000;
-let gameTimeStart = 0;
-let gameOver = false;
-
 //final task screen video
 let finalVid;
 let finalVidPlay = false;
@@ -294,8 +288,6 @@ function postScore(sessionId, key, value) {
 }
 
 
-
-
 let newTaskTimer;
 let lastNewTaskTimer;
 let allowNewTask = true;
@@ -304,9 +296,6 @@ function setup() {
   lastNewTaskTimer = millis();
   createCanvas(720, 400);
   textFont("system-ui");
-
-  // //start timer
-  // gameTimeStart = millis();
 
   //play bgm
   playBGM(currentTrack);
@@ -340,141 +329,57 @@ function setup() {
   socket = io();
   SocketListeners();
 
-  //const sessionCount = Object.keys(sessionsData).length;
 
-
-  //currentSession = Object.keys(sessionsData).length.toString();
-  //console.log(currentSession);
-  //monsterType = Math.floor(Math.random() * 6); // 0..5
-  //console.log(monsterType)
-  //
-  //initSessionOnServer(currentSession, monsterType);
-
-  //Some event listeners for manual control of the game
-  addEventListener("keydown", (e) => {
-    //These bring in new tasks
-    if (e.key == "w") { newTask = "brain"; }
-    if (e.key == "e") { newTask = "eyeball"; }
-    if (e.key == "q") { newTask = "bleeding"; }
-    if (e.key == "r") { newTask = "tummy"; }
-    if (e.key == "t") { newTask = "bleedEye"; }
-    if (e.key == "4") { newTask = "brainTummy"; }
-
-    //these atomize task from the list
-    if (e.key == "s") { banish = "brain"; }
-    if (e.key == "d") { banish = "eyeball"; }
-    if (e.key == "a") { banish = "bleeding"; }
-    if (e.key == "f") { banish = "tummy"; }
-    if (e.key == "g") { banish = "bleedEye"; }
-    if (e.key == "5") { banish = "brainTummy"; }
-    // these fill out the bar of a given task
-    // if (e.key == "s") { stations.brain.progress += .1 }
-    // if (e.key == "d") { stations.eyeball.progress += .1 }
-    // if (e.key == "a") { stations.bleeding.progress += .1 }
-    // if (e.key == "f") { stations.tummy.progress += .1 }
-    // if (e.key == "g") {stations.bleedEye.partProgress.bleeding += .1; stations.bleedEye.partProgress.eyeball += 1;}
-    // if (e.key == "5") {stations.brainTummy.partProgress.brain += .1; stations.brainTummy.partProgress.tummy += .1}
-    //reset all pins on a given station
-    //these get sent to index.js
-    if (e.key == "x") { socket.emit("brain", "reset"); }
-    if (e.key == "c") { socket.emit("eyeball", "reset"); }
-    if (e.key == "z") { socket.emit("bleeding", "reset"); }
-    if (e.key == "v") { socket.emit("tummy", "reset"); }
-    if (e.key == "b") { socket.emit("heart", "reset"); }
-
-    //increment LEFT light threshold
-    if (e.key == "7") { socket.emit("brain", "leftInc"); }
-    if (e.key == "8") { socket.emit("eyeball", "leftInc"); }
-    if (e.key == "6") { socket.emit("bleeding", "leftInc"); }
-    if (e.key == "9") { socket.emit("tummy", "leftInc"); }
-    if (e.key == "0") { socket.emit("heart", "leftInc"); }
-    //decrement LEFT light threshold
-    if (e.key == "u") { socket.emit("brain", "leftDec"); }
-    if (e.key == "i") { socket.emit("eyeball", "leftDec"); }
-    if (e.key == "y") { socket.emit("bleeding", "leftDec"); }
-    if (e.key == "o") { socket.emit("tummy", "leftDec"); }
-    if (e.key == "p") { socket.emit("heart", "leftDec"); }
-    //increment RIGHT light threshold
-    if (e.key == "j") { socket.emit("brain", "rightInc"); }
-    if (e.key == "k") { socket.emit("eyeball", "rightInc"); }
-    if (e.key == "h") { socket.emit("bleeding", "rightInc"); }
-    if (e.key == "l") { socket.emit("tummy", "rightInc"); }
-    if (e.key == ";") { socket.emit("heart", "rightInc"); }
-    //decrement RIGHT light threshold
-    if (e.key == "m") { socket.emit("brain", "rightDec"); }
-    if (e.key == ",") { socket.emit("eyeball", "rightDec"); }
-    if (e.key == "n") { socket.emit("bleeding", "rightDec"); }
-    if (e.key == ".") { socket.emit("tummy", "rightDec"); }
-    if (e.key == "/") { socket.emit("heart", "rightDec"); }
-
-
-    if (e.key == "1") { //For gameloop 1
-      // gameloop = 1;
-      // gameState = 1;
-      // updateGameState = true;
+  window.setKeyBinds(socket, {
+    setNewTask: (task) => { newTask = task; },
+    banishTask: (task) => { banish = task; },
+    incrementTask: (taskName, amount = 0.1) => {
+      switch (taskName) {
+        case "brain": stations.brain.progress += amount; break;
+        case "eyeball": stations.eyeball.progress += amount; break;
+        case "bleeding": stations.bleeding.progress += amount; break;
+        case "tummy": stations.tummy.progress += amount; break;
+        case "bleedEye":
+          stations.bleedEye.partProgress.bleeding += amount;
+          stations.bleedEye.partProgress.eyeball += amount;
+          break;
+        case "brainTummy":
+          stations.brainTummy.partProgress.brain += amount;
+          stations.brainTummy.partProgress.tummy += amount;
+          break;
+      }
+    },
+    startLoop: (loopNumber) => { //For gameloops
       createNewSession();
-      currentLoop = 1;
+      currentLoop = loopNumber;
       gameIndex = 0;
       useGameLoop = true;
-      gameTime = 120000;
-      gameTimeStart = millis();
       gameOver = false;
       currentTasks.length = 0;
       activeTaskCount = 0;
       newTask = "";
       otherNewTask = "";
-      gameLoop1(activeTaskCount);
+      window.gameTimer.init(currentSession, socket, finalVid, playFinalVid, playSound);
+
+      if (loopNumber === 1) gameLoop1(activeTaskCount);
+      if (loopNumber === 2) gameLoop2(activeTaskCount);
+      if (loopNumber === 3) gameLoop3(activeTaskCount);
+
       socket.emit("refresh", currentSession);
-    }
-    if (e.key == "2") { //For gameloop 2
-      // gameloop = 2;
-      // gameState = 1;
-      createNewSession();
-      currentLoop = 2;
-      gameIndex = 0;
-      useGameLoop = true;
-      gameTime = 120000;
-      gameTimeStart = millis();
-      gameOver = false;
-      currentTasks.length = 0;
-      activeTaskCount = 0;
-      newTask = "";
-      otherNewTask = "";
-      gameLoop2(activeTaskCount);
-      socket.emit("refresh", currentSession);
-    }
-    if (e.key == "`") { //For gameloop 2
-      // gameloop = 2;
-      // gameState = 1;
-      createNewSession();
-      currentLoop = 3;
-      gameIndex = 0;
-      useGameLoop = true;
-      gameTime = 120000;
-      gameTimeStart = millis();
-      gameOver = false;
-      currentTasks.length = 0;
-      activeTaskCount = 0;
-      newTask = "";
-      otherNewTask = "";
-      gameLoop3(activeTaskCount);
-      socket.emit("refresh", currentSession);
-    }
-    if (e.key == "3") { //For manual control
-      // gameloop = 0;
-      // gameState = 1;
+    },
+    manualControl: () => { //For manual control
       currentLoop = 0;
       gameIndex = 0;
       useGameLoop = false;
     }
-    // if (e.key == "4") { //manual daisy task
+    //   manualDaisyTask: () => {
     //   daisy.useDaisy = true;
-    //   // console.log(daisy.useDaisy);
     //   daisy.daisyTask = "bleeding";
-    //   // console.log(daisy.daisyTask);
     //   daisy.endTask = "eyeball";
     //   stations.bleedEye.inputDelay = true;
+    //   console.log("Daisy task activated!");
     // }
+
   })
 }
 
@@ -642,7 +547,7 @@ function draw() {
         console.log(`${st.name} scored:`, points);
         updateScoreJSON(st.name, points);
 
-        
+
         //remove from visibleTasks and currentTasks
         let index = currentTasks.indexOf(st.name);
         if (index > -1) currentTasks.splice(index, 1);
@@ -812,42 +717,7 @@ function draw() {
   }
 
   // ----GAME TIMER----
-  //added game over thing just in case we want to do it for imagine
-  if (!gameOver && useGameLoop) {
-    let elapsed = millis() - gameTimeStart;
-    let remainTime = max(0, gameTime - elapsed);
-
-    let minutes = floor(remainTime / 60000);
-    let seconds = floor((remainTime % 60000) / 1000);
-
-    //format to minutes:seconds
-    let timeText = nf(minutes, 2) + ':' + nf(seconds, 2);
-
-    //display
-    textSize(20);
-    textAlign(RIGHT, CENTER);
-    fill(225);
-    text(timeText, width - 25, 41);
-
-    // for game over
-    if (remainTime <= 0 && !gameOver) {
-      gameOver = true;
-      useGameLoop = false;
-
-      //stop tasks
-      currentTasks.length = 0;
-      visibleTasks.length = 0;
-
-      //rell server GAME OVER
-      socket.emit("complete", currentSession);
-
-      //play final screen
-      playFinalVid();
-      playSound("taskOver");
-
-      console.log("Ran out of time!")
-    }
-  }
+  window.gameTimer.update();
 }
 
 
