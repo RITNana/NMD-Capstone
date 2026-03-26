@@ -3,10 +3,7 @@ window.updateScoreJSON = function (stationName, points) {
         console.error("No active session!");
         return;
     }
-
-
     //console.log("Current session is:", currentSession);
-
 
     const scoreMap = {
         brain: "headScore",
@@ -17,43 +14,62 @@ window.updateScoreJSON = function (stationName, points) {
         brainTummy: "brainTummy"
     };
 
-
-    let key = scoreMap[stationName];
-    if (!key) return;
-
     //get current scores
-    fetch("/score")
-        .then(res => res.json())
-        .then(data => {
-            let currentValue = data[currentSession]?.[key] || 0;
-            let newTotal;
+    const applyScore = (key, pts, method) => {
+        fetch("/score")
+            .then(res => res.json())
+            .then(data => {
+                let currentValue = data[currentSession]?.[key] || 0;
+                let newTotal;
 
-            //average the scores
-            if (currentValue > 0) {
-                newTotal = (currentValue + points) / 2;
-                newTotal = Math.floor(newTotal);
-            } else {
-                newTotal = points;
-            }
+                // add the scores
+                if (method === "add") {
+                    newTotal = currentValue + pts;
+                } else { //average
+                    newTotal = currentValue > 0 ? Math.floor((currentValue + pts) / 2) : pts;
+                }
 
-            //send updated value
-            return fetch("/score", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    sessionId: currentSession,
-                    key: key,
-                    value: newTotal
-                })
-            });
-        })
-        .then(res => res.json())
-        .then(result => {
-            console.log("score updated!!", result);
-        })
-        .catch(err => {
-            console.error("Error updating:", err);
-        })
+                //send updated value
+                return fetch("/score", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        sessionId: currentSession,
+                        key: key,
+                        value: newTotal
+                    })
+                });
+            })
+            .then(res => res.json())
+            .then(result => {
+                console.log("score updated!!", result);
+            })
+            .catch(err => {
+                console.error("Error updating:", err);
+            })
+    }
+
+    //combined tasks
+    if (stationName === "bleedEye") {
+        let halfPoints = Math.floor(points / 2);
+        applyScore("bleedingScore", halfPoints, "add");
+        applyScore("eyeScore", halfPoints, "add");
+        applyScore("bleedEye", points);
+        return;
+    }
+    if (stationName === "brainTummy") {
+        let halfPoints = Math.floor(points / 2);
+        applyScore("brainScore", halfPoints, "add");
+        applyScore("tummyScore", halfPoints, "add");
+        applyScore("brainTummy", points);
+        return;
+    }
+
+    //normal tasks
+    const key = scoreMap[stationName];
+    if (!key) return;
+    applyScore(key, points);
+
 };

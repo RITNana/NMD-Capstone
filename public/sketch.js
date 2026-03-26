@@ -213,9 +213,9 @@ function createNewSession() {
 }
 
 //test loop
-let loop1 = ["bleeding", "tummy", "eyeball"];
+//let loop1 = ["bleeding", "tummy", "bleeding", "bleedEye"];
 
-//let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "tummy", "eyeball", "filler", "brainTummy", "filler"];
+let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "tummy", "eyeball", "filler", "brainTummy", "filler"];
 let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball", "tummy", "bleed", "brain", "filler", "filler", "bleedEye", "brainTummy", "filler"];
 let loop3 = ["bleeding", "brain", "tummy", "eyeball", "brain", "tummy", "bleeding", "eyeball", "brain", "tummy", "filler"]
 let currentTasks = [];
@@ -641,6 +641,8 @@ function draw() {
         const points = scoring(st.totalTime);
         console.log(`${st.name} scored:`, points);
         updateScoreJSON(st.name, points);
+
+        
         //remove from visibleTasks and currentTasks
         let index = currentTasks.indexOf(st.name);
         if (index > -1) currentTasks.splice(index, 1);
