@@ -4,17 +4,7 @@
 
 // public/sketch.js
 let socket;
-//import { createMonster } from "./monster/monster.js";
 // mirrors Arduino thresholds
-const thresholds = [10, 20, 30];
-
-// animation stuff
-let fullFrames = 0;
-const FULL_FRAMES_TO_CONFIRM = 12; // ~12 frames ≈ 200ms at 60fps
-const DISMISS_DURATION = 600;
-
-//tracks what tasks are currrently shown
-let visibleTasks = [];
 
 // video overlay
 let taskVideo;
