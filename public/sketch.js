@@ -16,12 +16,6 @@ let taskVideo;
 let bleedingBar;
 let veinStatus = "";
 
-//layout constants
-const barX = 282;
-const barY = 27;
-const barW = 375;
-const barH = 30;
-
 //final task screen video
 let finalVid;
 let finalVidPlay = false;
@@ -324,6 +318,18 @@ function setup() {
   socket = io();
   SocketListeners();
 
+  //set station images
+  window.stationLayouts = {
+    brain: { img: brainBar },
+    eyeball: { img: eyeBar },
+    bleeding: { img: bleedingBar },
+    heart: { img: null },
+    tummy: { img: tummyBar },
+    bleedEye: { img: daisyBleedBar },
+    brainTummy: { img: daisyBrainBar }
+  };
+
+
   //setup keybinds
   window.setKeyBinds(socket, window.keyCallbacks());
 }
@@ -382,26 +388,6 @@ function draw() {
     h = w * (timerImage.height / timerImage.width);
     image(timerImage, width - 110, 25, w, h);
   }
-
-  //layout constants
-  const topOffset = 90;
-  const space = 24;
-  const ratio = 357 / 4308;
-  const barWidth = width * 0.9;
-  const barHeight = barWidth * ratio;
-  const centeredX = (width - barWidth) / 2;
-  const daisyMult = 2;
-
-  //layouts of stations
-  let stationLayouts = {
-    brain: { img: brainBar, x: centeredX, y: 0, w: barWidth, h: barHeight },
-    eyeball: { img: eyeBar, x: centeredX, y: 0, w: barWidth, h: barHeight },
-    bleeding: { img: bleedingBar, x: centeredX, y: 0, w: barWidth, h: barHeight },
-    heart: { img: null, x: centeredX, y: 0, w: barWidth, h: barHeight },
-    tummy: { img: tummyBar, x: centeredX, y: 0, w: barWidth, h: barHeight },
-    bleedEye: { img: daisyBleedBar, x: centeredX, y: 0, w: barWidth, h: barHeight },
-    brainTummy: { img: daisyBrainBar, x: centeredX, y: 0, w: barWidth, h: barHeight }
-  };
 
   //Trigger the tube finder to be updated
   tubeFinder();
@@ -593,66 +579,23 @@ function draw() {
     }
   }
 
-  // --- STACK STATIONS ---
-  for (let i = 0; i < visibleTasks.length; i++) {
-    const key = visibleTasks[i];
-    const posY = topOffset + i * (barHeight + space);
 
+  //---DRAW STATIONS---
+  //station layouts
+  const {
+    barWidth,
+    barHeight,
+    centeredX,
+  } = getStationLayout();
 
-    //--- DAISY STATIONS ---
-    if (key === "bleedEye" || key === "brainTummy") {
-      const st = stations[key];
-
-      push();
-      translate(st.offsetX, posY);
-
-      //draw two bars
-      const parts = st.parts;
-
-      if (parts[0]) {
-        noStroke();
-        fill(228, 44, 46);
-        rect(barX - 10, barY - 10, barW * daisyPartProgress, barH - 10);
-      }
-      if (parts[1]) {
-        noStroke();
-        fill(228, 44, 46);
-        rect(barX - 10, barY + 44, barW * endPartProgress, barH - 10);
-      };
-
-      //draw image
-      tint(255, 255 * st.fade);
-      image(st.img, centeredX, 0, barWidth, barHeight * daisyMult);
-      noTint();
-
-      pop();
-      continue;
-    }
-
-
-    //--- NORMAL STATIONS ---
-    const st = stations[key];
-    //if (!st) continue;
-
-    if (st.visible || st.dismissing) {
-      const layout = stationLayouts[st.name];
-
-      push();
-      translate(st.offsetX, posY);
-      noStroke();
-      fill(228, 44, 46);
-      rect(barX - 10, barY - 10, barW * st.progress, barH - 10);
-
-      //image
-      if (layout && layout.img) {
-        tint(255, 255 * st.fade);
-        image(layout.img, layout.x, layout.y, layout.w, layout.h);
-        noTint();
-      }
-
-      pop();
-    }
-  }
+  //draw them
+  window.drawStations({
+    visibleTasks,
+    stations,
+    centeredX,
+    barWidth,
+    barHeight,
+  });
 
   // ---- DRAW FINAL TASK SCREEN VIDEO ----
   if (finalVidPlay) {
