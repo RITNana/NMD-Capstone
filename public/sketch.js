@@ -93,7 +93,8 @@ function preload() {
   sfx.bg3 = loadSound("media/audio/music/bgm3.mp3");
   bgmList = [sfx.bg1, sfx.bg2, sfx.bg3];
 
-  //final video
+  //videos
+  taskVideo = createVideo("media/video/Background.mp4");
   finalVid = createVideo("media/video/EndScreen.mp4");
 
   sessionsData = loadJSON("/score");
@@ -280,6 +281,7 @@ function postScore(sessionId, key, value) {
 let newTaskTimer;
 let lastNewTaskTimer;
 let allowNewTask = true;
+
 function setup() {
   newTaskTimer = millis();
   lastNewTaskTimer = millis();
@@ -289,30 +291,12 @@ function setup() {
   //play bgm
   playBGM(currentTrack);
 
-  //background task video
-  taskVideo = createVideo("media/video/Background.mp4", () => {
-    // make it autoplay-safe
-    taskVideo.volume(0); // p5 wrapper volume
-    taskVideo.elt.muted = true;
-    taskVideo.elt.setAttribute("muted", "");
-    taskVideo.elt.setAttribute("playsinline", ""); // iOS Safari inline playback
-    taskVideo.loop(); // or .play()
-    taskVideo.hide();
-  });
+  //initilaize the videos
+  initVideos();
+
+  //task video
   taskVideo.loop();
   taskVideo.hide();
-
-  //final video
-  finalVid.volume(0);
-  finalVid.elt.muted = true;
-  finalVid.elt.setAttribute("muted", "");
-  finalVid.elt.setAttribute("playsinline", ""); // iOS Safari inline playback
-  finalVid.hide();
-  //does NOT loop
-  finalVid.elt.onended = () => {
-    finalVidOver = true;
-    finalVid.pause();
-  }
 
   // same-origin socket.io
   socket = io();
@@ -328,7 +312,6 @@ function setup() {
     bleedEye: { img: daisyBleedBar },
     brainTummy: { img: daisyBrainBar }
   };
-
 
   //setup keybinds
   window.setKeyBinds(socket, window.keyCallbacks());
@@ -376,8 +359,10 @@ function draw() {
   let headScale = 0.3;
   let timeScale = 0.12;
 
-  //video and header
-  if (taskVideo) image(taskVideo, 0, 0, width, height);
+  //draw video
+  drawVideos();
+
+  //header
   if (headerImage) {
     w = width * headScale;
     h = w * (headerImage.height / headerImage.width);
@@ -476,7 +461,6 @@ function draw() {
         const points = scoring(st.totalTime);
         console.log(`${st.name} scored:`, points);
         updateScoreJSON(st.name, points);
-
 
         //remove from visibleTasks and currentTasks
         let index = currentTasks.indexOf(st.name);
@@ -579,7 +563,6 @@ function draw() {
     }
   }
 
-
   //---DRAW STATIONS---
   //station layouts
   const {
@@ -634,18 +617,6 @@ function ledProgress(charge, th = thresholds) {
 //----STORE JSON DATA----
 localStorage.setItem("sessionScore", JSON.stringify(scoreData));
 
-//final video play function
-function playFinalVid() {
-  useGameLoop = false;
-  gameOver = true;
-  finalVidPlay = true;
-  finalVidOver = false;
-
-  //rewind vid
-  finalVid.time(0);
-  finalVid.play();
-}
-
 
 // ----- INTERACTION -----
 
@@ -659,7 +630,6 @@ function mousePressed() {
   if (getAudioContext().state !== 'running') {
     getAudioContext().resume();
   }
-
 }
 
 //import from helper

@@ -1,4 +1,4 @@
-//play sounds helpers
+//handles all audio functions
 
 //volumes
 let sfxVolume = 0.6;
