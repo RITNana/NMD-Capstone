@@ -11,15 +11,6 @@ const DISMISS_DURATION = 600;
 
 //tracks what tasks are currrently shown
 let visibleTasks = [];
-// video overlay
-let taskVideo;
-let bleedingBar;
-let veinStatus = "";
-
-//final task screen video
-let finalVid;
-let finalVidPlay = false;
-let finalVidOver = false;
 
 //score calculation
 let scoreData = {
@@ -155,46 +146,6 @@ function tubeFinder() {
 let currentLoop = 0;
 let gameIndex = 0;
 
-async function initSessionOnServer(sessionId, monsterType) {
-  const template = {
-    monsterType,
-    headScore: 0,
-    eyeScore: 0,
-    bleedingScore: 0,
-    stomachScore: 0,
-    bleedEye: 0,
-    brainTummy: 0,
-  };
-
-  // write each key to sessions.json using your existing route
-  await Promise.all(
-    Object.entries(template).map(([key, value]) => postScore(sessionId, key, value))
-  );
-
-  console.log("session initialized on server:", sessionId, template);
-}
-
-
-function getNextSessionId() {
-  // safest version (handles gaps and non-numeric keys)
-  const keys = Object.keys(sessionsData || {});
-  const nums = keys.map(k => parseInt(k, 10)).filter(n => Number.isFinite(n));
-  const next = (nums.length ? Math.max(...nums) + 1 : 0);
-  return String(next);
-}
-
-function createNewSession() {
-  currentSession = getNextSessionId();
-  monsterType = Math.floor(Math.random() * 6);
-
-  // keep local copy in sync so the next press increments correctly
-  sessionsData[currentSession] = sessionsData[currentSession] || {};
-
-  // write template to sessions.json
-  initSessionOnServer(currentSession, monsterType)
-    .then(() => console.log("new session created:", currentSession, "monsterType:", monsterType))
-    .catch((e) => console.error("session create failed", e));
-}
 
 //test loop
 //let loop1 = ["bleeding", "tummy", "bleeding", "bleedEye"];
@@ -265,16 +216,6 @@ function gameLoop3(activeTaskCount) {
     return;
   }
   if (!loop3[gameIndex]) return;
-}
-
-
-//for initializing the session data to the json
-function postScore(sessionId, key, value) {
-  return fetch("/score", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ sessionId, key, value }),
-  }).then((r) => r.json());
 }
 
 
@@ -360,7 +301,7 @@ function draw() {
   let timeScale = 0.12;
 
   //draw video
-  drawVideos();
+  drawVideo();
 
   //header
   if (headerImage) {
@@ -580,39 +521,17 @@ function draw() {
     barHeight,
   });
 
-  // ---- DRAW FINAL TASK SCREEN VIDEO ----
-  if (finalVidPlay) {
-    image(finalVid, 0, 0, width, height);
-    return;
-  }
-
-  // ----GAME TIMER----
+  //draw game timer
   window.gameTimer.update();
+
+  //draw final vid
+  drawVideo("final");
 }
 
 
 // ---- SHOW BAR PROGRESS ----
-// Map chargeNum to progress in 3 equal segments that line up with the LEDs
-function ledProgress(charge, th = thresholds) {
-  const [t0, t1, t2] = th;
+ledProgress(st.num, thresholds);
 
-  // if (charge <= 0 || !heartConnected) return 0;
-  if (charge <= 0) return 0;
-
-  if (charge <= t0) {
-    // first third
-    const seg = charge / t0; // 0..1 within [0..t0]
-    return (1 / 3) * seg;
-  } else if (charge <= t1) {
-    // second third
-    const seg = (charge - t0) / (t1 - t0); // 0..1 within (t0..t1]
-    return 1 / 3 + (1 / 3) * seg;
-  } else {
-    // last third (cap at full)
-    const seg = (charge - t1) / (t2 - t1); // 0..1 within (t1..t2]
-    return Math.min(2 / 3 + (1 / 3) * seg, 1);
-  }
-}
 
 //----STORE JSON DATA----
 localStorage.setItem("sessionScore", JSON.stringify(scoreData));

@@ -15,6 +15,10 @@ window.initVideos = function () {
     finalVid.elt.onended = () => finalVidOver = true;
 }
 
+let finalVid;
+let finalVidPlay = false;
+let finalVidOver = false;
+
 //handles when final video plays
 window.playFinalVid = function () {
     useGameLoop = false;
@@ -28,7 +32,10 @@ window.playFinalVid = function () {
 }
 
 //draw the videos
-window.drawVideos = function () {
-  if (taskVideo) image(taskVideo, 0, 0, width, height);
-  if (finalVidPlay) image(finalVid, 0, 0, width, height);
+window.drawVideo = function (video = "task") {
+    if (video === "final") {
+        if (finalVidPlay) image(finalVid, 0, 0, width, height);
+    } else {
+        if (taskVideo) image(taskVideo, 0, 0, width, height);
+    }
 };

@@ -2523,32 +2523,5 @@
     "stomachScore": 0,
     "bleedEye": 0,
     "brainTummy": 0
-  },
-  "282": {
-    "monsterType": 0,
-    "headScore": 0,
-    "eyeScore": 0,
-    "bleedingScore": 0,
-    "stomachScore": 0,
-    "bleedEye": 0,
-    "brainTummy": 0
-  },
-  "283": {
-    "monsterType": 5,
-    "headScore": 509,
-    "eyeScore": 503,
-    "bleedingScore": 509,
-    "stomachScore": 506,
-    "bleedEye": 0,
-    "brainTummy": 0
-  },
-  "284": {
-    "monsterType": 0,
-    "headScore": 0,
-    "eyeScore": 0,
-    "bleedingScore": 510,
-    "stomachScore": 0,
-    "bleedEye": 0,
-    "brainTummy": 0
   }
 }

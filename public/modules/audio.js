@@ -23,7 +23,6 @@ window.playSound = function (name, loop = false, volume = sfxVolume) {
   }
 }
 
-
 //for background music
 window.playBGM = function (currentTrack, volume = bgmVolume) {
   let track = bgmList[currentTrack];
