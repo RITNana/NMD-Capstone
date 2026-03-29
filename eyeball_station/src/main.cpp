@@ -189,70 +189,7 @@ int eyeballLoop()
 
 
   bool covered = eyesCovered(leftLight,rightLight);
-  //Serial.print("L=");
-  //Serial.print(leftLight);
-  //Serial.print(" R=");
-  //Serial.print(rightLight);
-  //Serial.print(" Sock=");
-  //Serial.print(connectionLight);
-  //Serial.print(" | AvgL=");
-  //Serial.print(averageLightLeft);
-  //Serial.print(" AvgR=");
-  //Serial.print(averageLightRight);
-  //Serial.print(" AvgSock=");
-  //Serial.print(averageLightSocket);
-  //Serial.print(" | conn=");
-  //Serial.print(connected ? "Y" : "N");
-  // popout();
   
-
-
-
-  // --- State machine ---
-  // 0 = eyes bright (normal), 1 = eyes covered, 2 = eyes popped out (latched)
-  // if (eyeCondition == 0)
-  // {
-  //   // go to 1 when both eyes are covered
-  //   if (eyesCovered(leftLight, rightLight))
-  //   {
-  //     eyeCondition = 1;
-  //   }
-  // }
-  // else if (eyeCondition == 1)
-  // {
-  //   // if eyes become bright:
-  //   if (eyesBright(leftLight, rightLight))
-  //   {
-  //     if (connected)
-  //     {
-  //       // socket light present -> OK to go back to 0
-  //       eyeCondition = 0;
-  //     }
-  //     else
-  //     {
-  //       // socket dark -> latch "popped out"
-  //       eyeCondition = 2;
-  //     }
-  //   }
-  //   // (stay 1 if still covered)
-  // }
-  // else if (eyeCondition == 2)
-  // {
-  //   // popped out: must see socket light before allowing return to 0
-  //   if (connected && eyesBright(leftLight, rightLight))
-  //   {
-  //     eyeCondition = 0;
-  //   }
-  //   // user can cover again anytime -> show 1
-  //   else if (eyesCovered(leftLight, rightLight))
-  //   {
-  //     eyeCondition = 1;
-  //     output += 2;
-  //   }
-  //   else{
-  //     return 0; //This is to prevent the 2 from triggering completion
-  //   }
-  // }
   if(anyLightOn && covered && allowScoring && output < 110){output += 2;}
   else if( output > 0){output -= 2;}
   // delay(200);
