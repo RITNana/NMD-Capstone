@@ -4,17 +4,7 @@
 
 // public/sketch.js
 let socket;
-//import { createMonster } from "./monster/monster.js";
 // mirrors Arduino thresholds
-const thresholds = [10, 20, 30];
-
-// animation stuff
-let fullFrames = 0;
-const FULL_FRAMES_TO_CONFIRM = 12; // ~12 frames ≈ 200ms at 60fps
-const DISMISS_DURATION = 600;
-
-//tracks what tasks are currrently shown
-let visibleTasks = [];
 
 // video overlay
 let taskVideo;
@@ -26,11 +16,6 @@ const barX = 282;
 const barY = 27;
 const barW = 375;
 const barH = 30;
-
-//game time
-let gameDuration = 120 * 1000;
-let gameTimeStart = 0;
-let gameOver = false;
 
 //final task screen video
 let finalVid;
@@ -141,13 +126,13 @@ function tubeFinder() {
     //red port
     if (portData[station].red !== "0" &&
       previousPortState[station].red === "0") {
-      playSound("connect");
+      // playSound("connect");
     }
 
     //blue port
     if (portData[station].blue !== "0" &&
       previousPortState[station].blue === "0") {
-      playSound("connect");
+      // playSound("connect");
     }
 
     // Update previous state
@@ -212,10 +197,10 @@ function createNewSession() {
 }
 
 //test loop
-//let loop1 = ["bleeding", "tummy", "eyeball"];
+//let loop1 = ["bleeding", "tummy", "bleeding", "bleedEye"];
 
-let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "bleeding","eyeball", "filler",  "brainTummy", "filler"];
-let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball", "tummy", "bleed", "brain", "filler", "filler",  "bleedEye", "brainTummy", "filler"];
+let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "tummy", "eyeball", "filler", "brainTummy", "filler"];
+let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball", "tummy", "bleed", "brain", "filler", "filler", "bleedEye", "brainTummy", "filler"];
 let loop3 = ["bleeding", "brain", "tummy", "eyeball", "brain", "tummy", "bleeding", "eyeball", "brain", "tummy", "filler"]
 let currentTasks = [];
 let daisyPartProgress;
@@ -293,8 +278,6 @@ function postScore(sessionId, key, value) {
 }
 
 
-
-
 let newTaskTimer;
 let lastNewTaskTimer;
 let allowNewTask = true;
@@ -303,9 +286,6 @@ function setup() {
   lastNewTaskTimer = millis();
   createCanvas(720, 400);
   textFont("system-ui");
-
-  //start timer
-  gameTimeStart = millis();
 
   //play bgm
   playBGM(currentTrack);
@@ -339,147 +319,18 @@ function setup() {
   socket = io();
   SocketListeners();
 
-  //const sessionCount = Object.keys(sessionsData).length;
-
-
-  //currentSession = Object.keys(sessionsData).length.toString();
-  //console.log(currentSession);
-  //monsterType = Math.floor(Math.random() * 6); // 0..5
-  //console.log(monsterType)
-  //
-  //initSessionOnServer(currentSession, monsterType);
-
-  //Some event listeners for manual control of the game
-  addEventListener("keydown", (e) => {
-    //These bring in new tasks
-    if (e.key == "w") { newTask = "brain"; }
-    if (e.key == "e") { newTask = "eyeball"; }
-    if (e.key == "q") { newTask = "bleeding"; }
-    if (e.key == "r") { newTask = "tummy"; }
-    if (e.key == "t") { newTask = "bleedEye"; }
-    if (e.key == "4") { newTask = "brainTummy"; }
-
-    //these atomize task from the list
-    if (e.key == "s") { banish = "brain"; }
-    if (e.key == "d") { banish = "eyeball"; }
-    if (e.key == "a") { banish = "bleeding"; }
-    if (e.key == "f") { banish = "tummy"; }
-    if (e.key == "g") { banish = "bleedEye"; }
-    if (e.key == "5") { banish = "brainTummy"; }
-    // these fill out the bar of a given task
-    // if (e.key == "s") { stations.brain.progress += .1 }
-    // if (e.key == "d") { stations.eyeball.progress += .1 }
-    // if (e.key == "a") { stations.bleeding.progress += .1 }
-    // if (e.key == "f") { stations.tummy.progress += .1 }
-    // if (e.key == "g") {stations.bleedEye.partProgress.bleeding += .1; stations.bleedEye.partProgress.eyeball += 1;}
-    // if (e.key == "5") {stations.brainTummy.partProgress.brain += .1; stations.brainTummy.partProgress.tummy += .1}
-    //reset all pins on a given station
-    //these get sent to index.js
-    if (e.key == "x") { socket.emit("brain", "reset"); }
-    if (e.key == "c") { socket.emit("eyeball", "reset"); }
-    if (e.key == "z") { socket.emit("bleeding", "reset"); }
-    if (e.key == "v") { socket.emit("tummy", "reset"); }
-    if (e.key == "b") { socket.emit("heart", "reset"); }
-
-    //increment LEFT light threshold
-    if (e.key == "7") { socket.emit("brain", "leftInc"); }
-    if (e.key == "8") { socket.emit("eyeball", "leftInc"); }
-    if (e.key == "6") { socket.emit("bleeding", "leftInc"); }
-    if (e.key == "9") { socket.emit("tummy", "leftInc"); }
-    if (e.key == "0") { socket.emit("heart", "leftInc"); }
-    //decrement LEFT light threshold
-    if (e.key == "u") { socket.emit("brain", "leftDec"); }
-    if (e.key == "i") { socket.emit("eyeball", "leftDec"); }
-    if (e.key == "y") { socket.emit("bleeding", "leftDec"); }
-    if (e.key == "o") { socket.emit("tummy", "leftDec"); }
-    if (e.key == "p") { socket.emit("heart", "leftDec"); }
-    //increment RIGHT light threshold
-    if (e.key == "j") { socket.emit("brain", "rightInc"); }
-    if (e.key == "k") { socket.emit("eyeball", "rightInc"); }
-    if (e.key == "h") { socket.emit("bleeding", "rightInc"); }
-    if (e.key == "l") { socket.emit("tummy", "rightInc"); }
-    if (e.key == ";") { socket.emit("heart", "rightInc"); }
-    //decrement RIGHT light threshold
-    if (e.key == "m") { socket.emit("brain", "rightDec"); }
-    if (e.key == ",") { socket.emit("eyeball", "rightDec"); }
-    if (e.key == "n") { socket.emit("bleeding", "rightDec"); }
-    if (e.key == ".") { socket.emit("tummy", "rightDec"); }
-    if (e.key == "/") { socket.emit("heart", "rightDec"); }
-
-
-    if (e.key == "1") { //For gameloop 1
-      // gameloop = 1;
-      // gameState = 1;
-      // updateGameState = true;
-      createNewSession();
-      currentLoop = 1;
-      gameIndex = 0;
-      useGameLoop = true;
-      gameTimeStart = millis();
-      currentTasks.length = 0;
-      activeTaskCount = 0;
-      newTask = "";
-      otherNewTask = "";
-      gameLoop1(activeTaskCount);
-      socket.emit("refresh", currentSession);
-    }
-    if (e.key == "2") { //For gameloop 2
-      // gameloop = 2;
-      // gameState = 1;
-      createNewSession();
-      currentLoop = 2;
-      gameIndex = 0;
-      useGameLoop = true;
-      gameTimeStart = millis();
-      currentTasks.length = 0;
-      activeTaskCount = 0;
-      newTask = "";
-      otherNewTask = "";
-      gameLoop2(activeTaskCount);
-      socket.emit("refresh", currentSession);
-    }
-    if (e.key == "`") { //For gameloop 2
-      // gameloop = 2;
-      // gameState = 1;
-      createNewSession();
-      currentLoop = 3;
-      gameIndex = 0;
-      useGameLoop = true;
-      gameTimeStart = millis();
-      currentTasks.length = 0;
-      activeTaskCount = 0;
-      newTask = "";
-      otherNewTask = "";
-      gameLoop3(activeTaskCount);
-      socket.emit("refresh", currentSession);
-    }
-    if (e.key == "3") { //For manual control
-      // gameloop = 0;
-      // gameState = 1;
-      currentLoop = 0;
-      gameIndex = 0;
-      useGameLoop = false;
-    }
-    // if (e.key == "4") { //manual daisy task
-    //   daisy.useDaisy = true;
-    //   // console.log(daisy.useDaisy);
-    //   daisy.daisyTask = "bleeding";
-    //   // console.log(daisy.daisyTask);
-    //   daisy.endTask = "eyeball";
-    //   stations.bleedEye.inputDelay = true;
-    // }
-  })
+  //setup keybinds
+  window.setKeyBinds(socket, window.keyCallbacks());
 }
-
 
 // ---- Socket Listeners ----
 //They should be strings they come from index.js
-function SocketListeners() {
-  socket.on("brain-data", (p) => stations.brain.num = (String(p).trim()));
-  socket.on("eyeball-data", (p) => stations.eyeball.num = (String(p).trim()));
-  socket.on("bleeding-data", (p) => stations.bleeding.num = (String(p).trim()));
+function SocketListeners() { // nunmber comments are under usual GDC load values
+  socket.on("brain-data", (p) => stations.brain.num = (String(p).trim()) * 25);// 2
+  socket.on("eyeball-data", (p) => stations.eyeball.num = (String(p).trim()) * 25); //6
+  socket.on("bleeding-data", (p) => stations.bleeding.num = (String(p).trim()) * 25); //10
   socket.on("heart-data", (p) => stations.heart.num = (String(p).trim()));
-  socket.on("tummy-data", (p) => stations.tummy.num = (String(p).trim()));
+  socket.on("tummy-data", (p) => stations.tummy.num = (String(p).trim()) * 25); //6
 
   socket.on("brain-red", (p) => portData.brain.red = (String(p).trim()));
   socket.on("eyeball-red", (p) => portData.eyeball.red = (String(p).trim()));
@@ -498,17 +349,17 @@ function SocketListeners() {
 // ---- DRAW STATIONS ----
 function draw() {
   newTaskTimer = millis();
-  if(newTaskTimer - lastNewTaskTimer > 2000 ) {allowNewTask = true;}
-    if(updateGameState && useGameLoop && allowNewTask){
-      const activeTaskCount = currentTasks.length;
-      updateGameState = false;
-      gameIndex++;
-      if (currentLoop === 1) { gameLoop1(activeTaskCount); };
-      if (currentLoop === 2) { gameLoop2(activeTaskCount); };
-      if (currentLoop === 3) { gameLoop3(activeTaskCount); };
-      lastNewTaskTimer = millis();
-      allowNewTask = false;
-    }
+  if (newTaskTimer - lastNewTaskTimer > 2000) { allowNewTask = true; }
+  if (updateGameState && useGameLoop && allowNewTask) {
+    const activeTaskCount = currentTasks.length;
+    updateGameState = false;
+    gameIndex++;
+    if (currentLoop === 1) { gameLoop1(activeTaskCount); };
+    if (currentLoop === 2) { gameLoop2(activeTaskCount); };
+    if (currentLoop === 3) { gameLoop3(activeTaskCount); };
+    lastNewTaskTimer = millis();
+    allowNewTask = false;
+  }
   background(0);
 
   let headScale = 0.3;
@@ -634,6 +485,8 @@ function draw() {
         const points = scoring(st.totalTime);
         console.log(`${st.name} scored:`, points);
         updateScoreJSON(st.name, points);
+
+
         //remove from visibleTasks and currentTasks
         let index = currentTasks.indexOf(st.name);
         if (index > -1) currentTasks.splice(index, 1);
@@ -661,7 +514,6 @@ function draw() {
         updateGameState = true;
       }
       banish = "";
-
 
       st.inputDelay = false; //Possible solution for the first input completion
       socket.emit(`${st.name}`, "stop"); //Trigger stop
@@ -804,22 +656,7 @@ function draw() {
   }
 
   // ----GAME TIMER----
-  //added game over thing just in case we want to do it for imagine
-  if (!gameOver) {
-    let time = millis() - gameTimeStart;
-
-    let minutes = floor(time / 60000);
-    let seconds = floor((time % 60000) / 1000);
-
-    //format
-    let Ttext = nf(minutes, 2) + ':' + nf(seconds, 2);
-
-    textSize(20);
-    textAlign(RIGHT, CENTER);
-    fill(225);
-    text(Ttext, width - 25, 41);
-
-  }
+  window.gameTimer.update();
 }
 
 
@@ -848,7 +685,6 @@ function ledProgress(charge, th = thresholds) {
 
 //----STORE JSON DATA----
 localStorage.setItem("sessionScore", JSON.stringify(scoreData));
-
 
 //final video play function
 function playFinalVid() {
