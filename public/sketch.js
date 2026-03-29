@@ -529,8 +529,6 @@ function draw() {
 }
 
 
-// ---- SHOW BAR PROGRESS ----
-ledProgress(st.num, thresholds);
 
 
 //----STORE JSON DATA----
