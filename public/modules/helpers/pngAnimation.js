@@ -1,7 +1,5 @@
 // png animation helper
 
-//IN PROGRESS
-
 window.pngAnimation = class {
     constructor(folderPath, frameNums, frameRate = 8) {
         this.frames = [];

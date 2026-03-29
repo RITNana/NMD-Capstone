@@ -1,11 +1,11 @@
-//play sounds helpers
+//handles all audio functions
 
 //volumes
 let sfxVolume = 0.6;
 let bgmVolume = 0.4;
 
 //sound affects
-function playSound(name, loop = false, volume = sfxVolume) {
+window.playSound = function (name, loop = false, volume = sfxVolume) {
   const sound = sfx[name];
   if (!sound || !sound.isLoaded()) return;
 
@@ -23,9 +23,8 @@ function playSound(name, loop = false, volume = sfxVolume) {
   }
 }
 
-
 //for background music
-function playBGM(currentTrack, volume = bgmVolume) {
+window.playBGM = function (currentTrack, volume = bgmVolume) {
   let track = bgmList[currentTrack];
 
   track.setVolume(volume);
