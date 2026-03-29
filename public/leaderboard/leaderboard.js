@@ -1,8 +1,16 @@
 //load data
 //sort data
 //parse through and format while inserting to html
-
-
+let socket;
+function setup() {
+  socket = io();
+  function SocketListeners() {
+    socket.on("complete", () => {
+      loadLeaderboard();
+    });
+  }
+  SocketListeners();
+}
 async function loadLeaderboard() {
   const response = await fetch('/score');
   const data = await response.json();
