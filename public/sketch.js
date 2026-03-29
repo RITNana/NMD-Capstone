@@ -1,26 +1,16 @@
-// const { createVideo } = require("p5");
-
-//NOTE: Add connecttion light back on
-
 // public/sketch.js
 let socket;
+//import { createMonster } from "./monster/monster.js";
 // mirrors Arduino thresholds
+const thresholds = [10, 20, 30];
 
-// video overlay
-let taskVideo;
-let bleedingBar;
-let veinStatus = "";
+// animation stuff
+let fullFrames = 0;
+const FULL_FRAMES_TO_CONFIRM = 12; // ~12 frames ≈ 200ms at 60fps
+const DISMISS_DURATION = 600;
 
-//layout constants
-const barX = 282;
-const barY = 27;
-const barW = 375;
-const barH = 30;
-
-//final task screen video
-let finalVid;
-let finalVidPlay = false;
-let finalVidOver = false;
+//tracks what tasks are currrently shown
+let visibleTasks = [];
 
 //score calculation
 let scoreData = {
@@ -94,7 +84,8 @@ function preload() {
   sfx.bg3 = loadSound("media/audio/music/bgm3.mp3");
   bgmList = [sfx.bg1, sfx.bg2, sfx.bg3];
 
-  //final video
+  //videos
+  taskVideo = createVideo("media/video/Background.mp4");
   finalVid = createVideo("media/video/EndScreen.mp4");
 
   sessionsData = loadJSON("/score");
@@ -155,46 +146,6 @@ function tubeFinder() {
 let currentLoop = 0;
 let gameIndex = 0;
 
-async function initSessionOnServer(sessionId, monsterType) {
-  const template = {
-    monsterType,
-    headScore: 0,
-    eyeScore: 0,
-    bleedingScore: 0,
-    stomachScore: 0,
-    bleedEye: 0,
-    brainTummy: 0,
-  };
-
-  // write each key to sessions.json using your existing route
-  await Promise.all(
-    Object.entries(template).map(([key, value]) => postScore(sessionId, key, value))
-  );
-
-  console.log("session initialized on server:", sessionId, template);
-}
-
-
-function getNextSessionId() {
-  // safest version (handles gaps and non-numeric keys)
-  const keys = Object.keys(sessionsData || {});
-  const nums = keys.map(k => parseInt(k, 10)).filter(n => Number.isFinite(n));
-  const next = (nums.length ? Math.max(...nums) + 1 : 0);
-  return String(next);
-}
-
-function createNewSession() {
-  currentSession = getNextSessionId();
-  monsterType = Math.floor(Math.random() * 6);
-
-  // keep local copy in sync so the next press increments correctly
-  sessionsData[currentSession] = sessionsData[currentSession] || {};
-
-  // write template to sessions.json
-  initSessionOnServer(currentSession, monsterType)
-    .then(() => console.log("new session created:", currentSession, "monsterType:", monsterType))
-    .catch((e) => console.error("session create failed", e));
-}
 
 //test loop
 //let loop1 = ["bleeding", "tummy", "bleeding", "bleedEye"];
@@ -268,19 +219,10 @@ function gameLoop3(activeTaskCount) {
 }
 
 
-//for initializing the session data to the json
-function postScore(sessionId, key, value) {
-  return fetch("/score", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ sessionId, key, value }),
-  }).then((r) => r.json());
-}
-
-
 let newTaskTimer;
 let lastNewTaskTimer;
 let allowNewTask = true;
+
 function setup() {
   newTaskTimer = millis();
   lastNewTaskTimer = millis();
@@ -290,34 +232,27 @@ function setup() {
   //play bgm
   playBGM(currentTrack);
 
-  //background task video
-  taskVideo = createVideo("media/video/Background.mp4", () => {
-    // make it autoplay-safe
-    taskVideo.volume(0); // p5 wrapper volume
-    taskVideo.elt.muted = true;
-    taskVideo.elt.setAttribute("muted", "");
-    taskVideo.elt.setAttribute("playsinline", ""); // iOS Safari inline playback
-    taskVideo.loop(); // or .play()
-    taskVideo.hide();
-  });
+  //initilaize the videos
+  initVideos();
+
+  //task video
   taskVideo.loop();
   taskVideo.hide();
-
-  //final video
-  finalVid.volume(0);
-  finalVid.elt.muted = true;
-  finalVid.elt.setAttribute("muted", "");
-  finalVid.elt.setAttribute("playsinline", ""); // iOS Safari inline playback
-  finalVid.hide();
-  //does NOT loop
-  finalVid.elt.onended = () => {
-    finalVidOver = true;
-    finalVid.pause();
-  }
 
   // same-origin socket.io
   socket = io();
   SocketListeners();
+
+  //set station images
+  window.stationLayouts = {
+    brain: { img: brainBar },
+    eyeball: { img: eyeBar },
+    bleeding: { img: bleedingBar },
+    heart: { img: null },
+    tummy: { img: tummyBar },
+    bleedEye: { img: daisyBleedBar },
+    brainTummy: { img: daisyBrainBar }
+  };
 
   //setup keybinds
   window.setKeyBinds(socket, window.keyCallbacks());
@@ -365,8 +300,10 @@ function draw() {
   let headScale = 0.3;
   let timeScale = 0.12;
 
-  //video and header
-  if (taskVideo) image(taskVideo, 0, 0, width, height);
+  //draw video
+  drawVideo();
+
+  //header
   if (headerImage) {
     w = width * headScale;
     h = w * (headerImage.height / headerImage.width);
@@ -377,26 +314,6 @@ function draw() {
     h = w * (timerImage.height / timerImage.width);
     image(timerImage, width - 110, 25, w, h);
   }
-
-  //layout constants
-  const topOffset = 90;
-  const space = 24;
-  const ratio = 357 / 4308;
-  const barWidth = width * 0.9;
-  const barHeight = barWidth * ratio;
-  const centeredX = (width - barWidth) / 2;
-  const daisyMult = 2;
-
-  //layouts of stations
-  let stationLayouts = {
-    brain: { img: brainBar, x: centeredX, y: 0, w: barWidth, h: barHeight },
-    eyeball: { img: eyeBar, x: centeredX, y: 0, w: barWidth, h: barHeight },
-    bleeding: { img: bleedingBar, x: centeredX, y: 0, w: barWidth, h: barHeight },
-    heart: { img: null, x: centeredX, y: 0, w: barWidth, h: barHeight },
-    tummy: { img: tummyBar, x: centeredX, y: 0, w: barWidth, h: barHeight },
-    bleedEye: { img: daisyBleedBar, x: centeredX, y: 0, w: barWidth, h: barHeight },
-    brainTummy: { img: daisyBrainBar, x: centeredX, y: 0, w: barWidth, h: barHeight }
-  };
 
   //Trigger the tube finder to be updated
   tubeFinder();
@@ -485,7 +402,6 @@ function draw() {
         const points = scoring(st.totalTime);
         console.log(`${st.name} scored:`, points);
         updateScoreJSON(st.name, points);
-
 
         //remove from visibleTasks and currentTasks
         let index = currentTasks.indexOf(st.name);
@@ -588,115 +504,37 @@ function draw() {
     }
   }
 
-  // --- STACK STATIONS ---
-  for (let i = 0; i < visibleTasks.length; i++) {
-    const key = visibleTasks[i];
-    const posY = topOffset + i * (barHeight + space);
+  //---DRAW STATIONS---
+  //station layouts
+  const {
+    barWidth,
+    barHeight,
+    centeredX,
+  } = getStationLayout();
 
+  //draw them
+  window.drawStations({
+    visibleTasks,
+    stations,
+    centeredX,
+    barWidth,
+    barHeight,
+  });
 
-    //--- DAISY STATIONS ---
-    if (key === "bleedEye" || key === "brainTummy") {
-      const st = stations[key];
-
-      push();
-      translate(st.offsetX, posY);
-
-      //draw two bars
-      const parts = st.parts;
-
-      if (parts[0]) {
-        noStroke();
-        fill(228, 44, 46);
-        rect(barX - 10, barY - 10, barW * daisyPartProgress, barH - 10);
-      }
-      if (parts[1]) {
-        noStroke();
-        fill(228, 44, 46);
-        rect(barX - 10, barY + 44, barW * endPartProgress, barH - 10);
-      };
-
-      //draw image
-      tint(255, 255 * st.fade);
-      image(st.img, centeredX, 0, barWidth, barHeight * daisyMult);
-      noTint();
-
-      pop();
-      continue;
-    }
-
-
-    //--- NORMAL STATIONS ---
-    const st = stations[key];
-    //if (!st) continue;
-
-    if (st.visible || st.dismissing) {
-      const layout = stationLayouts[st.name];
-
-      push();
-      translate(st.offsetX, posY);
-      noStroke();
-      fill(228, 44, 46);
-      rect(barX - 10, barY - 10, barW * st.progress, barH - 10);
-
-      //image
-      if (layout && layout.img) {
-        tint(255, 255 * st.fade);
-        image(layout.img, layout.x, layout.y, layout.w, layout.h);
-        noTint();
-      }
-
-      pop();
-    }
-  }
-
-  // ---- DRAW FINAL TASK SCREEN VIDEO ----
-  if (finalVidPlay) {
-    image(finalVid, 0, 0, width, height);
-    return;
-  }
-
-  // ----GAME TIMER----
+  //draw game timer
   window.gameTimer.update();
+
+  //draw final vid
+  drawVideo("final");
 }
 
 
 // ---- SHOW BAR PROGRESS ----
-// Map chargeNum to progress in 3 equal segments that line up with the LEDs
-function ledProgress(charge, th = thresholds) {
-  const [t0, t1, t2] = th;
+ledProgress(st.num, thresholds);
 
-  // if (charge <= 0 || !heartConnected) return 0;
-  if (charge <= 0) return 0;
-
-  if (charge <= t0) {
-    // first third
-    const seg = charge / t0; // 0..1 within [0..t0]
-    return (1 / 3) * seg;
-  } else if (charge <= t1) {
-    // second third
-    const seg = (charge - t0) / (t1 - t0); // 0..1 within (t0..t1]
-    return 1 / 3 + (1 / 3) * seg;
-  } else {
-    // last third (cap at full)
-    const seg = (charge - t1) / (t2 - t1); // 0..1 within (t1..t2]
-    return Math.min(2 / 3 + (1 / 3) * seg, 1);
-  }
-}
 
 //----STORE JSON DATA----
 localStorage.setItem("sessionScore", JSON.stringify(scoreData));
-
-//final video play function
-function playFinalVid() {
-  useGameLoop = false;
-  gameOver = true;
-  finalVidPlay = true;
-  finalVidOver = false;
-
-  //rewind vid
-  finalVid.time(0);
-  finalVid.play();
-}
 
 
 // ----- INTERACTION -----
@@ -711,7 +549,6 @@ function mousePressed() {
   if (getAudioContext().state !== 'running') {
     getAudioContext().resume();
   }
-
 }
 
 //import from helper
