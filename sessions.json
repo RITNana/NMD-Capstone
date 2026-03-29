@@ -2514,14 +2514,5 @@
     "stomachScore": 0,
     "bleedEye": 0,
     "brainTummy": 0
-  },
-  "281": {
-    "monsterType": 4,
-    "headScore": 0,
-    "eyeScore": 0,
-    "bleedingScore": 0,
-    "stomachScore": 0,
-    "bleedEye": 0,
-    "brainTummy": 0
   }
 }
