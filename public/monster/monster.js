@@ -117,6 +117,7 @@ function setup() {
   const cnv = createCanvas(1078, 1915);
   cnv.parent("canvasContainer");
   imageMode(CORNER);
+  textAlign(LEFT)
 
   //need to grab the session string from the current sessoin and make that what needs to be reffered to 
   const keys = Object.keys(sessionData || {});
@@ -466,15 +467,15 @@ function draw() {
 
     textSize(29);
     drawGlowingText(
-      `Head Score: ${scores.head}`,
-      320,
+      `Brain Score: ${scores.head}`,
+      305,
       1560,
       {
         font: dogicaFont,
         size: 29,
         glowColor: [255, 255, 255], // white glow
         glowAlpha: 5,              // subtle
-        glowRadius: 5,              // small halo
+        glowRadius: 4,              // small halo
         mainColor: [255, 255, 255],
         mainAlpha: 200
       }
@@ -482,14 +483,14 @@ function draw() {
     //text(`Head Score: ${sessionSet.headScore}`, 310, 1560)
     drawGlowingText(
       `Eye Score: ${scores.eyes}`,
-      305,
+      275,
       1610,
       {
         font: dogicaFont,
         size: 29,
         glowColor: [255, 255, 255], // white glow
         glowAlpha: 5,              // subtle
-        glowRadius: 5,              // small halo
+        glowRadius: 4,              // small halo
         mainColor: [255, 255, 255],
         mainAlpha: 200
       }
@@ -497,14 +498,14 @@ function draw() {
     //text(`Eye Score: ${sessionSet.eyeScore}`, 295, 1610)
     drawGlowingText(
       `Stomach Score: ${scores.stomach}`,
-      365,
+      335,
       1660,
       {
         font: dogicaFont,
         size: 29,
         glowColor: [255, 255, 255], // white glow
         glowAlpha: 5,              // subtle
-        glowRadius: 5,              // small halo
+        glowRadius: 4,              // small halo
         mainColor: [255, 255, 255],
         mainAlpha: 200
       }
@@ -512,14 +513,14 @@ function draw() {
     //text(`Stomach Score: ${sessionSet.stomachScore}`, 355, 1660)
     drawGlowingText(
       `Bleeding Score: ${scores.bleeding}`,
-      380,
+      350,
       1710,
       {
         font: dogicaFont,
         size: 29,
         glowColor: [255, 255, 255], // white glow
         glowAlpha: 5,              // subtle
-        glowRadius: 5,              // small halo
+        glowRadius: 4,              // small halo
         mainColor: [255, 255, 255],
         mainAlpha: 191
       }
