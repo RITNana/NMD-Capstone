@@ -1,22 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patchwork Leaderboard</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chelsea+Market&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="leaderboard.css">
+
+    <!--<script src="/socket.io/socket.io.js"></script>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.dom.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
+
 <body>
-    <h1>Leaderboard</h1>
-    <button onclick="loadLeaderboard()">load data</button>
-    <div id="scores"></div>
+    <main class="leaderboard-page">
+        <section class="leaderboard-panel">
+            <div class="leaderboard-header">
+                <img class="leaderboard-logo" src="/media/logo.png" alt="Patchwork logo" />
+                <h1>LEADERBOARD</h1>
+            </div>
+
+            <section id="topThree" class="top-three"></section>
+            <section id="scores" class="score-list"></section>
+        </section>
+    </main>
 
     <script src="leaderboard.js"></script>
 </body>
+
 </html>
