@@ -115,16 +115,14 @@ function loopingVideo() {
   taskVideo.hide();
 }
 
+let isGlitching = false;
+
 function glitchingVideo() {
-  //load in glitch video
   glitchVideo = createVideo(`../media/monsters/${monsterType}/${monsterType}-glitch.mp4`, () => {
     glitchVideo.volume(0);
     glitchVideo.elt.muted = true;
-    glitchVideo.elt.setAttribute("muted", "");
-    glitchVideo.elt.setAttribute("playsinline", "");
     glitchVideo.hide();
   });
-  glitchVideo.hide();
 }
 
 function getRandomInt(max) {
@@ -220,13 +218,21 @@ function setup() {
           }
         );
         loopingVideo();
+        glitchingVideo();
       });
       // window.location.reload();
       // console.log("Update session:" + sessionID);
     });
     socket.on("newTask", () => {
+      if (!glitchVideo) return;
+
+      glitchVideo.time(0);
       glitchVideo.play();
-      console.log("this is a fun test");
+        isGlitching = true;
+
+      setTimeout(() => {
+        isGlitching = false;
+      }, 1000); // duration of glitch
     });
     //socket.on("bleeding", () => {
     //  if (getRandomInt() % 2 == 0) {
@@ -247,7 +253,7 @@ function setup() {
 
   SocketListeners();
 
-  
+
 
 
   // If your session ids are numeric strings like "0","1","2"... use this safer sort:
@@ -310,11 +316,11 @@ function setup() {
     }
   );
 
-  
+
 
 
   loopingVideo();
-  //glitchVideo();
+  glitchingVideo();
 
   //scores = generateScores();
   //console.log("stomach score:", scores.stomachScore);
@@ -600,7 +606,12 @@ function draw() {
   }
   else {
     background(0);
-    if (taskVideo) image(taskVideo, 0, 0, width, height);
+    if (isGlitching && glitchVideo) {
+      image(glitchVideo, 0, 0, width, height);
+    } else if (taskVideo) {
+      image(taskVideo, 0, 0, width, height);
+    }
+    //if (taskVideo) image(taskVideo, 0, 0, width, height);
   }
 
   // Scoring gates
