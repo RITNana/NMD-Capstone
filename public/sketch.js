@@ -177,6 +177,7 @@ function gameLoop1(activeTaskCount) {
     return;
   }
   if (!loop1[gameIndex]) return;
+  socket.emit("newTask", "filler that can be replaced"); // at present for calling the glitch
 }
 
 // Gameloop 2 

@@ -34,6 +34,8 @@ let finalBgImg = null;
 let finalBgLoading = false;
 let finalBgError = false;
 
+let glitchVideo;
+
 //fonts
 let pixelFont;
 let dogicaFont;
@@ -112,6 +114,23 @@ function loopingVideo() {
   taskVideo.loop();
   taskVideo.hide();
 }
+
+function glitchingVideo() {
+  //load in glitch video
+  glitchVideo = createVideo(`../media/monsters/${monsterType}/${monsterType}-glitch.mp4`, () => {
+    glitchVideo.volume(0);
+    glitchVideo.elt.muted = true;
+    glitchVideo.elt.setAttribute("muted", "");
+    glitchVideo.elt.setAttribute("playsinline", "");
+    glitchVideo.hide();
+  });
+  glitchVideo.hide();
+}
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
+
 let finalBgPath;
 function setup() {
   const cnv = createCanvas(1078, 1915);
@@ -127,7 +146,9 @@ function setup() {
     noLoop();
     return;
   }
-//more code to clean up yay
+
+
+  //more code to clean up yay
   socket = io();
   function SocketListeners() {
     socket.on("complete", (sessionID) => {
@@ -144,7 +165,7 @@ function setup() {
 
         // stringSesh = keys.sort((a, b) => Number(a) - Number(b)).at(-1);
         sessionSet = sessionData[sessionID];
-        
+
         monsterType = monsterTypes[sessionSet.monsterType];
         scores = {
           head: sessionSet.headScore || 0,
@@ -177,35 +198,58 @@ function setup() {
           stomach: sessionSet.stomachScore || 0,
           bleeding: sessionSet.bleedingScore || 0
         };
-        
-          finalBgLoading = true;
-          finalBgError = false;
-          finalBgImg = null;
 
-          finalBgPath = `/media/monsters/${monsterType}/${monsterType}-finalcard.png`;
-          console.log("loading final bg:", finalBgPath);
+        finalBgLoading = true;
+        finalBgError = false;
+        finalBgImg = null;
 
-          loadImage(
-            finalBgPath,
-            (img) => {
-              finalBgImg = img;
-              finalBgLoading = false;
-              console.log("Loaded final bg OK:", finalBgPath);
-            },
-            (err) => {
-              finalBgLoading = false;
-              finalBgError = true;
-              console.error("Failed to load final bg:", finalBgPath, err);
-            }
-          );
+        finalBgPath = `/media/monsters/${monsterType}/${monsterType}-finalcard.png`;
+        console.log("loading final bg:", finalBgPath);
+
+        loadImage(
+          finalBgPath,
+          (img) => {
+            finalBgImg = img;
+            finalBgLoading = false;
+            console.log("Loaded final bg OK:", finalBgPath);
+          },
+          (err) => {
+            finalBgLoading = false;
+            finalBgError = true;
+            console.error("Failed to load final bg:", finalBgPath, err);
+          }
+        );
         loopingVideo();
       });
       // window.location.reload();
       // console.log("Update session:" + sessionID);
-    })
+    });
+    socket.on("newTask", () => {
+      glitchVideo.play();
+      console.log("this is a fun test");
+    });
+    //socket.on("bleeding", () => {
+    //  if (getRandomInt() % 2 == 0) {
+    //    glitchVideo()
+    //  }
+    //});
+    //socket.on("eyeball", () => {
+    //  if (getRandomInt() % 2 == 0) {
+    //    glitchVideo()
+    //  }
+    //});
+    //socket.on("tummy", () => {
+    //  if (getRandomInt() % 2 == 0) {
+    //    glitchVideo()
+    //  }
+    //})
   }
 
   SocketListeners();
+
+  
+
+
   // If your session ids are numeric strings like "0","1","2"... use this safer sort:
   const latestKey = keys.sort((a, b) => Number(a) - Number(b)).at(-1);
 
@@ -240,9 +284,10 @@ function setup() {
   console.log("using session:", stringSesh, sessionSet);
 
 
-  //monsterType = "wolf";
+
   monsterType = monsterTypes[sessionSet.monsterType];
   console.log("monsterType:", monsterType);
+  console.log(`../media/monsters/${monsterType}/${monsterType}-glitch.mp4`);
   // Load monster-specific final background: "<monsterType>-finalcard.png"
   finalBgLoading = true;
   finalBgError = false;
@@ -265,8 +310,11 @@ function setup() {
     }
   );
 
+  
+
 
   loopingVideo();
+  //glitchVideo();
 
   //scores = generateScores();
   //console.log("stomach score:", scores.stomachScore);
