@@ -84,6 +84,19 @@ function getMonsterImage(monsterTypeIndex) {
   return `/media/icons/${key}.png`;
 }
 
+//load data
+//sort data
+//parse through and format while inserting to html
+let socket;
+function setup() {
+  socket = io();
+  function SocketListeners() {
+    socket.on("complete", () => {
+      loadLeaderboard();
+    });
+  }
+  SocketListeners();
+}
 async function loadLeaderboard() {
   try {
     const response = await fetch("/score");
