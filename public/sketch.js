@@ -64,6 +64,16 @@ function preload() {
   daisyBleedBar = loadImage("media/images/DaisyBleed.png");
   daisyBrainBar = loadImage("media/images/DaisyBrain.png");
 
+  //connected version
+  bleedingBarActive = loadImage("media/images/active/BleedingActive.png");
+  brainBarActive = loadImage("media/images/active/BrainActive.png");
+  tummyBarActive = loadImage("media/images/active/StomachActive.png");
+  eyeBarActive = loadImage("media/images/active/EyeActive.png");
+
+  daisyBleedBarActive = loadImage("media/images/active/DaisyBleedActive.png");
+  daisyBrainBarActive = loadImage("media/images/active/DaisyBrainActive.png");
+
+
   //set image
   stations.bleedEye.img = daisyBleedBar;
   stations.brainTummy.img = daisyBrainBar;
@@ -248,13 +258,13 @@ function setup() {
 
   //set station images
   window.stationLayouts = {
-    brain: { img: brainBar },
-    eyeball: { img: eyeBar },
-    bleeding: { img: bleedingBar },
     heart: { img: null },
-    tummy: { img: tummyBar },
-    bleedEye: { img: daisyBleedBar },
-    brainTummy: { img: daisyBrainBar }
+    bleeding: { off: bleedingBar, on: bleedingBarActive },
+    brain: { off: brainBar, on: brainBarActive },
+    eyeball: { off: eyeBar, on: eyeBarActive },
+    tummy: { off: tummyBar, on: tummyBarActive },
+    bleedEye: { off: daisyBleedBar, on: daisyBleedBarActive },
+    brainTummy: { off: daisyBrainBar, on: daisyBrainBarActive }
   };
 
   //setup keybinds
@@ -510,6 +520,13 @@ function draw() {
     centeredX,
     barWidth,
     barHeight,
+    gameState: {
+      blueHeart,
+      redHeart,
+      blueDaisy,
+      redDaisy,
+      tubeLocation
+    }
   });
 
   //draw game timer

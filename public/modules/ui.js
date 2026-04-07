@@ -29,6 +29,7 @@ window.drawStations = function ({
   centeredX,
   barWidth,
   barHeight,
+  gameState
 }) {
 
   const topOffset = 113;
@@ -40,18 +41,21 @@ window.drawStations = function ({
   const barW = 135;
   const barH = 16;
 
-  // Ensure images are assigned ONCE per frame
-  for (const key in stations) {
-    if (window.stationLayouts[key]) {
-      stations[key].image = window.stationLayouts[key].img;
-    }
-  }
-
   for (let i = 0; i < visibleTasks.length; i++) {
     const key = visibleTasks[i];
     const st = stations[key];
+    const layout = window.stationLayouts[key];
+
     const posY = topOffset + i * (barHeight + space);
     const posX = 220;
+
+    //heart no image
+    if (key === "heart") {
+      st.image = null;
+    } else if (layout) {
+      const connected = window.isConnected(key, gameState);
+      st.image = connected ? layout.on : layout.off;
+    }
 
 
     push();
@@ -63,17 +67,21 @@ window.drawStations = function ({
       //draw two bars
       const parts = st.parts;
 
+      //clamp progress
+      const part1 = Math.min(Math.max(window.daisyPartProgress, 0), 1);
+      const part2 = Math.min(Math.max(window.endPartProgress, 0), 1);
+
       if (parts[0]) {
         noStroke();
         fill(228, 44, 46);
-        //rect(barX, barY, barW * window.daisyPartProgress, barH);
-        rect(barX, barY + 2, barW, barH);
+        rect(barX, barY + 2, barW * part1, barH);
+        //rect(barX, barY + 2, barW, barH);
       }
       if (parts[1]) {
         noStroke();
         fill(228, 44, 46);
-        //rect(barX, barY + 44, barW * window.endPartProgress, barH);
-        rect(barX, barY + 71, barW, barH);
+        rect(barX, barY + 71, barW * part2, barH);
+        //rect(barX, barY + 71, barW, barH);
 
       };
 
@@ -84,9 +92,13 @@ window.drawStations = function ({
 
     } else {
       //normal stations
+
+      //clamp prgress
+      const progress = Math.min(Math.max(st.progress, 0), 1);
+
       fill(228, 44, 46);
-      //rect(barX, barY, barW * st.progress, barH);
-      rect(barX, barY, barW, barH);
+      rect(barX, barY, barW * progress, barH);
+      //rect(barX, barY, barW, barH);
 
       if (st.image) {
         tint(255, 255 * st.fade);
@@ -142,3 +154,22 @@ window.ledProgress = function (charge, th = thresholds) {
   }
 }
 
+window.isConnected = function (key, gameState) {
+  if (!gameState) return false;
+
+  const { blueHeart, redHeart, blueDaisy, redDaisy, tubeLocation } = gameState;
+
+  const isDaisy = (key === "bleedEye" || key === "brainTummy");
+
+  if (isDaisy) {
+    return (
+      (blueDaisy && blueHeart) ||
+      (redDaisy && redHeart)
+    );
+  }
+
+  return (
+    (blueHeart && tubeLocation.blue.includes(key)) ||
+    (redHeart && tubeLocation.red.includes(key))
+  );
+};
