@@ -56,13 +56,13 @@ let stations = {
 };
 
 function preload() {
-  bleedingBar = loadImage("media/images/Bleeding.png");
-  brainBar = loadImage("media/images/Brain.png");
-  tummyBar = loadImage("media/images/Stomach.png");
-  eyeBar = loadImage("media/images/Eye.png");
+  bleedingBar = loadImage("media/images/stations/Bleeding.png");
+  brainBar = loadImage("media/images/stations/Brain.png");
+  tummyBar = loadImage("media/images/stations/Stomach.png");
+  eyeBar = loadImage("media/images/stations/Eye.png");
 
-  daisyBleedBar = loadImage("media/images/DaisyBleed.png");
-  daisyBrainBar = loadImage("media/images/DaisyBrain.png");
+  daisyBleedBar = loadImage("media/images/stations/DaisyBleed.png");
+  daisyBrainBar = loadImage("media/images/stations/DaisyBrain.png");
 
   //connected version
   bleedingBarActive = loadImage("media/images/active/BleedingActive.png");

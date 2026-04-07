@@ -67,20 +67,22 @@ window.drawStations = function ({
       //draw two bars
       const parts = st.parts;
 
-      //clamp progress
-      const part1 = Math.min(Math.max(window.daisyPartProgress, 0), 1);
-      const part2 = Math.min(Math.max(window.endPartProgress, 0), 1);
-
-      if (parts[0]) {
+      if (parts[0] && window.daisyPartProgress < 1) {
         noStroke();
         fill(228, 44, 46);
-        rect(barX, barY + 2, barW * part1, barH);
+
+        //clamp
+        const Progress1 = Math.min(window.daisyPartProgress, 1);
+        rect(barX, barY + 2, barW * Progress1, barH);
         //rect(barX, barY + 2, barW, barH);
       }
-      if (parts[1]) {
+      if (parts[1] && window.endPartProgress < 1) {
         noStroke();
         fill(228, 44, 46);
-        rect(barX, barY + 71, barW * part2, barH);
+
+        //clamp
+        const Progress2 = Math.min(window.endPartProgress, 1);
+        rect(barX, barY + 71, barW * Progress2, barH);
         //rect(barX, barY + 71, barW, barH);
 
       };
@@ -93,12 +95,15 @@ window.drawStations = function ({
     } else {
       //normal stations
 
-      //clamp prgress
-      const progress = Math.min(Math.max(st.progress, 0), 1);
+      //clamp
+      const progress = Math.min(st.progress, 1);
 
-      fill(228, 44, 46);
-      rect(barX, barY, barW * progress, barH);
-      //rect(barX, barY, barW, barH);
+      if (progress < 1) {
+        noStroke();
+        fill(228, 44, 46);
+        rect(barX, barY, barW * progress, barH);
+        //rect(barX, barY, barW, barH);
+      }
 
       if (st.image) {
         tint(255, 255 * st.fade);
