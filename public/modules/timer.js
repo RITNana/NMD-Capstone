@@ -23,7 +23,7 @@ window.gameTimer = function () {
         useGameLoop = true;
     }
 
-    function update() {
+    function update(font) {
         if (gameOver || !useGameLoop) return;
 
         let elapsed = millis() - gameTimeStart;
@@ -33,13 +33,14 @@ window.gameTimer = function () {
         let seconds = floor((remainTime % 60000) / 1000);
 
         //format to minutes:seconds
-        let timeText = nf(minutes, 2) + ':' + nf(seconds, 2);
+        let timeText = minutes + ':' + nf(seconds, 2);
 
         //display
-        textSize(20);
-        textAlign(RIGHT, CENTER);
+        textSize(45);
+        textAlign(LEFT, CENTER);
+        textFont(font);
         fill(225);
-        text(timeText, width - 25, 41);
+        text(timeText, 167, 49);
 
         // for game over
         if (remainTime <= 0 && !gameOver) {

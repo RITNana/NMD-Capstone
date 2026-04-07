@@ -88,6 +88,9 @@ function preload() {
   taskVideo = createVideo("media/video/Background.mp4");
   finalVid = createVideo("media/video/EndScreen.mp4");
 
+  //font
+  chelseaFont = loadFont("../media/fonts/ChelseaM.ttf");
+
   sessionsData = loadJSON("/score");
 }
 
@@ -297,23 +300,11 @@ function draw() {
   }
   background(0);
 
-  let headScale = 0.3;
-  let timeScale = 0.12;
-
   //draw video
   drawVideo();
 
   //header
-  if (headerImage) {
-    w = width * headScale;
-    h = w * (headerImage.height / headerImage.width);
-    image(headerImage, (width - w) / 2, 7, w, h);
-  }
-  if (timerImage) {
-    w = width * timeScale;
-    h = w * (timerImage.height / timerImage.width);
-    image(timerImage, width - 110, 25, w, h);
-  }
+  makeUI(headerImage, timerImage);
 
   //Trigger the tube finder to be updated
   tubeFinder();
@@ -522,7 +513,7 @@ function draw() {
   });
 
   //draw game timer
-  window.gameTimer.update();
+  window.gameTimer.update(chelseaFont);
 
   //draw final vid
   drawVideo("final");

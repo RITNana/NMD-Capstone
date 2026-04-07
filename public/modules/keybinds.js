@@ -69,20 +69,20 @@ window.setKeyBinds = function (socket) {
         if (e.key == "4") callbacks.setNewTask("brainTummy");
 
         //these atomize task from the list
-        if (e.key == "s") banish = "brain";
-        if (e.key == "d") banish = "eyeball";
-        if (e.key == "a") banish = "bleeding";
-        if (e.key == "f") banish = "tummy";
-        if (e.key == "g") banish = "bleedEye";
-        if (e.key == "5") banish = "brainTummy";
+        // if (e.key == "s") banish = "brain";
+        // if (e.key == "d") banish = "eyeball";
+        // if (e.key == "a") banish = "bleeding";
+        // if (e.key == "f") banish = "tummy";
+        // if (e.key == "g") banish = "bleedEye";
+        // if (e.key == "5") banish = "brainTummy";
 
         // these fill out the bar of a given task
-        // if (e.key == "s") callbacks.incrementTask("brain");
-        // if (e.key == "d") callbacks.incrementTask("eyeball");
-        // if (e.key == "a") callbacks.incrementTask("bleeding");
-        // if (e.key == "f") callbacks.incrementTask("tummy");
-        // if (e.key == "g") callbacks.incrementTask("bleedeye");
-        // if (e.key == "5") callbacks.incrementTask("brainTummy");
+        if (e.key == "s") callbacks.incrementTask("brain");
+        if (e.key == "d") callbacks.incrementTask("eyeball");
+        if (e.key == "a") callbacks.incrementTask("bleeding");
+        if (e.key == "f") callbacks.incrementTask("tummy");
+        if (e.key == "g") callbacks.incrementTask("bleedeye");
+        if (e.key == "5") callbacks.incrementTask("brainTummy");
 
         //reset all pins on a given station
         //these get sent to index.js
@@ -125,6 +125,6 @@ window.setKeyBinds = function (socket) {
         if (e.key === "2") callbacks.startLoop(2);
         if (e.key === "`") callbacks.startLoop(3);
         if (e.key === "3") callbacks.manualControl();
-       // if (e.key === "4") callbacks.manualDaisyTask();
+        // if (e.key === "4") callbacks.manualDaisyTask();
     });
 }
