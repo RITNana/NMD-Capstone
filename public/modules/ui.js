@@ -67,21 +67,21 @@ window.drawStations = function ({
       //draw two bars
       const parts = st.parts;
 
-      if (parts[0] && window.daisyPartProgress < 1) {
+      if (parts[0] && daisyPartProgress < 1) {
         noStroke();
         fill(228, 44, 46);
 
         //clamp
-        const Progress1 = Math.min(window.daisyPartProgress, 1);
+        const Progress1 = Math.min(daisyPartProgress, 1);
         rect(barX, barY + 2, barW * Progress1, barH);
         //rect(barX, barY + 2, barW, barH);
       }
-      if (parts[1] && window.endPartProgress < 1) {
+      if (parts[1] && endPartProgress < 1) {
         noStroke();
         fill(228, 44, 46);
 
         //clamp
-        const Progress2 = Math.min(window.endPartProgress, 1);
+        const Progress2 = Math.min(endPartProgress, 1);
         rect(barX, barY + 71, barW * Progress2, barH);
         //rect(barX, barY + 71, barW, barH);
 

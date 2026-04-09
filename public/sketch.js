@@ -80,6 +80,7 @@ function preload() {
 
   headerImage = loadImage("media/images/VitalsBoardLogo.png");
   timerImage = loadImage("media/images/ClockLogo.png");
+  backgroundImage = loadImage("media/images/Background.png");
 
   //load sound
   sfx.connect = loadSound("media/audio/portConnect.mp3");
@@ -95,7 +96,7 @@ function preload() {
   bgmList = [sfx.bg1, sfx.bg2, sfx.bg3];
 
   //videos
-  taskVideo = createVideo("media/video/Background.mp4");
+  //taskVideo = createVideo("media/video/Background.mp4");
   finalVid = createVideo("media/video/EndScreen.mp4");
 
   //font
@@ -249,8 +250,8 @@ function setup() {
   initVideos();
 
   //task video
-  taskVideo.loop();
-  taskVideo.hide();
+  // taskVideo.loop();
+  // taskVideo.hide();
 
   // same-origin socket.io
   socket = io();
@@ -308,7 +309,7 @@ function draw() {
     lastNewTaskTimer = millis();
     allowNewTask = false;
   }
-  background(0);
+  image(backgroundImage, 0, 0, width, height);
 
   //draw video
   drawVideo();
@@ -543,14 +544,14 @@ function draw() {
 localStorage.setItem("sessionScore", JSON.stringify(scoreData));
 
 
-// ----- INTERACTION -----
+// ----- INTERACTION -----s
 
 // Fallback: if the browser still blocks it, a click will start playback
 function mousePressed() {
-  if (taskVideo && taskVideo.elt && taskVideo.elt.paused) {
-    taskVideo.elt.muted = true; // ensure still muted
-    taskVideo.play();
-  }
+  // if (taskVideo && taskVideo.elt && taskVideo.elt.paused) {
+  //   taskVideo.elt.muted = true; // ensure still muted
+  //   taskVideo.play();
+  // }
   //make sure audio works
   if (getAudioContext().state !== 'running') {
     getAudioContext().resume();
