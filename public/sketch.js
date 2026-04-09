@@ -73,7 +73,6 @@ function preload() {
   daisyBleedBarActive = loadImage("media/images/active/DaisyBleedActive.png");
   daisyBrainBarActive = loadImage("media/images/active/DaisyBrainActive.png");
 
-
   //set image
   stations.bleedEye.img = daisyBleedBar;
   stations.brainTummy.img = daisyBrainBar;
@@ -101,6 +100,9 @@ function preload() {
 
   //font
   chelseaFont = loadFont("../media/fonts/ChelseaM.ttf");
+
+  //silly guy
+  sillyGuy = loadImage("media/images/dance.gif");
 
   sessionsData = loadJSON("/score");
 }
@@ -313,6 +315,9 @@ function draw() {
 
   //draw video
   drawVideo();
+
+  //this line of code is very important do NOT delete
+  image(sillyGuy, 100, 70, 240, 340);
 
   //header
   makeUI(headerImage, timerImage);

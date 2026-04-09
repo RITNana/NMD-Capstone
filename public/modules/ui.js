@@ -120,7 +120,7 @@ window.drawStations = function ({
 };
 
 let headScale = .37;
-let timeScale = .06;
+let timeScale = .08;
 
 window.makeUI = function (header, timer) {
   //header
@@ -132,7 +132,7 @@ window.makeUI = function (header, timer) {
   if (timer) {
     w = width * timeScale;
     h = w * (timer.height / timer.width);
-    image(timer, 317 * scale, 74 * scale, w, h);
+    image(timer, 280 * scale, 74 * scale, w, h);
   }
 }
 
