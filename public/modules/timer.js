@@ -40,7 +40,7 @@ window.gameTimer = function () {
         textAlign(LEFT, CENTER);
         textFont(font);
         fill(225);
-        text(timeText, 167, 49);
+        text(timeText, 207, 49);
 
         // for game over
         if (remainTime <= 0 && !gameOver) {

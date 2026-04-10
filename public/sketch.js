@@ -82,6 +82,7 @@ function preload() {
   headerImage = loadImage("media/images/VitalsBoardLogo.png");
   timerImage = loadImage("media/images/ClockLogo.png");
   backgroundImage = loadImage("media/images/Background.png");
+  mapBackground = loadImage("media/images/MapBackground.png");
 
   //map images
   mapBleed = loadImage("media/images/map/Bleeding.png");
@@ -324,6 +325,12 @@ function draw() {
   }
   image(backgroundImage, 0, 0, width, height);
 
+  const w = mapBackground.width * .39;
+  const h = mapBackground.height * .39;
+
+  //map background
+  image(mapBackground, 21, 100, 413, 284);
+
   //draw video
   drawVideo();
 
@@ -549,7 +556,8 @@ function draw() {
   });
 
   //map
-  drawMap({visibleTasks,
+  drawMap({
+    visibleTasks,
     mapImages: {
       bleeding: mapBleed,
       brain: mapBrain,

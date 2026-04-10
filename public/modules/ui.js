@@ -132,7 +132,7 @@ window.makeUI = function (header, timer) {
   if (timer) {
     w = width * timeScale;
     h = w * (timer.height / timer.width);
-    image(timer, 280 * scale, 74 * scale, w, h);
+    image(timer, 390 * scale, 74 * scale, w, h);
   }
 }
 
@@ -183,10 +183,10 @@ window.isConnected = function (key, gameState) {
 window.drawMap = function ({ visibleTasks, mapImages }) {
   if (!visibleTasks || visibleTasks.length === 0) return;
 
-  const x = -100;
-  const y = 0;
-  const w = 1061 * .61;
-  const h = 729 * .61;
+  const x = 10;
+  const y = 90;
+  const w = 1061 * .42;
+  const h = 729 * .42;
 
   for (const task of visibleTasks) {
     const img = mapImages?.[task];

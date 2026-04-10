@@ -132,7 +132,7 @@ window.setKeyBinds = function (socket) {
         // if (e.key === "4") callbacks.manualDaisyTask();
 
         //little timmy made me angry
-        if (e.key === "="){
+        if (e.key === "+"){
             const task = currentTasks[0];
             console.log("TIMMMY: ", task);
             callbacks.timmyMadeMeMad(task, 10);
