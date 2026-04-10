@@ -4,6 +4,8 @@ let socket;
 // mirrors Arduino thresholds
 const thresholds = [10, 20, 30];
 
+window.danceGuyDance = true;
+
 // animation stuff
 let fullFrames = 0;
 const FULL_FRAMES_TO_CONFIRM = 12; // ~12 frames ≈ 200ms at 60fps
@@ -317,7 +319,9 @@ function draw() {
   drawVideo();
 
   //this line of code is very important do NOT delete
-  image(sillyGuy, 100, 70, 240, 340);
+  if (window.danceGuyDance) {
+    image(sillyGuy, 100, 70, 240, 340);
+  }
 
   //header
   makeUI(headerImage, timerImage);

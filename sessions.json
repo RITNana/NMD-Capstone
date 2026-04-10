@@ -196,5 +196,59 @@
     "stomachScore": 0,
     "bleedEye": 0,
     "brainTummy": 0
+  },
+  "22": {
+    "monsterType": 0,
+    "headScore": 763,
+    "eyeScore": 632,
+    "bleedingScore": 764,
+    "stomachScore": 754,
+    "bleedEye": 501,
+    "brainTummy": 507
+  },
+  "23": {
+    "monsterType": 0,
+    "headScore": 762,
+    "eyeScore": 434,
+    "bleedingScore": 771,
+    "stomachScore": 760,
+    "bleedEye": 514,
+    "brainTummy": 512
+  },
+  "24": {
+    "monsterType": 4,
+    "headScore": 751,
+    "eyeScore": 636,
+    "bleedingScore": 762,
+    "stomachScore": 762,
+    "bleedEye": 514,
+    "brainTummy": 503
+  },
+  "25": {
+    "monsterType": 5,
+    "headScore": 502,
+    "eyeScore": 626,
+    "bleedingScore": 430,
+    "stomachScore": 355,
+    "bleedEye": 505,
+    "brainTummy": 0
+  },
+  "26": {
+    "monsterType": 2,
+    "headScore": 757,
+    "eyeScore": 638,
+    "bleedingScore": 256,
+    "stomachScore": 699,
+    "brainTummy": 506,
+    "bleedEye": 513
+  },
+  "27": {
+    "monsterType": 4,
+    "headScore": -789,
+    "eyeScore": 607,
+    "bleedingScore": 719,
+    "stomachScore": -944,
+    "bleedEye": 511,
+    "brainTummy": 504
   }
 }

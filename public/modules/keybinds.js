@@ -21,6 +21,9 @@ window.keyCallbacks = function (socket) {
                     break;
             }
         },
+        timmyMadeMeMad: (stationName, amount = 100) => {
+            window.updateScoreJSON(stationName, -amount);
+        },
         startLoop: (loopNumber) => { //For gameloops
             createNewSession();
             currentLoop = loopNumber;
@@ -51,6 +54,7 @@ window.keyCallbacks = function (socket) {
         //   stations.bleedEye.inputDelay = true;
         //   console.log("Daisy task activated!");
         // }
+
     }
 
 }
@@ -126,5 +130,16 @@ window.setKeyBinds = function (socket) {
         if (e.key === "`") callbacks.startLoop(3);
         if (e.key === "3") callbacks.manualControl();
         // if (e.key === "4") callbacks.manualDaisyTask();
+
+        //little timmy made me angry
+        if (e.key === "="){
+            const task = currentTasks[0];
+            console.log("TIMMMY: ", task);
+            callbacks.timmyMadeMeMad(task, 10);
+        } 
+
+        //silly guy
+        if (e.key === "-") window.danceGuyDance = !window.danceGuyDance;
+        console.log("hes dancing....")
     });
 }
