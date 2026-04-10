@@ -83,6 +83,15 @@ function preload() {
   timerImage = loadImage("media/images/ClockLogo.png");
   backgroundImage = loadImage("media/images/Background.png");
 
+  //map images
+  mapBleed = loadImage("media/images/map/Bleeding.png");
+  mapBrain = loadImage("media/images/map/Brain.png");
+  mapEye = loadImage("media/images/map/Eyes.png");
+  mapTummy = loadImage("media/images/map/Stomach.png");
+  mapDaisyBleed = loadImage("media/images/map/DaisyBleed.png");
+  mapDaisyBrain = loadImage("media/images/map/DaisyBrain.png");
+
+
   //load sound
   sfx.connect = loadSound("media/audio/portConnect.mp3");
   sfx.taskOver = loadSound("media/audio/tasksOver.mp3");
@@ -536,6 +545,18 @@ function draw() {
       blueDaisy,
       redDaisy,
       tubeLocation
+    }
+  });
+
+  //map
+  drawMap({visibleTasks,
+    mapImages: {
+      bleeding: mapBleed,
+      brain: mapBrain,
+      eyeball: mapEye,
+      tummy: mapTummy,
+      bleedEye: mapDaisyBleed,
+      brainTummy: mapDaisyBrain
     }
   });
 

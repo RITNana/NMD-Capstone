@@ -178,3 +178,21 @@ window.isConnected = function (key, gameState) {
     (redHeart && tubeLocation.red.includes(key))
   );
 };
+
+//draw the map
+window.drawMap = function ({ visibleTasks, mapImages }) {
+  if (!visibleTasks || visibleTasks.length === 0) return;
+
+  const x = -100;
+  const y = 0;
+  const w = 1061 * .61;
+  const h = 729 * .61;
+
+  for (const task of visibleTasks) {
+    const img = mapImages?.[task];
+
+    if (img) {
+      image(img, x, y, w, h);
+    }
+  };
+};
