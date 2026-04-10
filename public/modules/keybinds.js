@@ -135,11 +135,9 @@ window.setKeyBinds = function (socket) {
         if (e.key === "+"){
             const task = currentTasks[0];
             console.log("TIMMMY: ", task);
-            callbacks.timmyMadeMeMad(task, 10);
+            callbacks.timmyMadeMeMad(task, 100);
         } 
 
-        //silly guy
         if (e.key === "?") window.danceGuyDance = !window.danceGuyDance;
-        console.log("hes dancing....")
     });
 }

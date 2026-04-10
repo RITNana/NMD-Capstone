@@ -4,7 +4,7 @@ let socket;
 // mirrors Arduino thresholds
 const thresholds = [10, 20, 30];
 
-window.danceGuyDance = true;
+window.danceGuyDance = false;
 
 // animation stuff
 let fullFrames = 0;
