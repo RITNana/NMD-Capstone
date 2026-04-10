@@ -139,7 +139,7 @@ window.setKeyBinds = function (socket) {
         } 
 
         //silly guy
-        if (e.key === "-") window.danceGuyDance = !window.danceGuyDance;
+        if (e.key === "?") window.danceGuyDance = !window.danceGuyDance;
         console.log("hes dancing....")
     });
 }
