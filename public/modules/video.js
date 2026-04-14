@@ -2,11 +2,11 @@
 
 //initialize
 window.initVideos = function () {
-    taskVideo.volume(0);
-    taskVideo.elt.muted = true;
-    taskVideo.elt.setAttribute("playsinline", "");
-    taskVideo.loop();
-    taskVideo.hide();
+    // taskVideo.volume(0);
+    // taskVideo.elt.muted = true;
+    // taskVideo.elt.setAttribute("playsinline", "");
+    // taskVideo.loop();
+    // taskVideo.hide();
 
     finalVid.volume(0);
     finalVid.elt.muted = true;
@@ -35,7 +35,8 @@ window.playFinalVid = function () {
 window.drawVideo = function (video = "task") {
     if (video === "final") {
         if (finalVidPlay) image(finalVid, 0, 0, width, height);
-    } else {
-        if (taskVideo) image(taskVideo, 0, 0, width, height);
-    }
+    } 
+    // else {
+    //     if (taskVideo) image(taskVideo, 0, 0, width, height);
+    // }
 };

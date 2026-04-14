@@ -4,6 +4,8 @@ let socket;
 // mirrors Arduino thresholds
 const thresholds = [10, 20, 30];
 
+window.danceGuyDance = false;
+
 // animation stuff
 let fullFrames = 0;
 const FULL_FRAMES_TO_CONFIRM = 12; // ~12 frames ≈ 200ms at 60fps
@@ -56,13 +58,22 @@ let stations = {
 };
 
 function preload() {
-  bleedingBar = loadImage("media/images/Bleeding.png");
-  brainBar = loadImage("media/images/Brain.png");
-  tummyBar = loadImage("media/images/Stomach.png");
-  eyeBar = loadImage("media/images/Eye.png");
+  bleedingBar = loadImage("media/images/stations/Bleeding.png");
+  brainBar = loadImage("media/images/stations/Brain.png");
+  tummyBar = loadImage("media/images/stations/Stomach.png");
+  eyeBar = loadImage("media/images/stations/Eye.png");
 
-  daisyBleedBar = loadImage("media/images/DaisyBleed.png");
-  daisyBrainBar = loadImage("media/images/DaisyBrain.png");
+  daisyBleedBar = loadImage("media/images/stations/DaisyBleed.png");
+  daisyBrainBar = loadImage("media/images/stations/DaisyBrain.png");
+
+  //connected version
+  bleedingBarActive = loadImage("media/images/active/BleedingActive.png");
+  brainBarActive = loadImage("media/images/active/BrainActive.png");
+  tummyBarActive = loadImage("media/images/active/StomachActive.png");
+  eyeBarActive = loadImage("media/images/active/EyeActive.png");
+
+  daisyBleedBarActive = loadImage("media/images/active/DaisyBleedActive.png");
+  daisyBrainBarActive = loadImage("media/images/active/DaisyBrainActive.png");
 
   //set image
   stations.bleedEye.img = daisyBleedBar;
@@ -70,6 +81,17 @@ function preload() {
 
   headerImage = loadImage("media/images/VitalsBoardLogo.png");
   timerImage = loadImage("media/images/ClockLogo.png");
+  backgroundImage = loadImage("media/images/Background.png");
+  mapBackground = loadImage("media/images/MapBackground.png");
+
+  //map images
+  mapBleed = loadImage("media/images/map/Bleeding.png");
+  mapBrain = loadImage("media/images/map/Brain.png");
+  mapEye = loadImage("media/images/map/Eyes.png");
+  mapTummy = loadImage("media/images/map/Stomach.png");
+  mapDaisyBleed = loadImage("media/images/map/DaisyBleed.png");
+  mapDaisyBrain = loadImage("media/images/map/DaisyBrain.png");
+
 
   //load sound
   sfx.connect = loadSound("media/audio/portConnect.mp3");
@@ -85,8 +107,14 @@ function preload() {
   bgmList = [sfx.bg1, sfx.bg2, sfx.bg3];
 
   //videos
-  taskVideo = createVideo("media/video/Background.mp4");
+  //taskVideo = createVideo("media/video/Background.mp4");
   finalVid = createVideo("media/video/EndScreen.mp4");
+
+  //font
+  chelseaFont = loadFont("../media/fonts/ChelseaM.ttf");
+
+  //silly guy
+  sillyGuy = loadImage("media/images/dance.gif");
 
   sessionsData = loadJSON("/score");
 }
@@ -237,8 +265,8 @@ function setup() {
   initVideos();
 
   //task video
-  taskVideo.loop();
-  taskVideo.hide();
+  // taskVideo.loop();
+  // taskVideo.hide();
 
   // same-origin socket.io
   socket = io();
@@ -246,13 +274,13 @@ function setup() {
 
   //set station images
   window.stationLayouts = {
-    brain: { img: brainBar },
-    eyeball: { img: eyeBar },
-    bleeding: { img: bleedingBar },
     heart: { img: null },
-    tummy: { img: tummyBar },
-    bleedEye: { img: daisyBleedBar },
-    brainTummy: { img: daisyBrainBar }
+    bleeding: { off: bleedingBar, on: bleedingBarActive },
+    brain: { off: brainBar, on: brainBarActive },
+    eyeball: { off: eyeBar, on: eyeBarActive },
+    tummy: { off: tummyBar, on: tummyBarActive },
+    bleedEye: { off: daisyBleedBar, on: daisyBleedBarActive },
+    brainTummy: { off: daisyBrainBar, on: daisyBrainBarActive }
   };
 
   //setup keybinds
@@ -296,25 +324,24 @@ function draw() {
     lastNewTaskTimer = millis();
     allowNewTask = false;
   }
-  background(0);
+  image(backgroundImage, 0, 0, width, height);
 
-  let headScale = 0.3;
-  let timeScale = 0.12;
+  const w = mapBackground.width * .39;
+  const h = mapBackground.height * .39;
+
+  //map background
+  image(mapBackground, 21, 100, 413, 284);
 
   //draw video
   drawVideo();
 
+  //this line of code is very important do NOT delete
+  if (window.danceGuyDance) {
+    image(sillyGuy, 100, 70, 240, 340);
+  }
+
   //header
-  if (headerImage) {
-    w = width * headScale;
-    h = w * (headerImage.height / headerImage.width);
-    image(headerImage, (width - w) / 2, 7, w, h);
-  }
-  if (timerImage) {
-    w = width * timeScale;
-    h = w * (timerImage.height / timerImage.width);
-    image(timerImage, width - 110, 25, w, h);
-  }
+  makeUI(headerImage, timerImage);
 
   //Trigger the tube finder to be updated
   tubeFinder();
@@ -520,10 +547,30 @@ function draw() {
     centeredX,
     barWidth,
     barHeight,
+    gameState: {
+      blueHeart,
+      redHeart,
+      blueDaisy,
+      redDaisy,
+      tubeLocation
+    }
+  });
+
+  //map
+  drawMap({
+    visibleTasks,
+    mapImages: {
+      bleeding: mapBleed,
+      brain: mapBrain,
+      eyeball: mapEye,
+      tummy: mapTummy,
+      bleedEye: mapDaisyBleed,
+      brainTummy: mapDaisyBrain
+    }
   });
 
   //draw game timer
-  window.gameTimer.update();
+  window.gameTimer.update(chelseaFont);
 
   //draw final vid
   drawVideo("final");
@@ -536,14 +583,14 @@ function draw() {
 localStorage.setItem("sessionScore", JSON.stringify(scoreData));
 
 
-// ----- INTERACTION -----
+// ----- INTERACTION -----s
 
 // Fallback: if the browser still blocks it, a click will start playback
 function mousePressed() {
-  if (taskVideo && taskVideo.elt && taskVideo.elt.paused) {
-    taskVideo.elt.muted = true; // ensure still muted
-    taskVideo.play();
-  }
+  // if (taskVideo && taskVideo.elt && taskVideo.elt.paused) {
+  //   taskVideo.elt.muted = true; // ensure still muted
+  //   taskVideo.play();
+  // }
   //make sure audio works
   if (getAudioContext().state !== 'running') {
     getAudioContext().resume();
