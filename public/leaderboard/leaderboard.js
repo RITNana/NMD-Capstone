@@ -154,7 +154,7 @@ function renderTopThree(topThreeData) {
             alt="${getMonsterName(entry.monsterType)} avatar"
           />
           <div class="podium-base">
-            <div class="podium-rank">${rankOrder[i]}</div>
+
             <div class="podium-name">${getMonsterName(entry.monsterType)}_${entry.id}</div>
             <div class="podium-score">Score: ${entry.totalScore}</div>
           </div>
