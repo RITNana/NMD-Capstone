@@ -52,7 +52,13 @@ window.gameTimer = function () {
             visibleTasks.length = 0;
 
             //tell server GAME OVER
-            if (socket) socket.emit("complete", currentSession);
+            if (socket){ 
+                socket.emit("brain", "stop");
+                socket.emit("tummy", "stop");
+                socket.emit("bleeding", "stop");
+                socket.emit("eyeball", "stop");
+                socket.emit("complete", currentSession);
+            }
 
             //play final screen
             if (playFinalVidCallback) playFinalVidCallback();

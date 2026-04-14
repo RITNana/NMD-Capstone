@@ -191,8 +191,7 @@ function gameLoop1(activeTaskCount) {
   newTask = loop1[gameIndex];
   otherNewTask = "";
   // }
-  // ONLY use snapshot, never currentTasks.length
-  if (gameIndex > 4 && activeTaskCount < 1) {
+  if (gameIndex > 0 && activeTaskCount < 1) {
     gameIndex++;
     otherNewTask = loop1[gameIndex];
   }
@@ -213,8 +212,7 @@ function gameLoop2(activeTaskCount) {
   newTask = loop2[gameIndex];
   otherNewTask = "";
 
-  // ONLY use snapshot, never currentTasks.length
-  if (gameIndex > 4 && activeTaskCount < 1) {
+  if (gameIndex > 0 && activeTaskCount < 1) {
     gameIndex++;
     otherNewTask = loop2[gameIndex];
   }
@@ -232,7 +230,6 @@ function gameLoop3(activeTaskCount) {
   newTask = loop3[gameIndex];
   otherNewTask = "";
 
-  // ONLY use snapshot, never currentTasks.length
   if (gameIndex > 4 && activeTaskCount < 1) {
     gameIndex++;
     otherNewTask = loop2[gameIndex];
