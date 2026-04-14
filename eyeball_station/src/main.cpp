@@ -113,8 +113,8 @@ void task(){
     eyeballLeftServo.write(0);
     eyeballRightServo.write(180);
     delay(500);
-    eyeballLeftServo.write(180);
-    eyeballRightServo.write(0);
+    eyeballLeftServo.write(160);
+    eyeballRightServo.write(20);
     // delay(500);
     allowScoring = true;
     eyeCondition = 0;
