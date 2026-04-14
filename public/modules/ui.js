@@ -1,11 +1,15 @@
 //handles all ui
 //functions made for making chnaging the ui easier in the future
 
+//scale is .37
+let scale = .37;
+
 //all varibles for station layouts
 window.getStationLayout = function () {
-  const ratio = 357 / 4308;
-  const barWidth = width * 0.9;
-  const barHeight = barWidth * ratio;
+  //let scale = min(width / 1080, height / 1920);
+
+  const barWidth = 682 * scale;
+  const barHeight = 213 * scale;
   const centeredX = (width - barWidth) / 2;
 
   return {
@@ -25,31 +29,37 @@ window.drawStations = function ({
   centeredX,
   barWidth,
   barHeight,
+  gameState
 }) {
 
-  const topOffset = 90;
-  const space = 24;
+  const topOffset = 113;
+  const space = 11;
   const daisyMult = 2;
 
-  const barX = 282;
-  const barY = 27;
-  const barW = 375;
-  const barH = 30;
-
-  // Ensure images are assigned ONCE per frame
-  for (const key in stations) {
-    if (window.stationLayouts[key]) {
-      stations[key].image = window.stationLayouts[key].img;
-    }
-  }
+  const barX = 325;
+  const barY = 43;
+  const barW = 135;
+  const barH = 16;
 
   for (let i = 0; i < visibleTasks.length; i++) {
     const key = visibleTasks[i];
     const st = stations[key];
+    const layout = window.stationLayouts[key];
+
     const posY = topOffset + i * (barHeight + space);
+    const posX = 220;
+
+    //heart no image
+    if (key === "heart") {
+      st.image = null;
+    } else if (layout) {
+      const connected = window.isConnected(key, gameState);
+      st.image = connected ? layout.on : layout.off;
+    }
+
 
     push();
-    translate(st.offsetX, posY);
+    translate(posX, posY);
 
     //daisy stations
     if (key === "bleedEye" || key === "brainTummy") {
@@ -57,15 +67,24 @@ window.drawStations = function ({
       //draw two bars
       const parts = st.parts;
 
-      if (parts[0]) {
+      if (parts[0] && daisyPartProgress < 1) {
         noStroke();
         fill(228, 44, 46);
-        rect(barX - 10, barY - 10, barW * window.daisyPartProgress, barH - 10);
+
+        //clamp
+        const Progress1 = Math.min(daisyPartProgress, 1);
+        rect(barX, barY + 2, barW * Progress1, barH);
+        //rect(barX, barY + 2, barW, barH);
       }
-      if (parts[1]) {
+      if (parts[1] && endPartProgress < 1) {
         noStroke();
         fill(228, 44, 46);
-        rect(barX - 10, barY + 44, barW * window.endPartProgress, barH - 10);
+
+        //clamp
+        const Progress2 = Math.min(endPartProgress, 1);
+        rect(barX, barY + 71, barW * Progress2, barH);
+        //rect(barX, barY + 71, barW, barH);
+
       };
 
       //draw image
@@ -75,8 +94,16 @@ window.drawStations = function ({
 
     } else {
       //normal stations
-      fill(228, 44, 46);
-      rect(barX - 10, barY - 10, barW * st.progress, barH - 10);
+
+      //clamp
+      const progress = Math.min(st.progress, 1);
+
+      if (progress < 1) {
+        noStroke();
+        fill(228, 44, 46);
+        rect(barX, barY, barW * progress, barH);
+        //rect(barX, barY, barW, barH);
+      }
 
       if (st.image) {
         tint(255, 255 * st.fade);
@@ -91,6 +118,23 @@ window.drawStations = function ({
   }
 
 };
+
+let headScale = .37;
+let timeScale = .08;
+
+window.makeUI = function (header, timer) {
+  //header
+  if (header) {
+    w = width * headScale;
+    h = w * (header.height / header.width);
+    image(header, 1207 * scale, 45 * scale, w, h);
+  }
+  if (timer) {
+    w = width * timeScale;
+    h = w * (timer.height / timer.width);
+    image(timer, 390 * scale, 74 * scale, w, h);
+  }
+}
 
 
 //maps chargeNum to progress
@@ -115,3 +159,40 @@ window.ledProgress = function (charge, th = thresholds) {
   }
 }
 
+window.isConnected = function (key, gameState) {
+  if (!gameState) return false;
+
+  const { blueHeart, redHeart, blueDaisy, redDaisy, tubeLocation } = gameState;
+
+  const isDaisy = (key === "bleedEye" || key === "brainTummy");
+
+  if (isDaisy) {
+    return (
+      (blueDaisy && blueHeart) ||
+      (redDaisy && redHeart)
+    );
+  }
+
+  return (
+    (blueHeart && tubeLocation.blue.includes(key)) ||
+    (redHeart && tubeLocation.red.includes(key))
+  );
+};
+
+//draw the map
+window.drawMap = function ({ visibleTasks, mapImages }) {
+  if (!visibleTasks || visibleTasks.length === 0) return;
+
+  const x = 10;
+  const y = 90;
+  const w = 1061 * .42;
+  const h = 729 * .42;
+
+  for (const task of visibleTasks) {
+    const img = mapImages?.[task];
+
+    if (img) {
+      image(img, x, y, w, h);
+    }
+  };
+};
