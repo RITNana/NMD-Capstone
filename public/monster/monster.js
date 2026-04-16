@@ -522,7 +522,7 @@ function draw() {
     textSize(29);
     drawGlowingText(
       `Brain Score: ${scores.head}`,
-      305,
+      335,
       1560,
       {
         font: dogicaFont,
@@ -537,7 +537,7 @@ function draw() {
     //text(`Head Score: ${sessionSet.headScore}`, 310, 1560)
     drawGlowingText(
       `Eye Score: ${scores.eyes}`,
-      275,
+      305,
       1610,
       {
         font: dogicaFont,
@@ -552,7 +552,7 @@ function draw() {
     //text(`Eye Score: ${sessionSet.eyeScore}`, 295, 1610)
     drawGlowingText(
       `Stomach Score: ${scores.stomach}`,
-      335,
+      365,
       1660,
       {
         font: dogicaFont,
@@ -567,7 +567,7 @@ function draw() {
     //text(`Stomach Score: ${sessionSet.stomachScore}`, 355, 1660)
     drawGlowingText(
       `Bleeding Score: ${scores.bleeding}`,
-      350,
+      380,
       1710,
       {
         font: dogicaFont,
