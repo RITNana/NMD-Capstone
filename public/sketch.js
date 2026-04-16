@@ -178,9 +178,9 @@ let gameIndex = 0;
 //test loop
 //let loop1 = ["bleeding", "tummy", "bleeding", "bleedEye"];
 
-let loop1 = ["bleeding", "brain", "eyeball", "tummy", "bleedEye", "brain", "tummy", "eyeball", "filler", "brainTummy", "filler"];
+let loop1 = ["bleeding", "brain", "eyeball", "tummy", "filler", "bleedEye","filler",  "brain", "tummy", "eyeball", "filler", "brainTummy", "filler"];
 let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball", "tummy", "bleed", "brain", "filler", "filler", "bleedEye", "brainTummy", "filler"];
-let loop3 = ["bleeding", "brain", "tummy", "eyeball", "brain", "tummy", "bleeding", "eyeball", "brain", "tummy", "filler"]
+let loop3 = ["brain", "bleeding", "eyeball", "tummy", "bleeding", "brain","tummy", "eyeball", "filler", "brainTummy", "filler"]
 let currentTasks = [];
 let daisyPartProgress;
 let endPartProgress;
@@ -229,19 +229,21 @@ function gameLoop2(activeTaskCount) {
 function gameLoop3(activeTaskCount) {
   newTask = loop3[gameIndex];
   otherNewTask = "";
-
-  if (gameIndex > 4 && activeTaskCount < 1) {
+  // }
+  if (gameIndex > 0 && activeTaskCount < 1) {
     gameIndex++;
-    otherNewTask = loop2[gameIndex];
+    otherNewTask = loop3[gameIndex];
   }
   if (!loop3[gameIndex] && activeTaskCount === 0) {
     socket.emit("complete", currentSession);
     //play final video
     playFinalVid();
+    playSound("taskOver");
     // console.log('done-done')
     return;
   }
   if (!loop3[gameIndex]) return;
+  if(gameIndex == 2 || gameIndex == 5) socket.emit("newTask", "filler that can be replaced"); // at present for calling the glitch
 }
 
 
