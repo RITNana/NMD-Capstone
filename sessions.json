@@ -349,5 +349,14 @@
     "stomachScore": 509,
     "bleedEye": 0,
     "brainTummy": 0
+  },
+  "100": {
+    "monsterType": 2,
+    "headScore": 510,
+    "eyeScore": 510,
+    "bleedingScore": 502,
+    "stomachScore": 507,
+    "bleedEye": 0,
+    "brainTummy": 0
   }
 }
