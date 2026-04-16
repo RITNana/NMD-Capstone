@@ -177,10 +177,10 @@ let gameIndex = 0;
 
 //test loop
 //let loop1 = ["bleeding", "tummy", "bleeding", "bleedEye"];
-
+//
 let loop1 = ["bleeding", "brain", "eyeball", "tummy", "filler", "bleedEye","filler",  "brain", "tummy", "eyeball", "filler", "brainTummy", "filler"];
-let loop2 = ["brain", "bleeding", "tummy", "eyeball", "brainTummy", "eyeball", "tummy", "bleed", "brain", "filler", "filler", "bleedEye", "brainTummy", "filler"];
-let loop3 = ["brain", "bleeding", "eyeball", "tummy", "bleeding", "brain","tummy", "eyeball", "filler", "brainTummy", "filler"]
+let loop2 = ["brain", "bleeding", "tummy", "eyeball", "filler", "brainTummy", "filler", "eyeball", "tummy", "bleed", "brain", "filler", "filler", "bleedEye", "brainTummy", "filler"];
+let loop3 = ["brain", "bleeding", "eyeball", "tummy", "brain", "bleeding","eyeball", "tummy", "filler", "bleedEye","filler"];
 let currentTasks = [];
 let daisyPartProgress;
 let endPartProgress;
@@ -370,13 +370,13 @@ function draw() {
           (redDaisy && redHeart)) // Red tube heart to Daisy 
       ) {
         //for the heart -> daisy
-        if ((st.name == stations.bleedEye.parts[0]) && daisy.daisyTask == "bleeding" || (st.name == stations.brainTummy.parts[0]) && daisy.daisyTask == "brain") {
+        if (((st.name == stations.bleedEye.parts[0]) && daisy.daisyTask == "bleeding") || ((st.name == stations.brainTummy.parts[0]) && daisy.daisyTask == "brain")) {
           st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
           daisyPartProgress = st.progress;
           // console.log("heart -> daisy " + stations.bleedEye.partProgress.bleeding)
         }
         //for the daisy -> end
-        if ((st.name == stations.bleedEye.parts[1]) && daisy.endTask == "eyeball" || (st.name == stations.brainTummy.parts[1]) && daisy.endTask == "tummy") {
+        if (((st.name == stations.bleedEye.parts[1]) && daisy.endTask == "eyeball") || ((st.name == stations.brainTummy.parts[1]) && daisy.endTask == "tummy")) {
           if (((blueEnd && blueDaisy) || //blue at end and daisy 
             (redEnd && redDaisy)) //red at end and daisy
           ) {
@@ -388,13 +388,16 @@ function draw() {
       }
 
       if (!st.visible) continue;
-      if (st.name == "bleedEye" || st.name == "brainTummy") {
-        // if (st.parts.includes(st.name)) {
-
-        if (daisyPartProgress >= 0.995 && endPartProgress >= 0.995) {
+      if(st.name == "bleedEye"){
+        if((daisy.daisyTask == "bleed" && daisy.endTask == "eyeball") && (daisyPartProgress >= .995 && endPartProgress >= .995)){
           st.dismissing = true;
-          // banish = st.name;
-          // st.completed = true;
+          daisy.useDaisy = false;
+          st.dismissStart = millis();
+        }
+      }
+      if(st.name == "brainTummy"){
+        if((daisy.daisyTask == "brain" && daisy.endTask == "tummy") && (daisyPartProgress >= .995 && endPartProgress >= .995)){
+          st.dismissing = true;
           daisy.useDaisy = false;
           st.dismissStart = millis();
         }
@@ -453,6 +456,8 @@ function draw() {
           socket.emit("bleed", "stop");
           socket.emit("eyeball", "stop");
         }
+
+      console.log('GO AWAY' + st.name + ' we got: ' + visibleTasks);
 
         updateGameState = true;
       }
