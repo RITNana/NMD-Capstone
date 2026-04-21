@@ -179,7 +179,7 @@ let gameIndex = 0;
 //let loop1 = ["bleeding", "tummy", "bleeding", "bleedEye"];
 //
 let loop1 = ["bleeding", "brain", "eyeball", "tummy", "filler", "bleedEye","filler",  "brain", "tummy", "eyeball", "filler", "brainTummy", "filler"];
-let loop2 = ["brain", "bleeding", "tummy", "eyeball", "filler", "brainTummy", "filler", "eyeball", "tummy", "bleed", "brain", "filler", "filler", "bleedEye", "brainTummy", "filler"];
+let loop2 = ["brain", "bleeding", "tummy", "eyeball", "filler", "brainTummy", "eyeball", "bleed", "tummy", "brain", "bleedEye", "filler", "tummy", "brain", "eyeball", "bleed"];
 let loop3 = ["brain", "bleeding", "eyeball", "tummy", "brain", "bleeding","eyeball", "tummy", "filler", "bleedEye","filler"];
 let currentTasks = [];
 let daisyPartProgress;
@@ -357,16 +357,15 @@ function draw() {
 
     // smooth progress update
     //console.log(st.inputDelay);
-    if (!daisy.useDaisy && st.inputDelay &&
-      ((blueHeart && tubeLocation.blue.includes(key)) ||
-        (redHeart && tubeLocation.red.includes(key)))) {
+    //If it aint the 2 daisy chains && the input delay was already triggered 
+    if ( (st.name != "bleedEye" || st.name != "brainTummy") && st.inputDelay &&
+      ((blueHeart && tubeLocation.blue.includes(key)) || //&& if heart is reading blue and the station is reading blue
+        (redHeart && tubeLocation.red.includes(key)))) { //or if heart is reading red and the station is reading red
       st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
     }
-
-    if (daisy.useDaisy) {
-      //minimum the hear to the daisy is needed 
-      if (
-        ((blueDaisy && blueHeart) || //Blue tube Heart to Daisy
+    //if it is one of the 2 daisy chains
+    if (st.name == "bleedEye" || st.name == "brainTummy") {
+      if (((blueDaisy && blueHeart) || //Blue tube Heart to Daisy
           (redDaisy && redHeart)) // Red tube heart to Daisy 
       ) {
         //for the heart -> daisy
@@ -388,6 +387,8 @@ function draw() {
       }
 
       if (!st.visible) continue;
+      //there is a way to write this that uses cases probably but whatever
+      //if bleedEye is completed 
       if(st.name == "bleedEye"){
         if((daisy.daisyTask == "bleed" && daisy.endTask == "eyeball") && (daisyPartProgress >= .995 && endPartProgress >= .995)){
           st.dismissing = true;
@@ -395,6 +396,7 @@ function draw() {
           st.dismissStart = millis();
         }
       }
+      //if brainTummy is completed
       if(st.name == "brainTummy"){
         if((daisy.daisyTask == "brain" && daisy.endTask == "tummy") && (daisyPartProgress >= .995 && endPartProgress >= .995)){
           st.dismissing = true;
