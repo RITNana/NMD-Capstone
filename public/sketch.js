@@ -14,6 +14,9 @@ const DISMISS_DURATION = 600;
 //tracks what tasks are currrently shown
 let visibleTasks = [];
 
+//game start state
+let gameStarted = false;
+
 //score calculation
 let scoreData = {
   "000": {
@@ -92,6 +95,7 @@ function preload() {
   mapDaisyBleed = loadImage("media/images/map/DaisyBleed.png");
   mapDaisyBrain = loadImage("media/images/map/DaisyBrain.png");
 
+  coverPage = loadImage("media/images/CoverScreen.png");
 
   //load sound
   sfx.connect = loadSound("media/audio/portConnect.mp3");
@@ -186,6 +190,7 @@ let daisyPartProgress;
 let endPartProgress;
 //Gameloop 1
 function gameLoop1(activeTaskCount) {
+  gameStarted = true;
   // console.log(activeTaskCount + " | " + currentTasks + " | " + gameIndex)s
   // if(activeTaskCount < 1){
   newTask = loop1[gameIndex];
@@ -204,11 +209,13 @@ function gameLoop1(activeTaskCount) {
     return;
   }
   if (!loop1[gameIndex]) return;
-  if(gameIndex == 2 || gameIndex == 5) socket.emit("newTask", "filler that can be replaced"); // at present for calling the glitch
+  if (gameIndex == 2 || gameIndex == 5) socket.emit("newTask", "filler that can be replaced"); // at present for calling the glitch
 }
 
 // Gameloop 2 
 function gameLoop2(activeTaskCount) {
+  gameStarted = true;
+
   newTask = loop2[gameIndex];
   otherNewTask = "";
 
@@ -227,6 +234,9 @@ function gameLoop2(activeTaskCount) {
 }
 //gameloop 3
 function gameLoop3(activeTaskCount) {
+  gameStarted = true;
+
+
   newTask = loop3[gameIndex];
   otherNewTask = "";
   // }
@@ -311,6 +321,14 @@ function SocketListeners() { // nunmber comments are under usual GDC load values
 
 // ---- DRAW STATIONS ----
 function draw() {
+
+  //game cover screen
+  if (!gameStarted) {
+    image(coverPage, 0, 0, width, height);
+
+    return;
+  }
+
   newTaskTimer = millis();
   if (newTaskTimer - lastNewTaskTimer > 2000) { allowNewTask = true; }
   if (updateGameState && useGameLoop && allowNewTask) {
