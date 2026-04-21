@@ -357,12 +357,18 @@ function draw() {
 
     // smooth progress update
     //console.log(st.inputDelay);
-    if (!daisy.useDaisy && st.inputDelay &&
+    if(!daisy.useDaisy){
+    if (st.inputDelay &&
       ((blueHeart && tubeLocation.blue.includes(key)) ||
         (redHeart && tubeLocation.red.includes(key)))) {
       st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
     }
-
+        // detect completion
+    if (!st.dismissing && st.visible && st.progress >= 0.995) {
+      st.dismissing = true;
+      st.dismissStart = millis();
+    }
+  }
     if (daisy.useDaisy) {
       //minimum the hear to the daisy is needed 
       if (
@@ -389,7 +395,7 @@ function draw() {
 
       if (!st.visible) continue;
       if(st.name == "bleedEye"){
-        if((daisy.daisyTask == "bleed" && daisy.endTask == "eyeball") && (daisyPartProgress >= .995 && endPartProgress >= .995)){
+        if((daisy.daisyTask == "bleeding" && daisy.endTask == "eyeball") && (daisyPartProgress >= .995 && endPartProgress >= .995)){
           st.dismissing = true;
           daisy.useDaisy = false;
           st.dismissStart = millis();
@@ -405,11 +411,7 @@ function draw() {
       // dismiss like normal stations
 
     }
-    // detect completion
-    if (!st.dismissing && st.visible && st.progress >= 0.995) {
-      st.dismissing = true;
-      st.dismissStart = millis();
-    }
+
 
     // handle dismissal animation
     if (st.dismissing || st.name === banish) {
@@ -457,7 +459,7 @@ function draw() {
           socket.emit("eyeball", "stop");
         }
 
-      console.log('GO AWAY' + st.name + ' we got: ' + visibleTasks);
+      console.log('GO AWAY ' + st.name + ' we got: ' + visibleTasks);
 
         updateGameState = true;
       }
