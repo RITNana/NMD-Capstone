@@ -8,51 +8,6 @@
     "daisy1Score": 0,
     "daisy2Score": 0
   },
-  "1": {
-    "monsterType": 3,
-    "headScore": 0,
-    "eyeScore": 0,
-    "bleedingScore": 0,
-    "stomachScore": 0,
-    "bleedEye": 0,
-    "brainTummy": 0
-  },
-  "2": {
-    "monsterType": 5,
-    "headScore": 0,
-    "eyeScore": 112,
-    "bleedingScore": 501,
-    "stomachScore": 0,
-    "bleedEye": 0,
-    "brainTummy": 0
-  },
-  "3": {
-    "monsterType": 0,
-    "headScore": 514,
-    "eyeScore": 492,
-    "bleedingScore": 491,
-    "stomachScore": 500,
-    "bleedEye": 114,
-    "brainTummy": 0
-  },
-  "4": {
-    "monsterType": 4,
-    "headScore": 512,
-    "eyeScore": 482,
-    "bleedingScore": 551,
-    "stomachScore": 510,
-    "bleedEye": 101,
-    "brainTummy": 0
-  },
-  "5": {
-    "monsterType": 0,
-    "headScore": 504,
-    "eyeScore": 567,
-    "bleedingScore": 559,
-    "stomachScore": 503,
-    "bleedEye": 109,
-    "brainTummy": 0
-  },
   "6": {
     "monsterType": 0,
     "headScore": 759,
@@ -95,6 +50,5 @@
     "bleedingScore": 607,
     "stomachScore": 757,
     "bleedEye": 513,
-    "brainTummy": 505
   }
 }

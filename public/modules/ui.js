@@ -36,8 +36,8 @@ window.drawStations = function ({
   const space = 11;
   const daisyMult = 2;
 
-  const barX = 325;
-  const barY = 43;
+  const barX = 324;
+  const barY = 41;
   const barW = 135;
   const barH = 16;
 
