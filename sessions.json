@@ -51,5 +51,32 @@
     "stomachScore": 757,
     "bleedEye": 513,
     "brainTummy": 511
+  },
+  "11": {
+    "monsterType": 4,
+    "headScore": 762,
+    "eyeScore": 574,
+    "bleedingScore": 763,
+    "stomachScore": 765,
+    "bleedEye": 505,
+    "brainTummy": 513
+  },
+  "12": {
+    "monsterType": 2,
+    "headScore": 878,
+    "eyeScore": 756,
+    "bleedingScore": 761,
+    "stomachScore": 884,
+    "bleedEye": 507,
+    "brainTummy": 501
+  },
+  "13": {
+    "monsterType": 0,
+    "headScore": 762,
+    "eyeScore": 636,
+    "bleedingScore": 756,
+    "stomachScore": 758,
+    "bleedEye": 511,
+    "brainTummy": 504
   }
 }

@@ -70,3 +70,18 @@ window.gameTimer = function () {
 
     return { init, update, get gameOver() { return gameOver; }, get useGameLoop() { return useGameLoop; } };
 }();
+
+window.timeStop = function () {
+    gameTime = 120;
+
+    //tell server GAME OVER
+    if (socket) {
+        socket.emit("brain", "stop");
+        socket.emit("tummy", "stop");
+        socket.emit("bleeding", "stop");
+        socket.emit("eyeball", "stop");
+        socket.emit("complete", currentSession);
+    }
+    console.log("timer stopped" + gameTime);
+
+}

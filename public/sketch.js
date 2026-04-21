@@ -182,9 +182,9 @@ let gameIndex = 0;
 //test loop
 //let loop1 = ["bleeding", "tummy", "bleeding", "bleedEye"];
 //
-let loop1 = ["bleeding", "brain", "eyeball", "tummy", "filler", "bleedEye","filler",  "brain", "tummy", "eyeball", "filler", "brainTummy", "filler"];
+let loop1 = ["bleeding", "brain", "eyeball", "tummy", "filler", "bleedEye", "filler", "brain", "tummy", "eyeball", "filler", "brainTummy", "filler"];
 let loop2 = ["brain", "bleeding", "tummy", "eyeball", "filler", "brainTummy", "filler", "eyeball", "tummy", "bleed", "brain", "filler", "filler", "bleedEye", "brainTummy", "filler"];
-let loop3 = ["brain", "bleeding", "eyeball", "tummy", "brain", "bleeding","eyeball", "tummy", "filler", "bleedEye","filler"];
+let loop3 = ["brain", "bleeding", "eyeball", "tummy", "brain", "bleeding", "eyeball", "tummy", "filler", "bleedEye", "filler"];
 let currentTasks = [];
 let daisyPartProgress;
 let endPartProgress;
@@ -202,6 +202,9 @@ function gameLoop1(activeTaskCount) {
   }
   if (!loop1[gameIndex] && activeTaskCount === 0) {
     socket.emit("complete", currentSession);
+
+    timeStop();
+
     //play final video
     playFinalVid();
     playSound("taskOver");
@@ -225,6 +228,8 @@ function gameLoop2(activeTaskCount) {
   }
   if (!loop2[gameIndex] && activeTaskCount === 0) {
     socket.emit("complete", currentSession);
+    timeStop();
+
     //play final video
     playFinalVid();
     // console.log('done-done')
@@ -246,6 +251,8 @@ function gameLoop3(activeTaskCount) {
   }
   if (!loop3[gameIndex] && activeTaskCount === 0) {
     socket.emit("complete", currentSession);
+    timeStop();
+    
     //play final video
     playFinalVid();
     playSound("taskOver");
@@ -253,7 +260,7 @@ function gameLoop3(activeTaskCount) {
     return;
   }
   if (!loop3[gameIndex]) return;
-  if(gameIndex == 2 || gameIndex == 5) socket.emit("newTask", "filler that can be replaced"); // at present for calling the glitch
+  if (gameIndex == 2 || gameIndex == 5) socket.emit("newTask", "filler that can be replaced"); // at present for calling the glitch
 }
 
 
@@ -375,18 +382,18 @@ function draw() {
 
     // smooth progress update
     //console.log(st.inputDelay);
-    if(!daisy.useDaisy){
-    if (st.inputDelay &&
-      ((blueHeart && tubeLocation.blue.includes(key)) ||
-        (redHeart && tubeLocation.red.includes(key)))) {
-      st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
+    if (!daisy.useDaisy) {
+      if (st.inputDelay &&
+        ((blueHeart && tubeLocation.blue.includes(key)) ||
+          (redHeart && tubeLocation.red.includes(key)))) {
+        st.progress = lerp(st.progress, ledProgress((st.num), thresholds), 0.1);
+      }
+      // detect completion
+      if (!st.dismissing && st.visible && st.progress >= 0.995) {
+        st.dismissing = true;
+        st.dismissStart = millis();
+      }
     }
-        // detect completion
-    if (!st.dismissing && st.visible && st.progress >= 0.995) {
-      st.dismissing = true;
-      st.dismissStart = millis();
-    }
-  }
     if (daisy.useDaisy) {
       //minimum the hear to the daisy is needed 
       if (
@@ -412,15 +419,15 @@ function draw() {
       }
 
       if (!st.visible) continue;
-      if(st.name == "bleedEye"){
-        if((daisy.daisyTask == "bleeding" && daisy.endTask == "eyeball") && (daisyPartProgress >= .995 && endPartProgress >= .995)){
+      if (st.name == "bleedEye") {
+        if ((daisy.daisyTask == "bleeding" && daisy.endTask == "eyeball") && (daisyPartProgress >= .995 && endPartProgress >= .995)) {
           st.dismissing = true;
           daisy.useDaisy = false;
           st.dismissStart = millis();
         }
       }
-      if(st.name == "brainTummy"){
-        if((daisy.daisyTask == "brain" && daisy.endTask == "tummy") && (daisyPartProgress >= .995 && endPartProgress >= .995)){
+      if (st.name == "brainTummy") {
+        if ((daisy.daisyTask == "brain" && daisy.endTask == "tummy") && (daisyPartProgress >= .995 && endPartProgress >= .995)) {
           st.dismissing = true;
           daisy.useDaisy = false;
           st.dismissStart = millis();
@@ -477,7 +484,7 @@ function draw() {
           socket.emit("eyeball", "stop");
         }
 
-      console.log('GO AWAY ' + st.name + ' we got: ' + visibleTasks);
+        console.log('GO AWAY ' + st.name + ' we got: ' + visibleTasks);
 
         updateGameState = true;
       }
