@@ -94,7 +94,7 @@ int  heartLoop() {
   digitalWrite(stationPin2, HIGH);
 
   int code = 0;
-  if (leftRedOn || leftBlueOn && rightRedOn || rightBlueOn ) {
+  if ((leftRedOn || leftBlueOn) && (rightRedOn || rightBlueOn )) {
     code = 3;
   } else if (leftRedOn || leftBlueOn) {
     code = 1;
