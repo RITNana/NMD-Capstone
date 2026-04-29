@@ -72,7 +72,7 @@ window.gameTimer = function () {
 }();
 
 window.timeStop = function () {
-    gameTime = 120;
+    gameTime = 6000;
 
     //tell server GAME OVER
     if (socket) {

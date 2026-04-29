@@ -180,11 +180,12 @@ let gameIndex = 0;
 
 
 //test loop
-//let loop1 = ["bleeding", "tummy", "bleeding", "bleedEye"];
+// let loop1 = ["bleeding", "eyeball", "bleeding", "filler", "brainTummy", "filler"];
 //
 let loop1 = ["bleeding", "brain", "eyeball", "tummy", "filler", "bleedEye", "filler", "brain", "tummy", "eyeball", "filler", "brainTummy", "filler"];
-let loop2 = ["brain", "bleeding", "tummy", "eyeball", "filler", "brainTummy", "filler", "eyeball", "tummy", "bleed", "brain", "filler", "filler", "bleedEye", "brainTummy", "filler"];
-let loop3 = ["brain", "bleeding", "eyeball", "tummy", "brain", "bleeding", "eyeball", "tummy", "filler", "bleedEye", "filler"];
+let loop2 = ["brain", "bleeding", "tummy", "eyeball", "filler", "brainTummy", "filler", "eyeball", "brain", "tummy", "bleeding", "brain", "filler", "filler", "bleedEye", "brainTummy", "filler"];
+let loop3 = ["brain", "bleeding", "tummy", "eyeball", "brain", "bleeding", "eyeball", "tummy", "filler", "bleedEye", "filler"];
+// let loop3 = ["brain", "bleeding", "eyeball", "tummy", "brain", "bleeding", "eyeball", "tummy", "filler", "bleedEye", "filler"];
 let currentTasks = [];
 let daisyPartProgress;
 let endPartProgress;
@@ -306,9 +307,9 @@ function setup() {
 // ---- Socket Listeners ----
 //They should be strings they come from index.js
 function SocketListeners() { // nunmber comments are under usual GDC load values
-  socket.on("brain-data", (p) => stations.brain.num = (String(p).trim()) * 25);// 2
+  socket.on("brain-data", (p) => stations.brain.num = (String(p).trim()) * 9);// 2
   socket.on("eyeball-data", (p) => stations.eyeball.num = (String(p).trim()) * 25); //6
-  socket.on("bleeding-data", (p) => stations.bleeding.num = (String(p).trim()) * 25); //10
+  socket.on("bleeding-data", (p) => stations.bleeding.num = (String(p).trim()) * 5); //10
   socket.on("heart-data", (p) => stations.heart.num = (String(p).trim()));
   socket.on("tummy-data", (p) => stations.tummy.num = (String(p).trim()) * 25); //6
 

@@ -130,13 +130,13 @@ window.setKeyBinds = function (socket) {
         if (e.key === "`") callbacks.startLoop(3);
         if (e.key === "3") callbacks.manualControl();
         // if (e.key === "4") callbacks.manualDaisyTask();
-
+        if (e.key == "-") gameStarted = !gameStarted;
         //little timmy made me angry
-        if (e.key === "+"){
-            const task = currentTasks[0];
-            console.log("TIMMMY: ", task);
-            callbacks.timmyMadeMeMad(task, 100);
-        } 
+        // if (e.key === ""){
+        //     const task = currentTasks[0];
+        //     console.log("TIMMMY: ", task);
+        //     callbacks.timmyMadeMeMad(task, 100);
+        // } 
 
         if (e.key === "?") window.danceGuyDance = !window.danceGuyDance;
     });
